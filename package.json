@@ -24,12 +24,36 @@
     "views": {
       "codeX-sidebar": [
         {
+          "type": "webview",
           "id": "codeX-documentations",
           "name": "Documentations"
         },
         {
+          "type": "webview",
           "id": "codeX-notebook",
           "name": "Notebook"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codeX.addColor",
+        "category": "Calico Colors",
+        "title": "Add Color"
+      },
+      {
+        "command": "codeX.clearColors",
+        "category": "Calico Colors",
+        "title": "Clear Colors",
+        "icon": "$(clear-all)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeX.clearColors",
+          "group": "navigation",
+          "when": "view == codeX-documentations"
         }
       ]
     }
