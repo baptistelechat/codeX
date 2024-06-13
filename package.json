@@ -27,11 +27,6 @@
           "type": "webview",
           "id": "codeX-documentations",
           "name": "Documentations"
-        },
-        {
-          "type": "webview",
-          "id": "codeX-notebook",
-          "name": "Notebook"
         }
       ]
     },

@@ -122,7 +122,8 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
-				<meta charset="UTF-8">
+      <meta charset="UTF-8">
+      <script src="https://cdn.tailwindcss.com"></script>
 
 				<!--
 					Use a content security policy to only allow loading styles from our extension directory,
@@ -137,12 +138,15 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
 				<link href="${styleVSCodeUri}" rel="stylesheet">
 				<link href="${styleMainUri}" rel="stylesheet">
 
+
 				<title>Cat Colors</title>
 			</head>
 			<body>
+        <h1 class="text-3xl font-bold underline">
+          Hello world!
+        </h1>
 				<ul class="color-list">
 				</ul>
-
 				<button class="add-color-button">Add Color</button>
 
 				<script nonce="${nonce}" src="${scriptUri}"></script>

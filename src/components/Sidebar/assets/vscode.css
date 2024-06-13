@@ -1,5 +1,5 @@
 :root {
-	--container-paddding: 20px;
+	--container-padding: 20px;
 	--input-padding-vertical: 6px;
 	--input-padding-horizontal: 4px;
 	--input-margin-vertical: 4px;
@@ -7,7 +7,7 @@
 }
 
 body {
-	padding: 0 var(--container-paddding);
+	padding: 0 var(--container-padding);
 	color: var(--vscode-foreground);
 	font-size: var(--vscode-font-size);
 	font-weight: var(--vscode-font-weight);
@@ -15,35 +15,38 @@ body {
 	background-color: var(--vscode-editor-background);
 }
 
-ol,
-ul {
-	padding-left: var(--container-paddding);
+/* Lists */
+ol, ul {
+	padding-left: var(--container-padding);
 }
 
-body > *,
-form > * {
+/* Global */
+body > *, form > * {
 	margin-block-start: var(--input-margin-vertical);
 	margin-block-end: var(--input-margin-vertical);
 }
 
+/* Focus */
 *:focus {
 	outline-color: var(--vscode-focusBorder) !important;
 }
 
+/* Links */
 a {
 	color: var(--vscode-textLink-foreground);
 }
 
-a:hover,
-a:active {
+a:hover, a:active {
 	color: var(--vscode-textLink-activeForeground);
 }
 
+/* Code */
 code {
 	font-size: var(--vscode-editor-font-size);
 	font-family: var(--vscode-editor-font-family);
 }
 
+/* Buttons */
 button {
 	border: none;
 	padding: var(--input-padding-vertical) var(--input-padding-horizontal);
@@ -73,8 +76,8 @@ button.secondary:hover {
 	background: var(--vscode-button-secondaryHoverBackground);
 }
 
-input:not([type='checkbox']),
-textarea {
+/* Inputs and Textareas */
+input:not([type='checkbox']), textarea {
 	display: block;
 	width: 100%;
 	border: none;
@@ -85,7 +88,39 @@ textarea {
 	background-color: var(--vscode-input-background);
 }
 
-input::placeholder,
-textarea::placeholder {
+input::placeholder, textarea::placeholder {
 	color: var(--vscode-input-placeholderForeground);
+}
+
+/* Other elements */
+h1, h2, h3, h4, h5, h6 {
+	color: var(--vscode-editor-foreground);
+}
+
+p {
+	color: var(--vscode-editor-foreground);
+}
+
+pre {
+	background-color: var(--vscode-editor-background);
+	color: var(--vscode-editor-foreground);
+	padding: var(--container-padding);
+	overflow: auto;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: var(--container-padding);
+	border: 1px solid var(--vscode-foreground);
+}
+
+blockquote {
+	color: var(--vscode-textBlockQuote-foreground);
+	border-left: 4px solid var(--vscode-textBlockQuote-border);
+	margin: var(--container-padding) 0;
+	padding: 0 var(--container-padding);
 }
