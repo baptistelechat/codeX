@@ -17,7 +17,7 @@
         {
           "id": "codeX-sidebar",
           "title": "CodeX",
-          "icon": "src/lib/assets/img/icon.png"
+          "icon": "src/assets/images/icon.png"
         }
       ]
     },
@@ -27,28 +27,6 @@
           "type": "webview",
           "id": "codeX-documentations",
           "name": "Documentations"
-        }
-      ]
-    },
-    "commands": [
-      {
-        "command": "codeX.addColor",
-        "category": "Calico Colors",
-        "title": "Add Color"
-      },
-      {
-        "command": "codeX.clearColors",
-        "category": "Calico Colors",
-        "title": "Clear Colors",
-        "icon": "$(clear-all)"
-      }
-    ],
-    "menus": {
-      "view/title": [
-        {
-          "command": "codeX.clearColors",
-          "group": "navigation",
-          "when": "view == codeX-documentations"
         }
       ]
     }
