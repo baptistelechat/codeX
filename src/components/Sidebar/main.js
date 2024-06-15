@@ -11,10 +11,12 @@ window.addEventListener("message", (event) => {
         return;
       }
 
+      document.querySelector("#no-documentation-found").style.display = "none";
+
       container.innerHTML = documentations
         .map(
           (doc) => `
-        <div id=${doc.id} class="item cursor-pointer flex-col gap-4 p-4 brightness-50 transition-all duration-200 hover:brightness-100">
+        <div id=${doc.id} class="item rounded cursor-pointer flex-col gap-4 p-4 brightness-50 transition-all duration-200 hover:brightness-100">
           <div class="flex items-center gap-2">
             <img src=${doc.icon} alt="${doc.name} icon" class="size-10" />
             <div class="flex flex-col gap-2">
@@ -45,7 +47,6 @@ window.addEventListener("message", (event) => {
           item.classList.add("border-l-sky-500");
         });
       });
-
       break;
   }
 });

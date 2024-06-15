@@ -1,19 +1,82 @@
+import * as fs from "fs";
+import * as path from "path";
 import * as vscode from "vscode";
 import documentations from "../data/documentations";
 
 export class CodeXViewProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = "codeX-documentations";
+  public static readonly viewType = "codeX.documentations";
 
   private _view?: vscode.WebviewView;
+  private packageJson: any;
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
-  public resolveWebviewView(
+  public async resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
     this._view = webviewView;
+
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) {
+      vscode.window.showErrorMessage("No workspace folder is open.");
+      return;
+    }
+
+    const packageJsonPath = path.join(
+      workspaceFolders[0].uri.fsPath,
+      "package.json"
+    );
+
+    if (fs.existsSync(packageJsonPath)) {
+      try {
+        const packageJsonContent = fs.readFileSync(packageJsonPath, "utf8");
+        this.packageJson = JSON.parse(packageJsonContent);
+
+        // Filter documentations based on dependencies
+        const filteredDocumentations = documentations.filter((doc) => {
+          // Check if dependency exists in dependencies or devDependencies
+          return doc.dependencies.some((dependency) => {
+            return (
+              this.packageJson.dependencies?.[dependency] ||
+              this.packageJson.devDependencies?.[dependency]
+            );
+          });
+        });
+
+        // Send filtered documentations to the webview
+        webviewView.webview.postMessage({
+          type: "setDocumentations",
+          documentations: filteredDocumentations,
+        });
+      } catch (error) {
+        vscode.window.showErrorMessage("Failed to read package.json.");
+      }
+    } else {
+      vscode.window.showErrorMessage("No package.json found in the workspace.");
+    }
+
+    // Update documentations when visibility changes
+    webviewView.onDidChangeVisibility(() => {
+      if (webviewView.visible && this.packageJson) {
+        // Filter documentations based on dependencies
+        const filteredDocumentations = documentations.filter((doc) => {
+          // Check if dependency exists in dependencies or devDependencies
+          return doc.dependencies.some((dependency) => {
+            return (
+              this.packageJson.dependencies?.[dependency] ||
+              this.packageJson.devDependencies?.[dependency]
+            );
+          });
+        });
+
+        webviewView.webview.postMessage({
+          type: "setDocumentations",
+          documentations: filteredDocumentations,
+        });
+      }
+    });
 
     webviewView.webview.options = {
       enableScripts: true,
@@ -21,20 +84,32 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+  }
 
-    webviewView.webview.postMessage({
-      type: "setDocumentations",
-      documentations,
-    });
-
-    webviewView.onDidChangeVisibility(() => {
-      if (webviewView.visible) {
-        webviewView.webview.postMessage({
-          type: "setDocumentations",
-          documentations,
+  public refresh() {
+    if (this._view?.visible && this.packageJson) {
+      // Filter documentations based on dependencies
+      const filteredDocumentations = documentations.filter((doc) => {
+        // Check if dependency exists in dependencies or devDependencies
+        return doc.dependencies.some((dependency) => {
+          return (
+            this.packageJson.dependencies?.[dependency] ||
+            this.packageJson.devDependencies?.[dependency]
+          );
         });
-      }
-    });
+      });
+
+      this._view.webview.postMessage({
+        type: "setDocumentations",
+        documentations: filteredDocumentations,
+      });
+    }
+  }
+
+  public clearColors() {
+    if (this._view) {
+      this._view.webview.postMessage({ type: "clearColors" });
+    }
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
@@ -78,6 +153,16 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       )
     );
 
+    const codiconsUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        "node_modules",
+        "@vscode/codicons",
+        "dist",
+        "codicon.css"
+      )
+    );
+
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
@@ -100,13 +185,18 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="${styleResetUri}" rel="stylesheet">
           <link href="${styleTailwindUri}" rel="stylesheet">
+				  <link href="${codiconsUri}" rel="stylesheet" />
           <link href="${styleVSCodeUri}" rel="stylesheet">
           <link href="${styleMainUri}" rel="stylesheet">
           <title>Documentation List</title>
           <script nonce="${nonce}" src="${scriptUri}"></script>
         </head>
         <body>
-          <div id="documentation-list" class="divide-y"></div>
+          <p id="no-documentation-found" class="flex items-center gap-2 font-bold p-4">
+            No documentation found. Try to refresh the extension.
+            <svg width="18" height="18" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.681 3H2V2h3.5l.5.5V6H5V4a5 5 0 1 0 4.53-.761l.302-.954A6 6 0 1 1 4.681 3z"/></svg>
+          </p>
+          <div id="documentation-list" class="mt-2 space-y-2"></div>
         </body>
       </html>`;
   }

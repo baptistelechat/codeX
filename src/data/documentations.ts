@@ -11,6 +11,7 @@ const documentations: IDocumentation[] = [
     tags: ["Fullstack"],
     languages: ["JavaScript", "TypeScript"],
     difficulty: "Intermediate",
+    dependencies: ["next"],
   },
   {
     name: "React",
@@ -22,6 +23,7 @@ const documentations: IDocumentation[] = [
     tags: ["Frontend"],
     languages: ["JavaScript", "TypeScript"],
     difficulty: "Beginner",
+    dependencies: ["react"],
   },
   {
     name: "Tailwind CSS",
@@ -33,6 +35,7 @@ const documentations: IDocumentation[] = [
     tags: ["Frontend"],
     languages: ["CSS"],
     difficulty: "Beginner",
+    dependencies: ["tailwindcss"],
   },
 ];
 

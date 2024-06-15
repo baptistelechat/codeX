@@ -11,4 +11,5 @@ export interface IDocumentation {
   tags?: DocumentationTag[];
   languages?: DocumentationLanguage[];
   difficulty?: "Beginner" | "Intermediate" | "Advanced";
+  dependencies: string[];
 }
