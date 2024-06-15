@@ -14,21 +14,38 @@ window.addEventListener("message", (event) => {
       container.innerHTML = documentations
         .map(
           (doc) => `
-        <div class="p-4 border rounded">
-          <img src="${doc.icon}" alt="${doc.name} icon" class="w-8 h-8">
-          <h2 class="text-xl font-semibold">${doc.name}</h2>
-          <p>${doc.description}</p>
-          <p><a href="${
-            doc.url
-          }" target="_blank" class="text-blue-500">Documentation</a></p>
-          <p><strong>Author:</strong> ${doc.author}</p>
-          <p><strong>Tags:</strong> ${doc.tags.join(", ")}</p>
-          <p><strong>Languages:</strong> ${doc.languages.join(", ")}</p>
-          <p><strong>Difficulty:</strong> ${doc.difficulty}</p>
+        <div id=${doc.id} class="item cursor-pointer flex-col gap-4 p-4 brightness-50 transition-all duration-200 hover:brightness-100">
+          <div class="flex items-center gap-2">
+            <img src=${doc.icon} alt="${doc.name} icon" class="size-10" />
+            <div class="flex flex-col gap-2">
+              <h2 class="text-xl font-semibold">${doc.name}</h2>
+              <p class="text-slate-400">${doc.description}</p>
+            </div>
+          </div>
         </div>
       `
         )
         .join("");
+
+      document.querySelectorAll(".item").forEach((item) => {
+        item.addEventListener("click", (event) => {
+          document.querySelectorAll(".item").forEach((i) => {
+            // Brightness
+            i.classList.remove("brightness-100");
+            i.classList.add("brightness-50");
+            // Border
+            i.classList.remove("border-l-8");
+            i.classList.remove("border-l-sky-500");
+          });
+          // Brightness
+          item.classList.remove("brightness-50");
+          item.classList.add("brightness-100");
+          // Border
+          item.classList.add("border-l-8");
+          item.classList.add("border-l-sky-500");
+        });
+      });
+
       break;
   }
 });

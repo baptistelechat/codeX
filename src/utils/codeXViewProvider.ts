@@ -106,8 +106,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           <script nonce="${nonce}" src="${scriptUri}"></script>
         </head>
         <body>
-          <h1 class="text-3xl font-bold">Documentation List</h1>
-          <div id="documentation-list" class="space-y-4"></div>
+          <div id="documentation-list" class="divide-y"></div>
         </body>
       </html>`;
   }
