@@ -1,5 +1,16 @@
 const vscode = acquireVsCodeApi();
 
+document.addEventListener("DOMContentLoaded", () => {
+  const reloadButton = document.getElementById("reload");
+  if (reloadButton) {
+    reloadButton.addEventListener("click", () => {
+      vscode.postMessage({
+        type: "reload",
+      });
+    });
+  }
+});
+
 window.addEventListener("message", (event) => {
   const message = event.data;
 
@@ -13,7 +24,7 @@ window.addEventListener("message", (event) => {
         return;
       }
 
-      document.querySelector("#no-documentation-found").style.display = "none";
+      document.getElementById("no-documentation-found").style.display = "none";
 
       container.innerHTML = documentations
         .map(
