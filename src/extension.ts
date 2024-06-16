@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
-	context.subscriptions.push(
+  context.subscriptions.push(
     vscode.commands.registerCommand("codeX.refresh", () => {
       provider.refresh();
     })

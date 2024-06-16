@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import documentations from "../data/documentations";
+import { getWebviewContent } from "./getWebviewContent";
 
 export class CodeXViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
@@ -57,6 +58,24 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       vscode.window.showErrorMessage("No package.json found in the workspace.");
     }
 
+    if (webviewView.visible && this.packageJson) {
+      // Filter documentations based on dependencies
+      const filteredDocumentations = documentations.filter((doc) => {
+        // Check if dependency exists in dependencies or devDependencies
+        return doc.dependencies.some((dependency) => {
+          return (
+            this.packageJson.dependencies?.[dependency] ||
+            this.packageJson.devDependencies?.[dependency]
+          );
+        });
+      });
+
+      webviewView.webview.postMessage({
+        type: "setDocumentations",
+        documentations: filteredDocumentations,
+      });
+    }
+
     // Update documentations when visibility changes
     webviewView.onDidChangeVisibility(() => {
       if (webviewView.visible && this.packageJson) {
@@ -75,6 +94,37 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           type: "setDocumentations",
           documentations: filteredDocumentations,
         });
+      }
+    });
+
+    webviewView.webview.onDidReceiveMessage((message) => {
+      switch (message.type) {
+        case "openDocumentation":
+          const documentationId = message.documentationId;
+          const documentation = documentations.filter(
+            (documentation) => documentation.id === documentationId
+          )[0];
+          if (this.isValidUrl(documentation.url)) {
+            const panel = vscode.window.createWebviewPanel(
+              documentation.id,
+              documentation.name,
+              vscode.ViewColumn.Two,
+              {
+                enableScripts: true,
+                retainContextWhenHidden: true,
+                localResourceRoots: [this._extensionUri],
+              }
+            );
+
+            panel.webview.html = getWebviewContent(documentation);
+          } else {
+            vscode.window.showErrorMessage("Invalid URL for documentation.");
+          }
+
+          break;
+
+        default:
+          break;
       }
     });
 
@@ -103,12 +153,6 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         type: "setDocumentations",
         documentations: filteredDocumentations,
       });
-    }
-  }
-
-  public clearColors() {
-    if (this._view) {
-      this._view.webview.postMessage({ type: "clearColors" });
     }
   }
 
@@ -153,16 +197,6 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       )
     );
 
-    const codiconsUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "node_modules",
-        "@vscode/codicons",
-        "dist",
-        "codicon.css"
-      )
-    );
-
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
@@ -185,7 +219,6 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="${styleResetUri}" rel="stylesheet">
           <link href="${styleTailwindUri}" rel="stylesheet">
-				  <link href="${codiconsUri}" rel="stylesheet" />
           <link href="${styleVSCodeUri}" rel="stylesheet">
           <link href="${styleMainUri}" rel="stylesheet">
           <title>Documentation List</title>
@@ -199,6 +232,15 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           <div id="documentation-list" class="mt-2 space-y-2"></div>
         </body>
       </html>`;
+  }
+
+  private isValidUrl(url: string): boolean {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
 
