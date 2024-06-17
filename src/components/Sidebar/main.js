@@ -1,4 +1,5 @@
 const vscode = acquireVsCodeApi();
+let openDocumentation = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const reloadButton = document.getElementById("reload");
@@ -16,7 +17,9 @@ window.addEventListener("message", (event) => {
 
   switch (message.type) {
     case "setDocumentations":
-      const documentations = message.documentations;
+      const { documentations, panels } = message;
+
+      console.log(message.panels);
 
       const container = document.getElementById("documentation-list");
       if (!container) {
@@ -59,13 +62,19 @@ window.addEventListener("message", (event) => {
           item.classList.add("border-l-8");
           item.classList.add("border-l-sky-500");
 
-          const url = item.getAttribute("data-url");
           const id = item.getAttribute("id");
-
-          vscode.postMessage({
-            type: "openDocumentation",
-            documentationId: id,
-          });
+          if (openDocumentation.includes(id)) {
+            vscode.postMessage({
+              type: "focusDocumentation",
+              documentationId: id,
+            });
+          } else {
+            vscode.postMessage({
+              type: "openDocumentation",
+              documentationId: id,
+            });
+            openDocumentation.push(id);
+          }
         });
       });
       break;

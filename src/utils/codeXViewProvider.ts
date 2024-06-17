@@ -4,10 +4,12 @@ import * as vscode from "vscode";
 import documentations from "../data/documentations";
 import getNonce from "./getNonce";
 import { getWebviewContent } from "./getWebviewContent";
+import isValidUrl from "./isValidUrl";
 
 export class CodeXViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
   private _view?: vscode.WebviewView;
+  private _panels: vscode.WebviewPanel[] = [];
   private packageJson: any;
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
@@ -53,25 +55,11 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage((message) => {
       switch (message.type) {
         case "openDocumentation":
-          const documentationId = message.documentationId;
-          const documentation = documentations.find(
-            (doc) => doc.id === documentationId
-          );
-          if (documentation && this.isValidUrl(documentation.url)) {
-            const panel = vscode.window.createWebviewPanel(
-              documentation.id,
-              documentation.name,
-              vscode.ViewColumn.Two,
-              {
-                enableScripts: true,
-                retainContextWhenHidden: true,
-                localResourceRoots: [this._extensionUri],
-              }
-            );
-            panel.webview.html = getWebviewContent(documentation);
-          } else {
-            vscode.window.showErrorMessage("Invalid URL for documentation.");
-          }
+          this.openDocumentation(message.documentationId);
+          break;
+
+        case "focusDocumentation":
+          this.focusDocumentation(message.documentationId);
           break;
 
         case "reload":
@@ -91,6 +79,39 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
   }
 
+  private openDocumentation(id: string) {
+    const documentation = documentations.find((doc) => doc.id === id);
+    if (documentation && isValidUrl(documentation.url)) {
+      const panel = vscode.window.createWebviewPanel(
+        id,
+        documentation.name,
+        vscode.ViewColumn.Two,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+          localResourceRoots: [this._extensionUri],
+        }
+      );
+      panel.webview.html = getWebviewContent(documentation);
+      this._panels.push(panel);
+
+      panel.onDidDispose(() => {
+        this._panels = this._panels.filter((panel) => panel.viewType !== id);
+      });
+    } else {
+      vscode.window.showErrorMessage("Invalid URL for documentation.");
+    }
+  }
+
+  private focusDocumentation(id: string) {
+    const panel = this._panels.find((panel) => panel.viewType === id);
+    if (panel) {
+      panel.reveal(vscode.ViewColumn.Two);
+    } else {
+      vscode.window.showErrorMessage("Documentation is not open.");
+    }
+  }
+
   public updateDocumentations() {
     if (this._view && this.packageJson) {
       const filteredDocumentations = documentations.filter((doc) =>
@@ -104,6 +125,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       this._view.webview.postMessage({
         type: "setDocumentations",
         documentations: filteredDocumentations,
+        panels: this._panels,
       });
     }
   }
@@ -193,14 +215,5 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         <div id="documentation-list" class="mt-2 space-y-2"></div>
       </body>
       </html>`;
-  }
-
-  private isValidUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch (e) {
-      return false;
-    }
   }
 }
