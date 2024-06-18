@@ -4,6 +4,15 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "build:tailwind",
+      "type": "npm",
+      "script": "build:tailwind",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "watch",
       "type": "npm",
       "script": "watch",
       "problemMatcher": "$tsc-watch",
@@ -17,9 +26,10 @@
       }
     },
     {
-      "label": "build:tailwind",
-      "type": "npm",
-      "script": "build:tailwind"
+      "label": "build-and-watch",
+      "dependsOrder": "sequence",
+      "dependsOn": ["build:tailwind", "watch"],
+      "problemMatcher": []
     }
   ]
 }
