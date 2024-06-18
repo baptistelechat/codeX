@@ -82,26 +82,35 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
   private openDocumentation(id: string) {
     const documentation = documentations.find((doc) => doc.id === id);
     if (documentation && isValidUrl(documentation.url)) {
-      if (this._panels[id]) {
-        this._panels[id].reveal(vscode.ViewColumn.Two);
-      } else {
-        const panel = vscode.window.createWebviewPanel(
-          id,
-          documentation.name,
-          vscode.ViewColumn.Two,
-          {
-            enableScripts: true,
-            retainContextWhenHidden: true,
-            localResourceRoots: [this._extensionUri],
-          }
-        );
-        panel.webview.html = getWebviewContent(documentation);
-        this._panels[id] = panel;
+      const panel = vscode.window.createWebviewPanel(
+        id,
+        documentation.name,
+        vscode.ViewColumn.Two,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+          localResourceRoots: [this._extensionUri],
+        }
+      );
+      panel.webview.html = getWebviewContent(documentation);
+      this._panels[id] = panel;
 
-        panel.onDidDispose(() => {
-          delete this._panels[id];
+      panel.onDidDispose(() => {
+        delete this._panels[id];
+        this._view?.webview.postMessage({
+          type: "documentationClosed",
+          documentationId: id,
         });
-      }
+      });
+
+      panel.onDidChangeViewState(() => {
+        if (panel.visible) {
+          this._view?.webview.postMessage({
+            type: "documentationFocused",
+            documentationId: id,
+          });
+        }
+      });
     } else {
       vscode.window.showErrorMessage("Invalid URL for documentation.");
     }
@@ -115,7 +124,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       this.openDocumentation(id);
     }
   }
-  
+
   public updateDocumentations() {
     if (this._view && this.packageJson) {
       const filteredDocumentations = documentations.filter((doc) =>
