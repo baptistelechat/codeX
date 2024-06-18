@@ -9,7 +9,7 @@ import isValidUrl from "./isValidUrl";
 export class CodeXViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
   private _view?: vscode.WebviewView;
-  private _panels: vscode.WebviewPanel[] = [];
+  private _panels: { [id: string]: vscode.WebviewPanel } = {};
   private packageJson: any;
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
@@ -82,36 +82,40 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
   private openDocumentation(id: string) {
     const documentation = documentations.find((doc) => doc.id === id);
     if (documentation && isValidUrl(documentation.url)) {
-      const panel = vscode.window.createWebviewPanel(
-        id,
-        documentation.name,
-        vscode.ViewColumn.Two,
-        {
-          enableScripts: true,
-          retainContextWhenHidden: true,
-          localResourceRoots: [this._extensionUri],
-        }
-      );
-      panel.webview.html = getWebviewContent(documentation);
-      this._panels.push(panel);
+      if (this._panels[id]) {
+        this._panels[id].reveal(vscode.ViewColumn.Two);
+      } else {
+        const panel = vscode.window.createWebviewPanel(
+          id,
+          documentation.name,
+          vscode.ViewColumn.Two,
+          {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            localResourceRoots: [this._extensionUri],
+          }
+        );
+        panel.webview.html = getWebviewContent(documentation);
+        this._panels[id] = panel;
 
-      panel.onDidDispose(() => {
-        this._panels = this._panels.filter((panel) => panel.viewType !== id);
-      });
+        panel.onDidDispose(() => {
+          delete this._panels[id];
+        });
+      }
     } else {
       vscode.window.showErrorMessage("Invalid URL for documentation.");
     }
   }
 
   private focusDocumentation(id: string) {
-    const panel = this._panels.find((panel) => panel.viewType === id);
+    const panel = this._panels[id];
     if (panel) {
       panel.reveal(vscode.ViewColumn.Two);
     } else {
-      vscode.window.showErrorMessage("Documentation is not open.");
+      this.openDocumentation(id);
     }
   }
-
+  
   public updateDocumentations() {
     if (this._view && this.packageJson) {
       const filteredDocumentations = documentations.filter((doc) =>
