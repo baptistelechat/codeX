@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import documentations from "../data/documentations";
+import { IDocumentation } from "../interfaces/IDocumentation";
 import getFaviconUrl from "./getFaviconUrl";
 import getNonce from "./getNonce";
 import getPackageInfo from "./getPackageInfo";
@@ -13,6 +13,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
   private _panels: { [id: string]: vscode.WebviewPanel } = {};
   private packageJson: any;
+  private _documentations: (IDocumentation | null)[] = [];
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
@@ -54,7 +55,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       }
     });
 
-    webviewView.webview.onDidReceiveMessage((message) => {
+    webviewView.webview.onDidReceiveMessage(async (message) => {
       switch (message.type) {
         case "openDocumentation":
           this.openDocumentation(message.documentationId);
@@ -82,7 +83,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
   }
 
   private openDocumentation(id: string) {
-    const documentation = documentations.find((doc) => doc.id === id);
+    const documentation = this._documentations.find((doc) => doc?.id === id);
     if (documentation && isValidUrl(documentation.url)) {
       const panel = vscode.window.createWebviewPanel(
         id,
@@ -134,31 +135,43 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         ...Object.keys(this.packageJson.devDependencies || {}),
       ];
 
+      const uniqueUrls: string[] = [];
       const documentations = await Promise.all(
         dependencies.map(async (dependency) => {
           const info = await getPackageInfo(dependency);
           if (info) {
+            const url =
+              info.homepage ||
+              (info.repository && info.repository.url) ||
+              `https://www.npmjs.com/package/${info.name}` ||
+              "";
+            if (uniqueUrls.includes(url)) {
+              return null;
+            }
+            uniqueUrls.push(url);
             return {
-              id: info._id,
-              name: info.name,
+              id: info.name,
+              name: info.name.charAt(0).toUpperCase() + info.name.slice(1),
               description: info.description,
-              url:
-                info.homepage || (info.repository && info.repository.url) || "",
-              icon:
-                getFaviconUrl(
-                  info.homepage ||
-                    (info.repository && info.repository.url) ||
-                    ""
-                ) ?? "",
-            };
+              url,
+              icon: getFaviconUrl(url) ?? "",
+            } as IDocumentation;
           }
           return null;
         })
       );
 
+      const validDocumentations = documentations
+        .filter((doc) => doc !== null)
+        .filter((doc) => !doc?.name.includes("@types")) as IDocumentation[];
+
+      this._documentations = validDocumentations.sort((a, b) =>
+        a && b ? a.name.localeCompare(b.name) : 0
+      );
+
       this._view.webview.postMessage({
         type: "setDocumentations",
-        documentations: documentations.filter((doc) => doc !== null),
+        documentations: this._documentations,
       });
     }
   }
