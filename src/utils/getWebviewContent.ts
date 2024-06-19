@@ -66,7 +66,7 @@ export const getWebviewContent = (documentation: IDocumentation) => {
 
           // Initial load of readme
           getReadmeContent('${owner}', '${repo}').then(content => {
-            const htmlContent = marked.parse(content, { renderer: customRenderer });
+            const htmlContent = marked.parse(content);
             document.getElementById('readme-content').innerHTML = htmlContent;
           }).catch(error => {
             console.error('Error fetching README:', error);
