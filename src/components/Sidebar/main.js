@@ -19,6 +19,8 @@ window.addEventListener("message", (event) => {
     case "setDocumentations":
       const { documentations } = message;
 
+      console.log(documentations);
+
       const container = document.getElementById("documentation-list");
       if (!container) {
         console.error("Documentation container not found!");

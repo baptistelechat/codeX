@@ -2,7 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import documentations from "../data/documentations";
+import getFaviconUrl from "./getFaviconUrl";
 import getNonce from "./getNonce";
+import getPackageInfo from "./getPackageInfo";
 import { getWebviewContent } from "./getWebviewContent";
 import isValidUrl from "./isValidUrl";
 
@@ -125,20 +127,38 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  public updateDocumentations() {
+  public async updateDocumentations() {
     if (this._view && this.packageJson) {
-      const filteredDocumentations = documentations.filter((doc) =>
-        doc.dependencies.some(
-          (dependency) =>
-            this.packageJson.dependencies?.[dependency] ||
-            this.packageJson.devDependencies?.[dependency]
-        )
+      const dependencies = [
+        ...Object.keys(this.packageJson.dependencies || {}),
+        ...Object.keys(this.packageJson.devDependencies || {}),
+      ];
+
+      const documentations = await Promise.all(
+        dependencies.map(async (dependency) => {
+          const info = await getPackageInfo(dependency);
+          if (info) {
+            return {
+              id: info._id,
+              name: info.name,
+              description: info.description,
+              url:
+                info.homepage || (info.repository && info.repository.url) || "",
+              icon:
+                getFaviconUrl(
+                  info.homepage ||
+                    (info.repository && info.repository.url) ||
+                    ""
+                ) ?? "",
+            };
+          }
+          return null;
+        })
       );
 
       this._view.webview.postMessage({
         type: "setDocumentations",
-        documentations: filteredDocumentations,
-        panels: this._panels,
+        documentations: documentations.filter((doc) => doc !== null),
       });
     }
   }
