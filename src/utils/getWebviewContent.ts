@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { IDocumentation } from "../interfaces/IDocumentation";
 
 export const getWebviewContent = (documentation: IDocumentation) => {
@@ -15,10 +14,14 @@ export const getWebviewContent = (documentation: IDocumentation) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>GitHub README</title>
         <style>
-          body {
+          body, html {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             padding: 20px;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
           }
           a {
             color: #0366d6; /* GitHub link color */
@@ -29,11 +32,10 @@ export const getWebviewContent = (documentation: IDocumentation) => {
             text-decoration: underline;
           }
         </style>
-        <base href="https://github.com/${owner}/${repo}/">
       </head>
       <body>
-      <div id="readme-content"></div>
-      
+        <div id="readme-content"></div>
+        
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script>
           async function getReadmeContent(owner, repo) {
@@ -51,18 +53,31 @@ export const getWebviewContent = (documentation: IDocumentation) => {
             return content;
           }
 
-          function loadContent(url) {
-            fetch(url)
-              .then(response => response.text())
-              .then(content => {
-                const htmlContent = marked.parse(content);
-                document.getElementById('readme-content').innerHTML = htmlContent;
-                history.pushState(null, '', url);
-              })
-              .catch(error => {
-                console.error('Error fetching linked content:', error);
+          function replaceBodyContent(href) {
+            if(href.includes("github.com")) {
+              const url = href.split("https://github.com/");
+              const ownerRepo = url[1].split("/");
+              const owner = ownerRepo[0];
+              const repo = ownerRepo[1].split("#")[0];
+
+              getReadmeContent(owner, repo).then(content => {
+              const htmlContent = marked.parse(content);
+              document.body.innerHTML = htmlContent;
+              }).catch(error => {
+                console.error('Error fetching README:', error);
+                document.getElementById('readme-content').innerText = 'Error fetching README. Please check the console for details.';
               });
+            } else {
+              document.body.innerHTML = "<iframe width='100%' height='100%' src=\\"" + href + "\\" frameborder='0'><p>'Can\\'t load'" + href + "</p></iframe>";
+            }
           }
+
+          const renderer = new marked.Renderer();
+          renderer.link = (href, title, text) => {
+            return "<a href='#' onclick='replaceBodyContent(\\"" + href + "\\")'>" + text + "</a>";
+          };
+
+          marked.use({ renderer });
 
           // Initial load of readme
           getReadmeContent('${owner}', '${repo}').then(content => {
@@ -85,9 +100,14 @@ export const getWebviewContent = (documentation: IDocumentation) => {
     <html lang="en">
       <head>
         <style>
-          body, html
-            {
-              margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #fff;
+          body, html {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              padding: 20px;
+              margin: 0;
+              padding: 0;
+              height: 100%;
+              overflow: hidden;
             }
         </style>
         <link rel="icon" href="${documentation.icon}" type="image/png">
@@ -98,8 +118,7 @@ export const getWebviewContent = (documentation: IDocumentation) => {
           <p>Can't load ${documentation.url}</p>
         </iframe>
       </body>
-    </html>
-    `;
+    </html>`;
 
   return html;
 };
