@@ -30,7 +30,7 @@ export const getWebviewContent = (documentation: IDocumentation) => {
         </style>
       </head>
       <body>
-        <div id="readme-content"></div>
+        <div id="readme-content">Loading...</div>
         
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script>

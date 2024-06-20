@@ -141,10 +141,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           const info = await getPackageInfo(dependency);
           if (info) {
             const url =
-              info.homepage ||
-              (info.repository && info.repository.url) ||
-              `https://www.npmjs.com/package/${info.name}` ||
-              "";
+              info.homepage || (info.repository && info.repository.url) || "";
             if (uniqueUrls.includes(url)) {
               return null;
             }
@@ -163,7 +160,9 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
 
       const validDocumentations = documentations
         .filter((doc) => doc !== null)
-        .filter((doc) => !doc?.name.includes("@types")) as IDocumentation[];
+        .filter(
+          (doc) => !doc?.id.startsWith("@") && doc?.url !== ""
+        ) as IDocumentation[];
 
       this._documentations = validDocumentations.sort((a, b) =>
         a && b ? a.name.localeCompare(b.name) : 0
