@@ -18,10 +18,6 @@ export const getWebviewContent = (documentation: IDocumentation) => {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             padding: 20px;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
           }
           a {
             color: #0366d6; /* GitHub link color */
@@ -68,6 +64,10 @@ export const getWebviewContent = (documentation: IDocumentation) => {
                 document.getElementById('readme-content').innerText = 'Error fetching README. Please check the console for details.';
               });
             } else {
+              document.documentElement.style.padding = 0;
+              document.documentElement.style.height = "100vh";
+              document.body.style.height = "100vh";
+              document.body.style.padding = 0;
               document.body.innerHTML = "<iframe width='100%' height='100%' src=\\"" + href + "\\" frameborder='0'><p>'Can\\'t load'" + href + "</p></iframe>";
             }
           }
@@ -101,14 +101,14 @@ export const getWebviewContent = (documentation: IDocumentation) => {
       <head>
         <style>
           body, html {
-              font-family: Arial, sans-serif;
-              line-height: 1.6;
-              padding: 20px;
-              margin: 0;
-              padding: 0;
-              height: 100%;
-              overflow: hidden;
-            }
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+          }
         </style>
         <link rel="icon" href="${documentation.icon}" type="image/png">
         <title>${documentation.name}</title>
