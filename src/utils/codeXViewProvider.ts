@@ -1,11 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
+import scriptSidebarUri from "../components/Sidebar/uri/scriptSidebarUri";
+import styleSidebarUri from "../components/Sidebar/uri/styleSidebarUri";
 import { IDocumentation } from "../interfaces/IDocumentation";
+import getDocWebviewContent from "./getDocWebviewContent";
 import getFaviconUrl from "./getFaviconUrl";
 import getNonce from "./getNonce";
 import getPackageInfo from "./getPackageInfo";
-import { getWebviewContent } from "./getWebviewContent";
 import isValidUrl from "./isValidUrl";
 
 export class CodeXViewProvider implements vscode.WebviewViewProvider {
@@ -95,7 +97,11 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           localResourceRoots: [this._extensionUri],
         }
       );
-      panel.webview.html = getWebviewContent(documentation);
+      panel.webview.html = getDocWebviewContent(
+        documentation,
+        panel.webview,
+        this._extensionUri
+      );
       this._panels[id] = panel;
 
       panel.onDidDispose(() => {
@@ -176,15 +182,6 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "src",
-        "components",
-        "Sidebar",
-        "main.js"
-      )
-    );
     const styleResetUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
@@ -194,6 +191,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         "reset.css"
       )
     );
+
     const styleVSCodeUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
@@ -203,6 +201,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         "vscode.css"
       )
     );
+
     const styleTailwindUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
@@ -212,6 +211,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         "tailwind.min.css"
       )
     );
+
     const codiconsUri = webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
@@ -222,15 +222,6 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         "codicon.css"
       )
     );
-    const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "src",
-        "components",
-        "Sidebar",
-        "main.css"
-      )
-    );
 
     const nonce = getNonce();
 
@@ -239,15 +230,23 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' ${webview.cspSource}; font-src 'self' ${webview.cspSource}; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' ${
+          webview.cspSource
+        }; font-src 'self' ${webview.cspSource}; script-src 'nonce-${nonce}';">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="${styleResetUri}" rel="stylesheet">
         <link href="${styleTailwindUri}" rel="stylesheet">
         <link href="${codiconsUri}" rel="stylesheet">
         <link href="${styleVSCodeUri}" rel="stylesheet">
-        <link href="${styleMainUri}" rel="stylesheet">
+        <link href="${styleSidebarUri(
+          this._view?.webview as vscode.Webview,
+          this._extensionUri
+        )}" rel="stylesheet">
         <title>Documentation List</title>
-        <script nonce="${nonce}" src="${scriptUri}"></script>
+        <script nonce="${nonce}" src="${scriptSidebarUri(
+      this._view?.webview as vscode.Webview,
+      this._extensionUri
+    )}"></script>
       </head>
       <body>
         <div id="no-documentation-found" class="flex flex-col gap-4 p-4">
