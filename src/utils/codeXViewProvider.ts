@@ -1,14 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import styleCodiconsUri from "../assets/uri/styleCodiconUri";
+import styleCodiconUri from "../assets/uri/styleCodiconUri";
 import styleResetUri from "../assets/uri/styleResetUri";
 import styleTailwindUri from "../assets/uri/styleTailwindUri";
 import styleVscodeUri from "../assets/uri/styleVscodeUri";
 import scriptSidebarUri from "../components/Sidebar/uri/scriptSidebarUri";
 import styleSidebarUri from "../components/Sidebar/uri/styleSidebarUri";
 import { IDocumentation } from "../interfaces/IDocumentation";
-import getDocWebviewContent from "./getDocWebviewContent";
+import getDocumentationContent from "./getDocumentationContent";
 import getFaviconUrl from "./getFaviconUrl";
 import getNonce from "./getNonce";
 import getPackageInfo from "./getPackageInfo";
@@ -101,11 +101,13 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           localResourceRoots: [this._extensionUri],
         }
       );
-      panel.webview.html = getDocWebviewContent(
+
+      const content = getDocumentationContent(
         documentation,
         panel.webview,
         this._extensionUri
       );
+      panel.webview.html = content;
       this._panels[id] = panel;
 
       panel.onDidDispose(() => {
@@ -187,7 +189,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
 
   private _getHtmlForWebview(webview: vscode.Webview) {
     const nonce = getNonce();
-    const extension = this._extensionUri;
+    const extensionUri = this._extensionUri;
 
     return `
       <!DOCTYPE html>
@@ -198,14 +200,14 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           webview.cspSource
         }; font-src 'self' ${webview.cspSource}; script-src 'nonce-${nonce}';">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="${styleResetUri(webview, extension)}" rel="stylesheet">
-        <link href="${styleTailwindUri(webview, extension)}" rel="stylesheet">
-        <link href="${styleCodiconsUri(webview, extension)}" rel="stylesheet">
-        <link href="${styleVscodeUri(webview, extension)}" rel="stylesheet">
-        <link href="${styleSidebarUri(
-          this._view?.webview as vscode.Webview,
-          this._extensionUri
+        <link href="${styleResetUri(webview, extensionUri)}" rel="stylesheet">
+        <link href="${styleTailwindUri(
+          webview,
+          extensionUri
         )}" rel="stylesheet">
+        <link href="${styleCodiconUri(webview, extensionUri)}" rel="stylesheet">
+        <link href="${styleVscodeUri(webview, extensionUri)}" rel="stylesheet">
+        <link href="${styleSidebarUri(webview, extensionUri)}" rel="stylesheet">
         <title>Documentation List</title>
         <script nonce="${nonce}" src="${scriptSidebarUri(
       this._view?.webview as vscode.Webview,

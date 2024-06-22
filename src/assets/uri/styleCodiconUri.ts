@@ -1,6 +1,6 @@
 import vscode from "vscode";
 
-const styleCodiconsUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
+const styleCodiconUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
   webview.asWebviewUri(
     vscode.Uri.joinPath(
       extensionUri,
@@ -12,4 +12,4 @@ const styleCodiconsUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
     )
   );
 
-export default styleCodiconsUri;
+export default styleCodiconUri;
