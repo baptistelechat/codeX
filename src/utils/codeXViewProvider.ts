@@ -1,6 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
+import styleCodiconsUri from "../assets/uri/styleCodiconUri";
+import styleResetUri from "../assets/uri/styleResetUri";
+import styleTailwindUri from "../assets/uri/styleTailwindUri";
+import styleVscodeUri from "../assets/uri/styleVscodeUri";
 import scriptSidebarUri from "../components/Sidebar/uri/scriptSidebarUri";
 import styleSidebarUri from "../components/Sidebar/uri/styleSidebarUri";
 import { IDocumentation } from "../interfaces/IDocumentation";
@@ -182,48 +186,8 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    const styleResetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "src",
-        "assets",
-        "styles",
-        "reset.css"
-      )
-    );
-
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "src",
-        "assets",
-        "styles",
-        "vscode.css"
-      )
-    );
-
-    const styleTailwindUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "src",
-        "assets",
-        "styles",
-        "tailwind.min.css"
-      )
-    );
-
-    const codiconsUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "node_modules",
-        "@vscode",
-        "codicons",
-        "dist",
-        "codicon.css"
-      )
-    );
-
     const nonce = getNonce();
+    const extension = this._extensionUri;
 
     return `
       <!DOCTYPE html>
@@ -234,10 +198,10 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
           webview.cspSource
         }; font-src 'self' ${webview.cspSource}; script-src 'nonce-${nonce}';">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="${styleResetUri}" rel="stylesheet">
-        <link href="${styleTailwindUri}" rel="stylesheet">
-        <link href="${codiconsUri}" rel="stylesheet">
-        <link href="${styleVSCodeUri}" rel="stylesheet">
+        <link href="${styleResetUri(webview, extension)}" rel="stylesheet">
+        <link href="${styleTailwindUri(webview, extension)}" rel="stylesheet">
+        <link href="${styleCodiconsUri(webview, extension)}" rel="stylesheet">
+        <link href="${styleVscodeUri(webview, extension)}" rel="stylesheet">
         <link href="${styleSidebarUri(
           this._view?.webview as vscode.Webview,
           this._extensionUri

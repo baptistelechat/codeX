@@ -10,5 +10,6 @@ a {
   cursor: pointer;
 }
 a:hover {
+  color: #0366d6; /* GitHub link color */
   text-decoration: underline;
 }

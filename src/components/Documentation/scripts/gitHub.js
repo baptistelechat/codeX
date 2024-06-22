@@ -38,6 +38,7 @@ function replaceBodyContent(href) {
     document.documentElement.style.height = "100vh";
     document.body.style.height = "100vh";
     document.body.style.padding = 0;
+    document.body.style.backgroundColor = "#fff";
     document.body.innerHTML = `<iframe width='100%' height='100%' src=${href} frameborder='0'><p>Can't load ${href}</p></iframe>`;
   }
 }
