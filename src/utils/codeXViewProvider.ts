@@ -159,8 +159,9 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
             }
             uniqueUrls.push(url);
             return {
-              id: info.name,
               name: info.name.charAt(0).toUpperCase() + info.name.slice(1),
+              id: info.name,
+              version: info.version,
               description: info.description,
               url,
               icon: getFaviconUrl(url) ?? "",
@@ -173,7 +174,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
       const validDocumentations = documentations
         .filter((doc) => doc !== null)
         .filter(
-          (doc) => !doc?.id.startsWith("@") && doc?.url !== ""
+          (doc) => !doc?.id.startsWith("@types") && doc?.url !== ""
         ) as IDocumentation[];
 
       this._documentations = validDocumentations.sort((a, b) =>
@@ -215,14 +216,14 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
     )}"></script>
       </head>
       <body>
-        <div id="no-documentation-found" class="flex flex-col gap-4 p-4">
+        <div id="no-documentation-found" class="flex flex-col gap-4 py-4">
           <p>No documentation found. Try to reload the extension.</p>
           <div id="reload" class="flex items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
             <div class="codicon codicon-refresh" aria-label="refresh"></div>
             <p class="text-slate-50">Reload</p>
           </div>
         </div>
-        <div id="documentation-list" class="mt-2 space-y-2"></div>
+        <div id="documentation-list" class="mt-2 space-y-2 max-w-full"></div>
       </body>
       </html>`;
   }

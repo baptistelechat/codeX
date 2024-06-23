@@ -29,23 +29,44 @@ window.addEventListener("message", (event) => {
 
       container.innerHTML = documentations
         .map(
-          (doc) => `
+          (documentation) => `
             <div id="${
-              doc.id
-            }" class="item rounded cursor-pointer flex-col gap-4 p-4 transition-all duration-200" data-url="${
-            doc.url
+              documentation.id
+            }" class="item cursor-pointer flex-col rounded py-4 pl-4 transition-all duration-200" data-url="${
+            documentation.url
           }">
-                <div class="flex items-center gap-2">
-                    <img src="${doc.icon}" alt="${
-            doc.name
+              <div class="flex items-center gap-4">
+                <img src="${documentation.icon}" alt="${
+            documentation.name
           } icon" class="size-10" />
-                    <div class="flex flex-col gap-2">
-                        <h2 class="text-xl font-semibold">${doc.name}</h2>
-                        <p class="text-slate-400">${doc.description ?? ""}</p>
+                <div class="flex w-full flex-col gap-1 overflow-hidden">
+                  <h2 class="text-xl font-semibold">${documentation.name}</h2>
+                  <p class="truncate text-slate-400">${
+                    documentation.description ?? ""
+                  }</p>
+                  <div class="flex justify-between">
+                    <p class="font-semibold italic text-slate-400">v${
+                      documentation.version
+                    }</p>
+                    <div class="mr-1 flex gap-1.5">
+                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                        <div class="codicon codicon-open-preview" aria-label="open-preview"></div>
+                      </div>
+                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                        <div class="codicon codicon-browser" aria-label="browser"></div>
+                      </div>
+                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                      <div class="codicon codicon-star-empty" aria-label="star-empty"></div>
+                      </div>
+                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                        <div class="codicon codicon-eye-closed" aria-label="eye-closed"></div>
+                      </div>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
-            `
+          `
         )
         .join("");
 
