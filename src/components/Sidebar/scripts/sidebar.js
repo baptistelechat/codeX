@@ -32,7 +32,7 @@ window.addEventListener("message", (event) => {
           (doc) => `
             <div id="${
               doc.id
-            }" class="item rounded cursor-pointer flex-col gap-4 p-4 brightness-50 transition-all duration-200 hover:brightness-100" data-url="${
+            }" class="item rounded cursor-pointer flex-col gap-4 p-4 transition-all duration-200" data-url="${
             doc.url
           }">
                 <div class="flex items-center gap-2">
@@ -67,6 +67,14 @@ window.addEventListener("message", (event) => {
 
           updateBorder(id);
         });
+
+        item.addEventListener("mouseenter", () => {
+          updateHover(item.id);
+        });
+
+        item.addEventListener("mouseleave", () => {
+          resetHover(item.id);
+        });
       });
       break;
 
@@ -75,12 +83,12 @@ window.addEventListener("message", (event) => {
       break;
 
     case "documentationClosed":
-      removeBorder(message.documentationId);
       openDocumentation = openDocumentation.filter(
         (id) => id !== message.documentationId
       );
+      removeBorder(message.documentationId, openDocumentation);
       break;
-      
+
     default:
       break;
   }
@@ -88,33 +96,76 @@ window.addEventListener("message", (event) => {
 
 function updateBorder(focusedId) {
   document.querySelectorAll(".item").forEach((item) => {
-    // Brightness
-    item.classList.remove("brightness-100");
-    item.classList.add("brightness-50");
-    // Border
-    item.classList.remove("border-l-8");
-    item.classList.remove("border-l-sky-500");
+    if (item.id === focusedId) {
+      // Brightness
+      item.classList.remove("brightness-50");
+      item.classList.add("brightness-100");
+      // Border
+      item.classList.add("border-l-8");
+      item.classList.add("border-l-sky-500");
+      item.classList.remove("border-l-slate-700");
+    } else if (openDocumentation.includes(item.id)) {
+      // Brightness
+      item.classList.remove("brightness-50");
+      item.classList.remove("brightness-100");
+      // Border
+      item.classList.add("border-l-8");
+      item.classList.remove("border-l-sky-500");
+      item.classList.add("border-l-slate-700");
+    } else {
+      // Brightness
+      item.classList.add("brightness-50");
+      item.classList.remove("brightness-100");
+      // Border
+      item.classList.remove("border-l-8");
+      item.classList.remove("border-l-sky-500");
+      item.classList.remove("border-l-slate-700");
+    }
   });
+}
 
-  const focusedItem = document.getElementById(focusedId);
-  if (focusedItem) {
-    // Brightness
-    focusedItem.classList.remove("brightness-50");
-    focusedItem.classList.add("brightness-100");
-    // Border
-    focusedItem.classList.add("border-l-8");
-    focusedItem.classList.add("border-l-sky-500");
+function updateHover(hoveredId) {
+  document.querySelectorAll(".item").forEach((item) => {
+    if (item.id === hoveredId) {
+      item.classList.add("brightness-100");
+      item.classList.remove("brightness-50");
+    } else if (!openDocumentation.includes(item.id)) {
+      item.classList.add("brightness-50");
+      item.classList.remove("brightness-100");
+    }
+  });
+}
+
+function resetHover(hoveredId) {
+  if (openDocumentation.length === 0) {
+    document.querySelectorAll(".item").forEach((item) => {
+      item.classList.add("brightness-100");
+      item.classList.remove("brightness-50");
+    });
+  } else {
+    document.querySelectorAll(".item").forEach((item) => {
+      if (!openDocumentation.includes(item.id)) {
+        item.classList.add("brightness-50");
+        item.classList.remove("brightness-100");
+      }
+    });
   }
 }
 
-function removeBorder(closedId) {
+function removeBorder(closedId, updatedOpenDocumentation) {
   const closedItem = document.getElementById(closedId);
   if (closedItem) {
-    // Brightness
-    closedItem.classList.remove("brightness-100");
     closedItem.classList.add("brightness-50");
-    // Border
+    closedItem.classList.remove("brightness-100");
     closedItem.classList.remove("border-l-8");
     closedItem.classList.remove("border-l-sky-500");
+    closedItem.classList.remove("border-l-slate-700");
+  }
+
+  if (updatedOpenDocumentation.length === 0) {
+    document.querySelectorAll(".item").forEach((item) => {
+      item.classList.add("brightness-100");
+      item.classList.remove("brightness-50");
+    });
   }
 }
