@@ -169,7 +169,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
               name: info.name.charAt(0).toUpperCase() + info.name.slice(1),
               id: info.name,
               version: info.version,
-              description: info.description,
+              description: info.description ?? "...",
               url,
               icon: getFaviconUrl(url) ?? "",
             } as IDocumentation;

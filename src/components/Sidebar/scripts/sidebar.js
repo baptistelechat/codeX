@@ -27,46 +27,59 @@ window.addEventListener("message", (event) => {
 
       document.getElementById("no-documentation-found").style.display = "none";
 
+      const actionItems = [
+        {
+          codicon: "preview",
+          description: "Open in browser",
+        },
+        {
+          codicon: "bookmark",
+          description: "Bookmark",
+        },
+        {
+          codicon: "eye-closed",
+          description: "Hide",
+        },
+      ]
+        .map((actionItem) => (
+          `<div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+            <div
+              class="codicon codicon-${actionItem.codicon}"
+              aria-label="${actionItem.codicon}"
+            ></div>
+            <div class="tooltip tooltip-${actionItem.codicon}">${actionItem.description}</div>
+          </div>`
+        ))
+        .join("");
+
       container.innerHTML = documentations
         .map(
-          (documentation) => `
-            <div id="${
-              documentation.id
-            }" class="item cursor-pointer flex-col rounded py-4 pl-4 transition-all duration-200" data-url="${
-            documentation.url
-          }">
-              <div class="flex items-center gap-4">
-                <img src="${documentation.icon}" alt="${
-            documentation.name
-          } icon" class="size-10" />
-                <div class="flex w-full flex-col gap-1 overflow-hidden">
-                  <h2 class="text-xl font-semibold">${documentation.name}</h2>
-                  <p class="truncate text-slate-400">${
-                    documentation.description ?? ""
-                  }</p>
-                  <div class="flex justify-between">
-                    <p class="font-semibold italic text-slate-400">v${
-                      documentation.version
-                    }</p>
-                    <div class="mr-1 flex gap-1.5">
-                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-                        <div class="codicon codicon-preview" aria-label="preview"></div>
-                      </div>
-                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-                        <div class="codicon codicon-browser" aria-label="browser"></div>
-                      </div>
-                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-                      <div class="codicon codicon-bookmark" aria-label="bookmark"></div>
-                      </div>
-                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-                        <div class="codicon codicon-eye-closed" aria-label="eye-closed"></div>
-                      </div>
-                    </div>
-                  </div>
+          (documentation) =>
+            `<div
+            id="${documentation.id}"
+            class="item cursor-pointer flex-col rounded py-4 pl-4 transition-all duration-200"
+            data-url="${documentation.url}"
+          >
+            <div class="flex items-center gap-4">
+              <img
+                src="${documentation.icon}"
+                alt="${documentation.name} icon"
+                class="size-10"
+              />
+              <div class="flex w-full flex-col gap-1 overflow-hidden">
+                <h2 class="text-xl font-semibold">${documentation.name}</h2>
+                <p class="truncate text-slate-400">
+                  ${documentation.description}
+                </p>
+                <div class="flex justify-between">
+                  <p class="font-semibold italic text-slate-400">
+                    v${documentation.version}
+                  </p>
+                  <div class="mr-2 flex gap-1.5">${actionItems}</div>
                 </div>
               </div>
             </div>
-          `
+          </div>`
         )
         .join("");
 

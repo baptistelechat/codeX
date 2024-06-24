@@ -1,8 +1,70 @@
-.item-selected {
-  filter: brightness(1);
+.action-item {
+  position: relative;
+  display: inline-block;
 }
 
-.title-selected {
-	font-weight: 700;
+.action-item:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
 
+.tooltip {
+  visibility: hidden;
+  background-color: var(--vscode-editorHoverWidget-background);
+  color: var(--vscode-editor-foreground);
+  text-align: center;
+  padding: 4px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position the tooltip above the text */
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--vscode-editorHoverWidget-background) transparent
+    transparent transparent;
+}
+
+.tooltip-preview {
+  width: 120px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-preview::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-bookmark {
+  width: 80px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-bookmark::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-eye-closed {
+  width: 50px;
+  border-radius: 5px;
+  border-bottom-right-radius: 0;
+  left: 100%;
+  transform: translateX(-100%);
+}
+
+.tooltip-eye-closed::after {
+  left: 100%;
+  transform: translateX(-100%);
 }
