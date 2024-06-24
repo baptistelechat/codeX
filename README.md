@@ -1,71 +1,42 @@
-# codex README
+# <img src="https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/img/logo.png"  height="150" alt="codeX 📚">
 
-This is the README for your extension "codex". After writing up a brief description, we recommend including the following sections.
+![GitHub package.json version](https://img.shields.io/github/package-json/v/baptistelechat/codeX) ![GitHub License](https://img.shields.io/github/license/baptistelechat/codeX) [![GitHub latest commit](https://badgen.net/github/last-commit/baptistelechat/codeX)](https://github.com/baptistelechat/codeX/commit/main)
 
-## Features
+A [Visual Studio Code](https://code.visualstudio.com/) extension for accessing documentation directly from the IDE.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## ✨ Features
 
-For example if there is an image subfolder under your extension project workspace:
+The codeX extension allows the user to read dependency documentation in VSCode:
 
-\!\[feature X\]\(images/feature-x.png\)
+- Display official dependency websites if a package.json file is detected
+- Display of dependency name, available documentation version and short description if available
+- Opening documentation in an editor side panel
+- Display of a markdown interpreter for documentation hosted on GitHub
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+Go to your activity bar to see all available websites. After installation, a new icon appears to access the extension!
 
-## Requirements
+**_Sidebar capture_**
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## 🐛 Error
 
-## Extension Settings
+If you encounter a problem while navigation through the documentation, you can open the current documentation directly in your default web browser at any time. A footer is always available for this eventuality.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+**_Footer capture_**
 
-For example:
 
-This extension contributes the following settings:
+## 🔄 Translation
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+This extension will soon use l10n (localization) and is currently available in :
 
-## Known Issues
+- English _(en)_
+<!-- - French _(fr)_ -->
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## 😸 Maintainers
 
-## Release Notes
+This project is mantained by:
 
-Users appreciate release notes as you update your extension.
+- [Baptiste LECHAT - baptistelechat](https://github.com/baptistelechat)
 
-### 1.0.0
+## ⭐ Show your support
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Give a ⭐️ for support the project or if this project helped you !

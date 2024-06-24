@@ -57,7 +57,7 @@ window.addEventListener("message", (event) => {
           (documentation) =>
             `<div
             id="${documentation.id}"
-            class="item cursor-pointer flex-col rounded py-4 pl-4 transition-all duration-200"
+            class="item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200"
             data-url="${documentation.url}"
           >
             <div class="flex items-center gap-4">
