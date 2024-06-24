@@ -49,16 +49,16 @@ window.addEventListener("message", (event) => {
                       documentation.version
                     }</p>
                     <div class="mr-1 flex gap-1.5">
-                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-                        <div class="codicon codicon-open-preview" aria-label="open-preview"></div>
+                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                        <div class="codicon codicon-preview" aria-label="preview"></div>
                       </div>
-                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
                         <div class="codicon codicon-browser" aria-label="browser"></div>
                       </div>
-                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-                      <div class="codicon codicon-star-empty" aria-label="star-empty"></div>
+                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                      <div class="codicon codicon-bookmark" aria-label="bookmark"></div>
                       </div>
-                      <div class="flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                      <div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
                         <div class="codicon codicon-eye-closed" aria-label="eye-closed"></div>
                       </div>
                     </div>
@@ -95,6 +95,15 @@ window.addEventListener("message", (event) => {
 
         item.addEventListener("mouseleave", () => {
           resetHover(item.id);
+        });
+      });
+
+      document.querySelectorAll(".action-item").forEach((item) => {
+        item.addEventListener("click", (event) => {
+          event.stopPropagation();
+          vscode.postMessage({
+            type: "wip",
+          });
         });
       });
       break;

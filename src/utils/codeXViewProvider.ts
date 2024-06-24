@@ -13,6 +13,7 @@ import getFaviconUrl from "./getFaviconUrl";
 import getNonce from "./getNonce";
 import getPackageInfo from "./getPackageInfo";
 import isValidUrl from "./isValidUrl";
+import { showErrorMessage, showInformationMessage } from "./showMessage";
 
 export class CodeXViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
@@ -32,7 +33,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
 
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
-      vscode.window.showErrorMessage("No workspace folder is open.");
+      showErrorMessage("No workspace folder is open.");
       return;
     }
 
@@ -45,11 +46,11 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         const packageJsonContent = fs.readFileSync(packageJsonPath, "utf8");
         this.packageJson = JSON.parse(packageJsonContent);
       } catch (error) {
-        vscode.window.showErrorMessage("Failed to read package.json.");
+        showErrorMessage("Failed to read package.json.");
         return;
       }
     } else {
-      vscode.window.showErrorMessage("No package.json found in the workspace.");
+      showErrorMessage("No package.json found in the workspace.");
       return;
     }
 
@@ -73,6 +74,12 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
 
         case "reload":
           this.updateDocumentations();
+          break;
+
+        case "wip":
+          showInformationMessage(
+            "Work in progress. Stay tuned to know when this feature will be ready."
+          );
           break;
 
         default:
@@ -127,7 +134,7 @@ export class CodeXViewProvider implements vscode.WebviewViewProvider {
         }
       });
     } else {
-      vscode.window.showErrorMessage("Invalid URL for documentation.");
+      showErrorMessage("Invalid URL for documentation.");
     }
   }
 
