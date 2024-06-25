@@ -25,7 +25,7 @@
     "shortcuts"
   ],
   "activationEvents": [],
-  "icon": "src/lib/assets/img/logo.png",
+  "icon": "src/assets/images/logo_min.png",
   "galleryBanner": {
     "color": "#0ea5e9",
     "theme": "light"
