@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/img/logo.png"  height="150" alt="codeX 📚">
+# <img src="https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/imgages/logo.png"  height="150" alt="codeX 📚">
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/baptistelechat/codeX) ![GitHub License](https://img.shields.io/github/license/baptistelechat/codeX) [![GitHub latest commit](https://badgen.net/github/last-commit/baptistelechat/codeX)](https://github.com/baptistelechat/codeX/commit/main)
 
@@ -15,13 +15,21 @@ The codeX extension allows the user to read dependency documentation in VSCode:
 
 Go to your activity bar to see all available websites. After installation, a new icon appears to access the extension!
 
-**_Sidebar capture_**
+![Sidebar](https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/imgages/captures/sidebar.png)
 
 ## 🐛 Error
 
 If you encounter a problem while navigation through the documentation, you can open the current documentation directly in your default web browser at any time. A footer is always available for this eventuality.
 
-**_Footer capture_**
+![Documentation example](https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/imgages/captures/documentation.png)
+
+## 💭 Feedback
+
+We appreciate your feedback and suggestions for improving this project. If you have any comments, ideas or questions, please take a few minutes to fill in our online feedback form.
+
+![Feedback](https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/imgages/captures/feedback.png)
+
+Your feedback is important to us, and will help us make this project even better. Thank you for your participation! 🙏
 
 
 ## 🔄 Translation

@@ -56,12 +56,23 @@
         "category": "CodeX",
         "title": "Reload",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "codeX.feedback",
+        "category": "CodeX",
+        "title": "Feedback",
+        "icon": "$(comment)"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "codeX.reload",
+          "group": "navigation",
+          "when": "view == codeX.documentations"
+        },
+        {
+          "command": "codeX.feedback",
           "group": "navigation",
           "when": "view == codeX.documentations"
         }
