@@ -1,5 +1,5 @@
 {
-  "name": "codex",
+  "name": "codex-extension",
   "displayName": "CodeX",
   "description": "A VSCode extension for accessing documentation directly from the IDE",
   "version": "0.0.1",
