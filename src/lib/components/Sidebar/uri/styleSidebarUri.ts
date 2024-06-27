@@ -1,15 +1,16 @@
 import * as vscode from "vscode";
 
-const styleGitHubUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
+const styleSidebarUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
   webview.asWebviewUri(
     vscode.Uri.joinPath(
       extensionUri,
       "src",
+      "lib",
       "components",
-      "Documentation",
+      "Sidebar",
       "styles",
-      "gitHub.css"
+      "sidebar.css"
     )
   );
 
-export default styleGitHubUri;
+export default styleSidebarUri;

@@ -1,15 +1,16 @@
 import * as vscode from "vscode";
 
-const scriptSidebarUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
+const scriptGitHubUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
   webview.asWebviewUri(
     vscode.Uri.joinPath(
       extensionUri,
       "src",
+      "lib",
       "components",
-      "Sidebar",
+      "Documentation",
       "scripts",
-      "sidebar.js"
+      "github.js"
     )
   );
 
-export default scriptSidebarUri;
+export default scriptGitHubUri;

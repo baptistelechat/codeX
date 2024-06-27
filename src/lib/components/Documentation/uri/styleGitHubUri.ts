@@ -1,18 +1,16 @@
 import * as vscode from "vscode";
 
-const styleDocumentationUri = (
-  webview: vscode.Webview,
-  extensionUri: vscode.Uri
-) =>
+const styleGitHubUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
   webview.asWebviewUri(
     vscode.Uri.joinPath(
       extensionUri,
       "src",
+      "lib",
       "components",
       "Documentation",
       "styles",
-      "documentation.css"
+      "gitHub.css"
     )
   );
 
-export default styleDocumentationUri;
+export default styleGitHubUri;

@@ -25,7 +25,7 @@
     "shortcuts"
   ],
   "activationEvents": [],
-  "icon": "src/assets/images/logo_min.png",
+  "icon": "src/lib/assets/images/logo_min.png",
   "galleryBanner": {
     "color": "#0ea5e9",
     "theme": "light"
@@ -37,7 +37,7 @@
         {
           "id": "codeX-sidebar",
           "title": "CodeX",
-          "icon": "src/assets/images/icon.png"
+          "icon": "src/lib/assets/images/icon.png"
         }
       ]
     },
@@ -86,7 +86,7 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
-    "build:tailwind": "npx tailwindcss -i ./src/assets/styles/tailwind.css -o ./src/assets/styles/tailwind.min.css --minify",
+    "build:tailwind": "npx tailwindcss -i ./src/lib/assets/styles/tailwind.css -o ./src/lib/assets/styles/tailwind.min.css --minify",
     "package": "vsce package",
     "publish:patch": "vsce publish patch --message=\"🚀 (Publish) - Increment patch version\"",
     "publish:minor": "vsce publish minor --message=\"🚀 (Publish) - Increment minor version\"",
@@ -106,5 +106,6 @@
   },
   "dependencies": {
     "@vscode/codicons": "^0.0.36"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }

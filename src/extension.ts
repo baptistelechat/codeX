@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { CodeXViewProvider } from "./utils/codeXViewProvider";
-import openFeedbackForms from "./utils/openFeedbackForms";
+import { CodeXViewProvider } from "./lib/utils/codeXViewProvider";
+import openFeedbackForms from "./lib/utils/openFeedbackForms";
 
 export function activate(context: vscode.ExtensionContext) {
   const provider = new CodeXViewProvider(context.extensionUri);

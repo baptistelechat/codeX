@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning].
   - Bookmark documentation for easier access in the future
   - Hide the desired documentation if the user doesn't think it's useful to display it
 
-## [0.1.0] - 2024-06-25
+## [0.1.0] - 2024-06-27
 
 ### Added
 
