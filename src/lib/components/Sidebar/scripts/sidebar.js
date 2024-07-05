@@ -41,15 +41,16 @@ window.addEventListener("message", (event) => {
           description: "Hide",
         },
       ]
-        .map((actionItem) => (
-          `<div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+        .map(
+          (actionItem) =>
+            `<div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
             <div
               class="codicon codicon-${actionItem.codicon}"
               aria-label="${actionItem.codicon}"
             ></div>
             <div class="tooltip tooltip-${actionItem.codicon}">${actionItem.description}</div>
           </div>`
-        ))
+        )
         .join("");
 
       container.innerHTML = documentations
@@ -137,7 +138,7 @@ window.addEventListener("message", (event) => {
   }
 });
 
-function updateBorder(focusedId) {
+const updateBorder = (focusedId) => {
   document.querySelectorAll(".item").forEach((item) => {
     if (item.id === focusedId) {
       // Brightness
@@ -165,9 +166,9 @@ function updateBorder(focusedId) {
       item.classList.remove("border-l-slate-700");
     }
   });
-}
+};
 
-function updateHover(hoveredId) {
+const updateHover = (hoveredId) => {
   document.querySelectorAll(".item").forEach((item) => {
     if (item.id === hoveredId) {
       item.classList.add("brightness-100");
@@ -177,9 +178,9 @@ function updateHover(hoveredId) {
       item.classList.remove("brightness-100");
     }
   });
-}
+};
 
-function resetHover(hoveredId) {
+const resetHover = (hoveredId) => {
   if (openDocumentation.length === 0) {
     document.querySelectorAll(".item").forEach((item) => {
       item.classList.add("brightness-100");
@@ -193,9 +194,9 @@ function resetHover(hoveredId) {
       }
     });
   }
-}
+};
 
-function removeBorder(closedId, updatedOpenDocumentation) {
+const removeBorder = (closedId, updatedOpenDocumentation) => {
   const closedItem = document.getElementById(closedId);
   if (closedItem) {
     closedItem.classList.add("brightness-50");
@@ -211,4 +212,4 @@ function removeBorder(closedId, updatedOpenDocumentation) {
       item.classList.remove("brightness-50");
     });
   }
-}
+};

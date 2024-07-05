@@ -1,20 +1,22 @@
 import * as vscode from "vscode";
-import { CodeXViewProvider } from "./lib/utils/codeXViewProvider";
+import { DocumentationViewProvider } from "./lib/utils/documentation/DocumentationViewProvider";
 import openFeedbackForms from "./lib/utils/openFeedbackForms";
 
-export function activate(context: vscode.ExtensionContext) {
-  const provider = new CodeXViewProvider(context.extensionUri);
+export const activate = (context: vscode.ExtensionContext) => {
+  const documentationViewProvider = new DocumentationViewProvider(
+    context.extensionUri
+  );
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      CodeXViewProvider.viewType,
-      provider
+      DocumentationViewProvider.viewType,
+      documentationViewProvider
     )
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("codeX.reload", () => {
-      provider.updateDocumentations();
+      documentationViewProvider.updateDocumentations();
     })
   );
 
@@ -25,8 +27,8 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   console.log('Extension "codeX" is now active!');
-}
+};
 
-export function deactivate() {
+export const deactivate = () => {
   console.log('Extension "codeX" is now deactivated');
-}
+};

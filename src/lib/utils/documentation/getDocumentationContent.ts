@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
-import styleCodiconUri from "../assets/uri/styleCodiconUri";
-import styleTailwindUri from "../assets/uri/styleTailwindUri";
-import scriptGitHubUri from "../components/Documentation/uri/scriptGitHubUri";
-import styleDocumentationUri from "../components/Documentation/uri/styleDocumentationUri";
-import styleGitHubUri from "../components/Documentation/uri/styleGitHubUri";
-import { IDocumentation } from "../interfaces/IDocumentation";
-import getNonce from "./getNonce";
+import styleCodiconUri from "../../assets/uri/styleCodiconUri";
+import styleTailwindUri from "../../assets/uri/styleTailwindUri";
+import scriptGitHubUri from "../../components/Documentation/uri/scriptGitHubUri";
+import styleDocumentationUri from "../../components/Documentation/uri/styleDocumentationUri";
+import styleGitHubUri from "../../components/Documentation/uri/styleGitHubUri";
+import { IDocumentation } from "../../interfaces/IDocumentation";
+import getNonce from "../getNonce";
 
 const getDocumentationContent = (
   documentation: IDocumentation,
