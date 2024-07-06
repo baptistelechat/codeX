@@ -4,7 +4,8 @@ import openFeedbackForms from "./lib/utils/openFeedbackForms";
 
 export const activate = (context: vscode.ExtensionContext) => {
   const documentationViewProvider = new DocumentationViewProvider(
-    context.extensionUri
+    context.extensionUri,
+    context
   );
 
   context.subscriptions.push(
@@ -16,7 +17,7 @@ export const activate = (context: vscode.ExtensionContext) => {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("codeX.reload", () => {
-      documentationViewProvider.updateDocumentations();
+      documentationViewProvider.getDocumentations();
     })
   );
 

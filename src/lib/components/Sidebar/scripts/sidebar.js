@@ -1,5 +1,6 @@
 const vscode = acquireVsCodeApi();
 let openDocumentation = [];
+let favoriteDocumentations = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const reloadButton = document.getElementById("reload");
@@ -18,6 +19,11 @@ window.addEventListener("message", (event) => {
   switch (message.type) {
     case "setDocumentations":
       const { documentations } = message;
+      favoriteDocumentations = documentations
+        .filter((documentation) => documentation.isFavorite)
+        .map((documentation) => documentation.id);
+
+      console.log(favoriteDocumentations);
 
       const container = document.getElementById("documentation-list");
       if (!container) {
@@ -27,31 +33,35 @@ window.addEventListener("message", (event) => {
 
       document.getElementById("no-documentation-found").style.display = "none";
 
-      const actionItems = [
-        {
-          codicon: "preview",
-          description: "Open in browser",
-        },
-        {
-          codicon: "star-empty",
-          description: "Add to favorites",
-        },
-        {
-          codicon: "eye-closed",
-          description: "Hide",
-        },
-      ]
-        .map(
-          (actionItem) =>
-            `<div class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-            <div
-              class="codicon codicon-${actionItem.codicon}"
-              aria-label="${actionItem.codicon}"
-            ></div>
-            <div class="tooltip tooltip-${actionItem.codicon}">${actionItem.description}</div>
-          </div>`
-        )
-        .join("");
+      const actionItems = (id) => {
+        const isFavorite = favoriteDocumentations.includes(id);
+
+        return [
+          {
+            codicon: "preview",
+            description: "Open in browser",
+          },
+          {
+            codicon: isFavorite ? "star-full" : "star-empty",
+            description: isFavorite ? "Remove favorite" : "Add to favorites",
+          },
+          {
+            codicon: "eye-closed",
+            description: "Hide",
+          },
+        ]
+          .map(
+            (actionItem) =>
+              `<div id="${actionItem.codicon}" class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+                <div
+                  class="codicon codicon-${actionItem.codicon}"
+                  aria-label="${actionItem.codicon}"
+                ></div>
+                <div class="tooltip tooltip-${actionItem.codicon}">${actionItem.description}</div>
+              </div>`
+          )
+          .join("");
+      };
 
       container.innerHTML = documentations
         .map(
@@ -80,7 +90,9 @@ window.addEventListener("message", (event) => {
                   <p class="font-semibold italic text-slate-400">
                     v${documentation.version}
                   </p>
-                  <div class="mr-2 flex gap-1.5">${actionItems}</div>
+                  <div class="mr-2 flex gap-1.5">${actionItems(
+                    documentation.id
+                  )}</div>
                 </div>
               </div>
             </div>
@@ -90,21 +102,21 @@ window.addEventListener("message", (event) => {
 
       document.querySelectorAll(".item").forEach((item) => {
         item.addEventListener("click", (event) => {
-          const id = item.getAttribute("id");
-          if (openDocumentation.includes(id)) {
+          const documentationId = item.id;
+          if (openDocumentation.includes(documentationId)) {
             vscode.postMessage({
               type: "focusDocumentation",
-              documentationId: id,
+              documentationId,
             });
           } else {
             vscode.postMessage({
               type: "openDocumentation",
-              documentationId: id,
+              documentationId,
             });
-            openDocumentation.push(id);
+            openDocumentation.push(documentationId);
           }
 
-          updateBorder(id);
+          updateBorder(documentationId);
         });
 
         item.addEventListener("mouseenter", () => {
@@ -117,12 +129,41 @@ window.addEventListener("message", (event) => {
       });
 
       document.querySelectorAll(".action-item").forEach((item) => {
-        item.addEventListener("click", (event) => {
-          event.stopPropagation();
-          vscode.postMessage({
-            type: "wip",
+        const iconName = item.id;
+        const documentationId =
+          item.parentElement.parentElement.parentElement.parentElement
+            .parentElement.id;
+        if (iconName.includes("star")) {
+          item.addEventListener("click", (event) => {
+            event.stopPropagation();
+
+            if (favoriteDocumentations.includes(documentationId)) {
+              favoriteDocumentations = favoriteDocumentations.filter(
+                (id) => id !== documentationId
+              );
+              item.innerHTML = `<div class="codicon codicon-star-empty" aria-label="star-empty"></div>
+                  <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
+              console.log(favoriteDocumentations);
+            } else {
+              favoriteDocumentations.push(documentationId);
+              item.innerHTML = `<div class="codicon codicon-star-full" aria-label="star-full"></div>
+                  <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
+              console.log(favoriteDocumentations);
+            }
+
+            vscode.postMessage({
+              type: "toggleFavorite",
+              documentationId,
+            });
           });
-        });
+        } else {
+          item.addEventListener("click", (event) => {
+            event.stopPropagation();
+            vscode.postMessage({
+              type: "wip",
+            });
+          });
+        }
       });
       break;
 
@@ -142,9 +183,9 @@ window.addEventListener("message", (event) => {
   }
 });
 
-const updateBorder = (focusedId) => {
+const updateBorder = (documentationId) => {
   document.querySelectorAll(".item").forEach((item) => {
-    if (item.id === focusedId) {
+    if (item.id === documentationId) {
       // Brightness
       item.classList.remove("brightness-50");
       item.classList.add("brightness-100");

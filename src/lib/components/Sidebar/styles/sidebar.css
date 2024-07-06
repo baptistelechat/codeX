@@ -56,6 +56,18 @@
   transform: translateX(-72%);
 }
 
+.tooltip-star-full {
+  width: 120px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-70%);
+}
+
+.tooltip-star-full::after {
+  left: 72%;
+  transform: translateX(-72%);
+}
+
 .tooltip-eye-closed {
   width: 50px;
   border-radius: 5px;

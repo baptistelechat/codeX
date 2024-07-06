@@ -3,7 +3,10 @@ import IPackageJson from "../../interfaces/IPackageJson";
 import getFaviconUrl from "../getFaviconUrl";
 import getPackageInfo from "../getPackageInfo";
 
-const getAllDocumentations = async (packageJson: IPackageJson) => {
+const getAllDocumentations = async (
+  packageJson: IPackageJson,
+  favoriteDocumentations: string[]
+) => {
   const dependencies = [
     ...Object.keys(packageJson.dependencies || {}),
     ...Object.keys(packageJson.devDependencies || {}),
@@ -20,13 +23,21 @@ const getAllDocumentations = async (packageJson: IPackageJson) => {
           return null;
         }
         uniqueUrls.push(url);
+
+        const documentationName = info.name.includes("/")
+          ? info.name.split("/")[0]
+          : info.name;
+
         return {
-          name: info.name.charAt(0).toUpperCase() + info.name.slice(1),
-          id: info.name,
+          name:
+            documentationName.charAt(0).toUpperCase() +
+            documentationName.slice(1),
+          id: documentationName,
           version: info.version,
           description: info.description ?? "...",
           url,
           icon: getFaviconUrl(url) ?? "",
+          isFavorite: favoriteDocumentations.includes(info.name),
         } as IDocumentation;
       }
       return null;

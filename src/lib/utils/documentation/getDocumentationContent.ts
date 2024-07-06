@@ -48,7 +48,7 @@ const getDocumentationContent = (
             <div id="readme-content" class="p-4">Loading...</div>
           </div>
           <div class="flex items-center justify-center gap-4 border-t border-t-sky-200 p-2">
-            <p class="m-0">Failed to load the ${
+            <p class="m-0">Failed to load ${
               documentation.name
             } ? Try opening it in a browser.</p>
             <a
@@ -95,7 +95,7 @@ const getDocumentationContent = (
             </iframe>
           </div>
           <div class="flex items-center justify-center gap-4 border-t border-t-sky-200 p-2">
-            <p class="m-0">Failed to load the ${
+            <p class="m-0">Failed to load ${
               documentation.name
             } ? Try opening it in a browser.</p>
             <a
