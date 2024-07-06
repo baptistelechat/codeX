@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning].
 
 ## Unreleased
 
+### Added
 - Action items :
   - Open in default browser
   - Bookmark documentation for easier access in the future
   - Hide the desired documentation if the user doesn't think it's useful to display it
+
+### Changed
+- Update "Add to favorites" icon
 
 ## [0.1.0] - 2024-06-27
 

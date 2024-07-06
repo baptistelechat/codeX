@@ -44,27 +44,26 @@
   transform: translateX(-50%);
 }
 
-.tooltip-bookmark {
-  width: 80px;
+.tooltip-star-empty {
+  width: 120px;
   border-radius: 5px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-70%);
 }
 
-.tooltip-bookmark::after {
-  left: 50%;
-  transform: translateX(-50%);
+.tooltip-star-empty::after {
+  left: 72%;
+  transform: translateX(-72%);
 }
 
 .tooltip-eye-closed {
   width: 50px;
   border-radius: 5px;
-  border-bottom-right-radius: 0;
   left: 100%;
   transform: translateX(-100%);
 }
 
 .tooltip-eye-closed::after {
-  left: 100%;
-  transform: translateX(-100%);
+  left: 85%;
+  transform: translateX(-85%);
 }

@@ -33,8 +33,8 @@ window.addEventListener("message", (event) => {
           description: "Open in browser",
         },
         {
-          codicon: "bookmark",
-          description: "Bookmark",
+          codicon: "star-empty",
+          description: "Add to favorites",
         },
         {
           codicon: "eye-closed",
@@ -62,11 +62,15 @@ window.addEventListener("message", (event) => {
             data-url="${documentation.url}"
           >
             <div class="flex items-center gap-4">
-              <img
-                src="${documentation.icon}"
-                alt="${documentation.name} icon"
-                class="size-10"
-              />
+              ${
+                documentation.icon.includes("github")
+                  ? '<div class="codicon codicon-github-inverted" aria-label="github-inverted" style="font-size:32px"></div>'
+                  : `<img
+                      src="${documentation.icon}"
+                      alt="${documentation.name} icon"
+                      class="size-10"
+                    />`
+              }
               <div class="flex w-full flex-col gap-1 overflow-hidden">
                 <h2 class="text-xl font-semibold">${documentation.name}</h2>
                 <p class="truncate text-slate-400">
