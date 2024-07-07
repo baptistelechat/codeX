@@ -1,5 +1,6 @@
 const vscode = acquireVsCodeApi();
 let openDocumentation = [];
+let currentDocumentation = "";
 let favoriteDocumentations = [];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -22,8 +23,6 @@ window.addEventListener("message", (event) => {
       favoriteDocumentations = documentations
         .filter((documentation) => documentation.isFavorite)
         .map((documentation) => documentation.id);
-
-      console.log(favoriteDocumentations);
 
       const container = document.getElementById("documentation-list");
       if (!container) {
@@ -52,12 +51,18 @@ window.addEventListener("message", (event) => {
         ]
           .map(
             (actionItem) =>
-              `<div id="${actionItem.codicon}" class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
+              `<div id="${
+                actionItem.codicon
+              }" class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
                 <div
-                  class="codicon codicon-${actionItem.codicon}"
+                  class="codicon codicon-${actionItem.codicon} ${
+                actionItem.codicon === "star-full" ? "text-yellow-500" : ""
+              }"
                   aria-label="${actionItem.codicon}"
                 ></div>
-                <div class="tooltip tooltip-${actionItem.codicon}">${actionItem.description}</div>
+                <div class="tooltip tooltip-${actionItem.codicon}">${
+                actionItem.description
+              }</div>
               </div>`
           )
           .join("");
@@ -116,6 +121,7 @@ window.addEventListener("message", (event) => {
             openDocumentation.push(documentationId);
           }
 
+          currentDocumentation = documentationId;
           updateBorder(documentationId);
         });
 
@@ -143,18 +149,18 @@ window.addEventListener("message", (event) => {
               );
               item.innerHTML = `<div class="codicon codicon-star-empty" aria-label="star-empty"></div>
                   <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
-              console.log(favoriteDocumentations);
             } else {
               favoriteDocumentations.push(documentationId);
-              item.innerHTML = `<div class="codicon codicon-star-full" aria-label="star-full"></div>
+              item.innerHTML = `<div class="codicon codicon-star-full text-yellow-500" aria-label="star-full"></div>
                   <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
-              console.log(favoriteDocumentations);
             }
 
             vscode.postMessage({
               type: "toggleFavorite",
               documentationId,
             });
+
+            updateBorder(documentationId);
           });
         } else {
           item.addEventListener("click", (event) => {
@@ -168,6 +174,7 @@ window.addEventListener("message", (event) => {
       break;
 
     case "documentationFocused":
+      currentDocumentation = message.documentationId;
       updateBorder(message.documentationId);
       break;
 
@@ -185,30 +192,66 @@ window.addEventListener("message", (event) => {
 
 const updateBorder = (documentationId) => {
   document.querySelectorAll(".item").forEach((item) => {
-    if (item.id === documentationId) {
+    const isFavorite = favoriteDocumentations.includes(item.id);
+    const isOpen = openDocumentation.includes(item.id);
+    const isCurrentDocumentation = currentDocumentation === item.id;
+
+    if (isOpen && item.id === documentationId) {
       // Brightness
       item.classList.remove("brightness-50");
       item.classList.add("brightness-100");
       // Border
-      item.classList.add("border-l-8");
-      item.classList.add("border-l-sky-500");
-      item.classList.remove("border-l-slate-700");
-    } else if (openDocumentation.includes(item.id)) {
+      if (isFavorite) {
+        item.classList.add("border-l-8");
+        item.classList.remove("border-l-slate-700");
+        item.classList.remove("border-l-sky-500");
+        if (isCurrentDocumentation) {
+          item.classList.add("border-l-yellow-500");
+          item.classList.remove("border-l-yellow-800");
+        } else {
+          item.classList.remove("border-l-yellow-500");
+          item.classList.add("border-l-yellow-800");
+        }
+      } else {
+        item.classList.add("border-l-8");
+        if (isCurrentDocumentation) {
+          item.classList.remove("border-l-slate-700");
+          item.classList.add("border-l-sky-500");
+        } else {
+          item.classList.add("border-l-slate-700");
+          item.classList.remove("border-l-sky-500");
+        }
+        item.classList.remove("border-l-yellow-500");
+        item.classList.remove("border-l-yellow-800");
+      }
+    } else if (isOpen) {
       // Brightness
       item.classList.remove("brightness-50");
       item.classList.remove("brightness-100");
       // Border
-      item.classList.add("border-l-8");
-      item.classList.remove("border-l-sky-500");
-      item.classList.add("border-l-slate-700");
+      if (isFavorite) {
+        item.classList.add("border-l-8");
+        item.classList.remove("border-l-slate-700");
+        item.classList.remove("border-l-sky-500");
+        item.classList.remove("border-l-yellow-500");
+        item.classList.add("border-l-yellow-800");
+      } else {
+        item.classList.add("border-l-8");
+        item.classList.add("border-l-slate-700");
+        item.classList.remove("border-l-sky-500");
+        item.classList.remove("border-l-yellow-500");
+        item.classList.remove("border-l-yellow-800");
+      }
     } else {
       // Brightness
       item.classList.add("brightness-50");
       item.classList.remove("brightness-100");
       // Border
       item.classList.remove("border-l-8");
-      item.classList.remove("border-l-sky-500");
       item.classList.remove("border-l-slate-700");
+      item.classList.remove("border-l-sky-500");
+      item.classList.remove("border-l-yellow-500");
+      item.classList.remove("border-l-yellow-800");
     }
   });
 };
@@ -249,6 +292,8 @@ const removeBorder = (closedId, updatedOpenDocumentation) => {
     closedItem.classList.remove("border-l-8");
     closedItem.classList.remove("border-l-sky-500");
     closedItem.classList.remove("border-l-slate-700");
+    closedItem.classList.remove("border-l-yellow-500");
+    closedItem.classList.remove("border-l-yellow-800");
   }
 
   if (updatedOpenDocumentation.length === 0) {

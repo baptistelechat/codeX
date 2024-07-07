@@ -156,6 +156,5 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     }
 
     this.saveFavoriteDocumentations();
-    console.log(documentationId, this._favoriteDocumentations);
   }
 }
