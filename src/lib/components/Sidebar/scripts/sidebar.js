@@ -1,4 +1,10 @@
+import updateBorder from "./updateBorder.js";
+import removeBorder from "./removeBorder.js";
+import updateHover from "./updateHover.js";
+import resetHover from "./resetHover.js";
+
 const vscode = acquireVsCodeApi();
+
 let openDocumentation = [];
 let currentDocumentation = "";
 let favoriteDocumentations = [];
@@ -122,15 +128,20 @@ window.addEventListener("message", (event) => {
           }
 
           currentDocumentation = documentationId;
-          updateBorder(documentationId);
+          updateBorder(
+            favoriteDocumentations,
+            openDocumentation,
+            currentDocumentation,
+            documentationId
+          );
         });
 
         item.addEventListener("mouseenter", () => {
-          updateHover(item.id);
+          updateHover(openDocumentation, item.id);
         });
 
         item.addEventListener("mouseleave", () => {
-          resetHover();
+          resetHover(openDocumentation);
         });
       });
 
@@ -160,7 +171,12 @@ window.addEventListener("message", (event) => {
               documentationId,
             });
 
-            updateBorder(documentationId);
+            updateBorder(
+              favoriteDocumentations,
+              openDocumentation,
+              currentDocumentation,
+              documentationId
+            );
           });
         } else {
           item.addEventListener("click", (event) => {
@@ -175,7 +191,12 @@ window.addEventListener("message", (event) => {
 
     case "documentationFocused":
       currentDocumentation = message.documentationId;
-      updateBorder(message.documentationId);
+      updateBorder(
+        favoriteDocumentations,
+        openDocumentation,
+        currentDocumentation,
+        message.documentationId
+      );
       break;
 
     case "documentationClosed":
@@ -189,88 +210,3 @@ window.addEventListener("message", (event) => {
       break;
   }
 });
-
-const updateBorder = (documentationId) => {
-  document.querySelectorAll(".item").forEach((item) => {
-    const isFavorite = favoriteDocumentations.includes(item.id);
-    const isOpen = openDocumentation.includes(item.id);
-    const isCurrentDocumentation = currentDocumentation === item.id;
-
-    // Reset classes
-    item.classList.remove(
-      "brightness-50",
-      "brightness-100",
-      "border-l-8",
-      "border-l-slate-700",
-      "border-l-sky-500",
-      "border-l-yellow-500",
-      "border-l-yellow-800"
-    );
-
-    if (isCurrentDocumentation || (isOpen && item.id === documentationId)) {
-      item.classList.add("brightness-100");
-      item.classList.add("border-l-8");
-
-      if (isFavorite) {
-        item.classList.add(
-          isCurrentDocumentation ? "border-l-yellow-500" : "border-l-yellow-800"
-        );
-      } else {
-        item.classList.add(
-          isCurrentDocumentation ? "border-l-sky-500" : "border-l-slate-700"
-        );
-      }
-    } else if (isOpen) {
-      item.classList.remove("brightness-50");
-      item.classList.add("border-l-8");
-
-      if (isFavorite) {
-        item.classList.add("border-l-yellow-800");
-      } else {
-        item.classList.add("border-l-slate-700");
-      }
-    } else {
-      item.classList.add("brightness-50");
-    }
-  });
-};
-
-const updateHover = (hoveredId) => {
-  document.querySelectorAll(".item").forEach((item) => {
-    const isHovered = item.id === hoveredId;
-    const isOpen = openDocumentation.includes(item.id);
-    item.classList.toggle("brightness-100", isHovered);
-    item.classList.toggle("brightness-50", !isHovered && !isOpen);
-  });
-};
-
-const resetHover = () => {
-  const isAnyOpen = openDocumentation.length > 0;
-  document.querySelectorAll(".item").forEach((item) => {
-    const isOpen = openDocumentation.includes(item.id);
-    item.classList.toggle("brightness-100", !isAnyOpen || isOpen);
-    item.classList.toggle("brightness-50", isAnyOpen && !isOpen);
-  });
-};
-
-const removeBorder = (closedId, updatedOpenDocumentation) => {
-  const closedItem = document.getElementById(closedId);
-  if (closedItem) {
-    closedItem.classList.add("brightness-50");
-    closedItem.classList.remove(
-      "brightness-100",
-      "border-l-8",
-      "border-l-sky-500",
-      "border-l-slate-700",
-      "border-l-yellow-500",
-      "border-l-yellow-800"
-    );
-  }
-
-  if (updatedOpenDocumentation.length === 0) {
-    document.querySelectorAll(".item").forEach((item) => {
-      item.classList.add("brightness-100");
-      item.classList.remove("brightness-50");
-    });
-  }
-};

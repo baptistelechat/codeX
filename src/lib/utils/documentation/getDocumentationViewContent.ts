@@ -31,7 +31,7 @@ const getDocumentationViewContent = (
         <link href="${styleVscodeUri(webview, extensionUri)}" rel="stylesheet">
         <link href="${styleSidebarUri(webview, extensionUri)}" rel="stylesheet">
         <title>Documentation List</title>
-        <script nonce="${nonce}" src="${scriptSidebarUri(
+        <script type="module" nonce="${nonce}" src="${scriptSidebarUri(
     webview,
     extensionUri
   )}"></script>
