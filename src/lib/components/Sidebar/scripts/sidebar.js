@@ -130,7 +130,7 @@ window.addEventListener("message", (event) => {
         });
 
         item.addEventListener("mouseleave", () => {
-          resetHover(item.id);
+          resetHover();
         });
       });
 
@@ -196,104 +196,75 @@ const updateBorder = (documentationId) => {
     const isOpen = openDocumentation.includes(item.id);
     const isCurrentDocumentation = currentDocumentation === item.id;
 
-    if (isOpen && item.id === documentationId) {
-      // Brightness
-      item.classList.remove("brightness-50");
+    // Reset classes
+    item.classList.remove(
+      "brightness-50",
+      "brightness-100",
+      "border-l-8",
+      "border-l-slate-700",
+      "border-l-sky-500",
+      "border-l-yellow-500",
+      "border-l-yellow-800"
+    );
+
+    if (isCurrentDocumentation || (isOpen && item.id === documentationId)) {
       item.classList.add("brightness-100");
-      // Border
+      item.classList.add("border-l-8");
+
       if (isFavorite) {
-        item.classList.add("border-l-8");
-        item.classList.remove("border-l-slate-700");
-        item.classList.remove("border-l-sky-500");
-        if (isCurrentDocumentation) {
-          item.classList.add("border-l-yellow-500");
-          item.classList.remove("border-l-yellow-800");
-        } else {
-          item.classList.remove("border-l-yellow-500");
-          item.classList.add("border-l-yellow-800");
-        }
+        item.classList.add(
+          isCurrentDocumentation ? "border-l-yellow-500" : "border-l-yellow-800"
+        );
       } else {
-        item.classList.add("border-l-8");
-        if (isCurrentDocumentation) {
-          item.classList.remove("border-l-slate-700");
-          item.classList.add("border-l-sky-500");
-        } else {
-          item.classList.add("border-l-slate-700");
-          item.classList.remove("border-l-sky-500");
-        }
-        item.classList.remove("border-l-yellow-500");
-        item.classList.remove("border-l-yellow-800");
+        item.classList.add(
+          isCurrentDocumentation ? "border-l-sky-500" : "border-l-slate-700"
+        );
       }
     } else if (isOpen) {
-      // Brightness
       item.classList.remove("brightness-50");
-      item.classList.remove("brightness-100");
-      // Border
+      item.classList.add("border-l-8");
+
       if (isFavorite) {
-        item.classList.add("border-l-8");
-        item.classList.remove("border-l-slate-700");
-        item.classList.remove("border-l-sky-500");
-        item.classList.remove("border-l-yellow-500");
         item.classList.add("border-l-yellow-800");
       } else {
-        item.classList.add("border-l-8");
         item.classList.add("border-l-slate-700");
-        item.classList.remove("border-l-sky-500");
-        item.classList.remove("border-l-yellow-500");
-        item.classList.remove("border-l-yellow-800");
       }
     } else {
-      // Brightness
       item.classList.add("brightness-50");
-      item.classList.remove("brightness-100");
-      // Border
-      item.classList.remove("border-l-8");
-      item.classList.remove("border-l-slate-700");
-      item.classList.remove("border-l-sky-500");
-      item.classList.remove("border-l-yellow-500");
-      item.classList.remove("border-l-yellow-800");
     }
   });
 };
 
 const updateHover = (hoveredId) => {
   document.querySelectorAll(".item").forEach((item) => {
-    if (item.id === hoveredId) {
-      item.classList.add("brightness-100");
-      item.classList.remove("brightness-50");
-    } else if (!openDocumentation.includes(item.id)) {
-      item.classList.add("brightness-50");
-      item.classList.remove("brightness-100");
-    }
+    const isHovered = item.id === hoveredId;
+    const isOpen = openDocumentation.includes(item.id);
+    item.classList.toggle("brightness-100", isHovered);
+    item.classList.toggle("brightness-50", !isHovered && !isOpen);
   });
 };
 
-const resetHover = (hoveredId) => {
-  if (openDocumentation.length === 0) {
-    document.querySelectorAll(".item").forEach((item) => {
-      item.classList.add("brightness-100");
-      item.classList.remove("brightness-50");
-    });
-  } else {
-    document.querySelectorAll(".item").forEach((item) => {
-      if (!openDocumentation.includes(item.id)) {
-        item.classList.add("brightness-50");
-        item.classList.remove("brightness-100");
-      }
-    });
-  }
+const resetHover = () => {
+  const isAnyOpen = openDocumentation.length > 0;
+  document.querySelectorAll(".item").forEach((item) => {
+    const isOpen = openDocumentation.includes(item.id);
+    item.classList.toggle("brightness-100", !isAnyOpen || isOpen);
+    item.classList.toggle("brightness-50", isAnyOpen && !isOpen);
+  });
 };
 
 const removeBorder = (closedId, updatedOpenDocumentation) => {
   const closedItem = document.getElementById(closedId);
   if (closedItem) {
     closedItem.classList.add("brightness-50");
-    closedItem.classList.remove("brightness-100");
-    closedItem.classList.remove("border-l-8");
-    closedItem.classList.remove("border-l-sky-500");
-    closedItem.classList.remove("border-l-slate-700");
-    closedItem.classList.remove("border-l-yellow-500");
-    closedItem.classList.remove("border-l-yellow-800");
+    closedItem.classList.remove(
+      "brightness-100",
+      "border-l-8",
+      "border-l-sky-500",
+      "border-l-slate-700",
+      "border-l-yellow-500",
+      "border-l-yellow-800"
+    );
   }
 
   if (updatedOpenDocumentation.length === 0) {
