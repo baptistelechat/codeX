@@ -5,4 +5,5 @@ export interface IDocumentation {
   description: string;
   url: string;
   icon: string;
+  isFavorite: boolean;
 }

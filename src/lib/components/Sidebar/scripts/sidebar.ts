@@ -1,13 +1,11 @@
-import updateBorder from "./updateBorder.js";
-import removeBorder from "./removeBorder.js";
-import updateHover from "./updateHover.js";
-import resetHover from "./resetHover.js";
+import { IDocumentation } from "../../../interfaces/IDocumentation";
 
+// @ts-ignore
 const vscode = acquireVsCodeApi();
 
-let openDocumentation = [];
-let currentDocumentation = "";
-let favoriteDocumentations = [];
+let openDocumentation: string[] = [];
+let currentDocumentation: string = "";
+let favoriteDocumentations: string[] = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const reloadButton = document.getElementById("reload");
@@ -27,8 +25,8 @@ window.addEventListener("message", (event) => {
     case "setDocumentations":
       const { documentations } = message;
       favoriteDocumentations = documentations
-        .filter((documentation) => documentation.isFavorite)
-        .map((documentation) => documentation.id);
+        .filter((documentation: IDocumentation) => documentation.isFavorite)
+        .map((documentation: IDocumentation) => documentation.id);
 
       const container = document.getElementById("documentation-list");
       if (!container) {
@@ -36,10 +34,16 @@ window.addEventListener("message", (event) => {
         return;
       }
 
-      document.getElementById("no-documentation-found").style.display = "none";
+      const noDocumentationFoundElement = document.getElementById(
+        "no-documentation-found"
+      );
 
-      const actionItems = (id) => {
-        const isFavorite = favoriteDocumentations.includes(id);
+      if (noDocumentationFoundElement) {
+        noDocumentationFoundElement.style.display = "none";
+      }
+
+      const actionItems = (documentationId: string) => {
+        const isFavorite = favoriteDocumentations.includes(documentationId);
 
         return [
           {
@@ -76,7 +80,7 @@ window.addEventListener("message", (event) => {
 
       container.innerHTML = documentations
         .map(
-          (documentation) =>
+          (documentation: IDocumentation) =>
             `<div
             id="${documentation.id}"
             class="item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200"
@@ -128,29 +132,24 @@ window.addEventListener("message", (event) => {
           }
 
           currentDocumentation = documentationId;
-          updateBorder(
-            favoriteDocumentations,
-            openDocumentation,
-            currentDocumentation,
-            documentationId
-          );
+          updateBorder(documentationId);
         });
 
         item.addEventListener("mouseenter", () => {
-          updateHover(openDocumentation, item.id);
+          updateHover(item.id);
         });
 
         item.addEventListener("mouseleave", () => {
-          resetHover(openDocumentation);
+          resetHover();
         });
       });
 
       document.querySelectorAll(".action-item").forEach((item) => {
         const iconName = item.id;
         const documentationId =
-          item.parentElement.parentElement.parentElement.parentElement
-            .parentElement.id;
-        if (iconName.includes("star")) {
+          item.parentElement?.parentElement?.parentElement?.parentElement
+            ?.parentElement?.id;
+        if (documentationId && iconName.includes("star")) {
           item.addEventListener("click", (event) => {
             event.stopPropagation();
 
@@ -171,12 +170,7 @@ window.addEventListener("message", (event) => {
               documentationId,
             });
 
-            updateBorder(
-              favoriteDocumentations,
-              openDocumentation,
-              currentDocumentation,
-              documentationId
-            );
+            updateBorder(documentationId);
           });
         } else {
           item.addEventListener("click", (event) => {
@@ -191,22 +185,102 @@ window.addEventListener("message", (event) => {
 
     case "documentationFocused":
       currentDocumentation = message.documentationId;
-      updateBorder(
-        favoriteDocumentations,
-        openDocumentation,
-        currentDocumentation,
-        message.documentationId
-      );
+      updateBorder(message.documentationId);
       break;
 
     case "documentationClosed":
       openDocumentation = openDocumentation.filter(
         (id) => id !== message.documentationId
       );
-      removeBorder(message.documentationId, openDocumentation);
+      removeBorder(openDocumentation, message.documentationId);
       break;
 
     default:
       break;
   }
 });
+
+const updateBorder = (documentationId: string) => {
+  document.querySelectorAll(".item").forEach((item) => {
+    const isFavorite = favoriteDocumentations.includes(item.id);
+    const isOpen = openDocumentation.includes(item.id);
+    const isCurrentDocumentation = currentDocumentation === item.id;
+
+    // Reset classes
+    item.classList.remove(
+      "brightness-50",
+      "brightness-100",
+      "border-l-8",
+      "border-l-slate-700",
+      "border-l-sky-500",
+      "border-l-yellow-500",
+      "border-l-yellow-800"
+    );
+
+    if (isCurrentDocumentation || (isOpen && item.id === documentationId)) {
+      item.classList.add("brightness-100");
+      item.classList.add("border-l-8");
+
+      if (isFavorite) {
+        item.classList.add(
+          isCurrentDocumentation ? "border-l-yellow-500" : "border-l-yellow-800"
+        );
+      } else {
+        item.classList.add(
+          isCurrentDocumentation ? "border-l-sky-500" : "border-l-slate-700"
+        );
+      }
+    } else if (isOpen) {
+      item.classList.remove("brightness-50");
+      item.classList.add("border-l-8");
+
+      if (isFavorite) {
+        item.classList.add("border-l-yellow-800");
+      } else {
+        item.classList.add("border-l-slate-700");
+      }
+    } else {
+      item.classList.add("brightness-50");
+    }
+  });
+};
+
+const updateHover = (documentationId: string) => {
+  document.querySelectorAll(".item").forEach((item) => {
+    const isHovered = item.id === documentationId;
+    const isOpen = openDocumentation.includes(item.id);
+    item.classList.toggle("brightness-100", isHovered);
+    item.classList.toggle("brightness-50", !isHovered && !isOpen);
+  });
+};
+
+const resetHover = () => {
+  const isAnyOpen = openDocumentation.length > 0;
+  document.querySelectorAll(".item").forEach((item) => {
+    const isOpen = openDocumentation.includes(item.id);
+    item.classList.toggle("brightness-100", !isAnyOpen || isOpen);
+    item.classList.toggle("brightness-50", isAnyOpen && !isOpen);
+  });
+};
+
+const removeBorder = (openDocumentation: string[], documentationId: string) => {
+  const closedItem = document.getElementById(documentationId);
+  if (closedItem) {
+    closedItem.classList.add("brightness-50");
+    closedItem.classList.remove(
+      "brightness-100",
+      "border-l-8",
+      "border-l-sky-500",
+      "border-l-slate-700",
+      "border-l-yellow-500",
+      "border-l-yellow-800"
+    );
+  }
+
+  if (openDocumentation.length === 0) {
+    document.querySelectorAll(".item").forEach((item) => {
+      item.classList.add("brightness-100");
+      item.classList.remove("brightness-50");
+    });
+  }
+};

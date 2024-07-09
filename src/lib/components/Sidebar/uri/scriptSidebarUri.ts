@@ -4,7 +4,7 @@ const scriptSidebarUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
   webview.asWebviewUri(
     vscode.Uri.joinPath(
       extensionUri,
-      "src",
+      "out",
       "lib",
       "components",
       "Sidebar",
