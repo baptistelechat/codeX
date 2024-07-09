@@ -2,15 +2,7 @@ import * as vscode from "vscode";
 
 const scriptSidebarUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
   webview.asWebviewUri(
-    vscode.Uri.joinPath(
-      extensionUri,
-      "out",
-      "lib",
-      "components",
-      "Sidebar",
-      "scripts",
-      "sidebar.js"
-    )
+    vscode.Uri.joinPath(extensionUri, "out", "app", "Sidebar", "sidebar.js")
   );
 
 export default scriptSidebarUri;

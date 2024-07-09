@@ -1,4 +1,4 @@
-import { IDocumentation } from "../../../interfaces/IDocumentation";
+import { IDocumentation } from "../../lib/interfaces/IDocumentation";
 
 // @ts-ignore
 const vscode = acquireVsCodeApi();

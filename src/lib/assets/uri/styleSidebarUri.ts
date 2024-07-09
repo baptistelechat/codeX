@@ -6,8 +6,7 @@ const styleSidebarUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
       extensionUri,
       "src",
       "lib",
-      "components",
-      "Sidebar",
+      "assets",
       "styles",
       "sidebar.css"
     )

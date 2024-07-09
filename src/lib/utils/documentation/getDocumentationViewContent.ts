@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
+import scriptSidebarUri from "../../assets/uri/scriptSidebarUri";
 import styleCodiconUri from "../../assets/uri/styleCodiconUri";
 import styleResetUri from "../../assets/uri/styleResetUri";
+import styleSidebarUri from "../../assets/uri/styleSidebarUri";
 import styleTailwindUri from "../../assets/uri/styleTailwindUri";
 import styleVscodeUri from "../../assets/uri/styleVscodeUri";
-import scriptSidebarUri from "../../components/Sidebar/uri/scriptSidebarUri";
-import styleSidebarUri from "../../components/Sidebar/uri/styleSidebarUri";
 import getNonce from "../getNonce";
 
 const getDocumentationViewContent = (
@@ -35,7 +35,8 @@ const getDocumentationViewContent = (
         <script type="module" nonce="${nonce}" src="${scriptSidebarUri(
     webview,
     extensionUri
-  )}"></script>
+  )}">
+        </script>
       </head>
       <body>
         <div id="no-documentation-found" class="flex flex-col gap-4 py-4">
