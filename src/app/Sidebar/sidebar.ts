@@ -1,11 +1,15 @@
 import { IDocumentation } from "../../lib/interfaces/IDocumentation";
+import removeBorder from "./utils/removeBorder";
+import resetHover from "./utils/resetHover";
+import updateBorder from "./utils/updateBorder";
+import updateHover from "./utils/updateHover";
 
 // @ts-ignore
 const vscode = acquireVsCodeApi();
 
 let openDocumentation: string[] = [];
 let currentDocumentation: string = "";
-let favoriteDocumentations: string[] = [];
+let favoriteDocumentation: string[] = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const reloadButton = document.getElementById("reload");
@@ -24,7 +28,7 @@ window.addEventListener("message", (event) => {
   switch (message.type) {
     case "setDocumentations":
       const { documentations } = message;
-      favoriteDocumentations = documentations
+      favoriteDocumentation = documentations
         .filter((documentation: IDocumentation) => documentation.isFavorite)
         .map((documentation: IDocumentation) => documentation.id);
 
@@ -43,7 +47,7 @@ window.addEventListener("message", (event) => {
       }
 
       const actionItems = (documentationId: string) => {
-        const isFavorite = favoriteDocumentations.includes(documentationId);
+        const isFavorite = favoriteDocumentation.includes(documentationId);
 
         return [
           {
@@ -132,15 +136,20 @@ window.addEventListener("message", (event) => {
           }
 
           currentDocumentation = documentationId;
-          updateBorder(documentationId);
+          updateBorder(
+            openDocumentation,
+            favoriteDocumentation,
+            currentDocumentation,
+            documentationId
+          );
         });
 
         item.addEventListener("mouseenter", () => {
-          updateHover(item.id);
+          updateHover(openDocumentation, item.id);
         });
 
         item.addEventListener("mouseleave", () => {
-          resetHover();
+          resetHover(openDocumentation);
         });
       });
 
@@ -153,14 +162,14 @@ window.addEventListener("message", (event) => {
           item.addEventListener("click", (event) => {
             event.stopPropagation();
 
-            if (favoriteDocumentations.includes(documentationId)) {
-              favoriteDocumentations = favoriteDocumentations.filter(
+            if (favoriteDocumentation.includes(documentationId)) {
+              favoriteDocumentation = favoriteDocumentation.filter(
                 (id) => id !== documentationId
               );
               item.innerHTML = `<div class="codicon codicon-star-empty" aria-label="star-empty"></div>
                   <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
             } else {
-              favoriteDocumentations.push(documentationId);
+              favoriteDocumentation.push(documentationId);
               item.innerHTML = `<div class="codicon codicon-star-full text-yellow-500" aria-label="star-full"></div>
                   <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
             }
@@ -170,7 +179,12 @@ window.addEventListener("message", (event) => {
               documentationId,
             });
 
-            updateBorder(documentationId);
+            updateBorder(
+              openDocumentation,
+              favoriteDocumentation,
+              currentDocumentation,
+              documentationId
+            );
           });
         } else {
           item.addEventListener("click", (event) => {
@@ -185,7 +199,12 @@ window.addEventListener("message", (event) => {
 
     case "documentationFocused":
       currentDocumentation = message.documentationId;
-      updateBorder(message.documentationId);
+      updateBorder(
+        openDocumentation,
+        favoriteDocumentation,
+        currentDocumentation,
+        message.documentationId
+      );
       break;
 
     case "documentationClosed":
@@ -199,88 +218,3 @@ window.addEventListener("message", (event) => {
       break;
   }
 });
-
-const updateBorder = (documentationId: string) => {
-  document.querySelectorAll(".item").forEach((item) => {
-    const isFavorite = favoriteDocumentations.includes(item.id);
-    const isOpen = openDocumentation.includes(item.id);
-    const isCurrentDocumentation = currentDocumentation === item.id;
-
-    // Reset classes
-    item.classList.remove(
-      "brightness-50",
-      "brightness-100",
-      "border-l-8",
-      "border-l-slate-700",
-      "border-l-sky-500",
-      "border-l-yellow-500",
-      "border-l-yellow-800"
-    );
-
-    if (isCurrentDocumentation || (isOpen && item.id === documentationId)) {
-      item.classList.add("brightness-100");
-      item.classList.add("border-l-8");
-
-      if (isFavorite) {
-        item.classList.add(
-          isCurrentDocumentation ? "border-l-yellow-500" : "border-l-yellow-800"
-        );
-      } else {
-        item.classList.add(
-          isCurrentDocumentation ? "border-l-sky-500" : "border-l-slate-700"
-        );
-      }
-    } else if (isOpen) {
-      item.classList.remove("brightness-50");
-      item.classList.add("border-l-8");
-
-      if (isFavorite) {
-        item.classList.add("border-l-yellow-800");
-      } else {
-        item.classList.add("border-l-slate-700");
-      }
-    } else {
-      item.classList.add("brightness-50");
-    }
-  });
-};
-
-const updateHover = (documentationId: string) => {
-  document.querySelectorAll(".item").forEach((item) => {
-    const isHovered = item.id === documentationId;
-    const isOpen = openDocumentation.includes(item.id);
-    item.classList.toggle("brightness-100", isHovered);
-    item.classList.toggle("brightness-50", !isHovered && !isOpen);
-  });
-};
-
-const resetHover = () => {
-  const isAnyOpen = openDocumentation.length > 0;
-  document.querySelectorAll(".item").forEach((item) => {
-    const isOpen = openDocumentation.includes(item.id);
-    item.classList.toggle("brightness-100", !isAnyOpen || isOpen);
-    item.classList.toggle("brightness-50", isAnyOpen && !isOpen);
-  });
-};
-
-const removeBorder = (openDocumentation: string[], documentationId: string) => {
-  const closedItem = document.getElementById(documentationId);
-  if (closedItem) {
-    closedItem.classList.add("brightness-50");
-    closedItem.classList.remove(
-      "brightness-100",
-      "border-l-8",
-      "border-l-sky-500",
-      "border-l-slate-700",
-      "border-l-yellow-500",
-      "border-l-yellow-800"
-    );
-  }
-
-  if (openDocumentation.length === 0) {
-    document.querySelectorAll(".item").forEach((item) => {
-      item.classList.add("brightness-100");
-      item.classList.remove("brightness-50");
-    });
-  }
-};

@@ -80,10 +80,13 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile && npm run build:tailwind",
-    "compile": "tsc -p ./ && npm run build:tailwind",
-    "watch": "tsc -watch -p ./ && npm run build:tailwind",
-    "pretest": "npm run compile && npm run lint",
+    "postprocess": "node postprocess.js",
+    "vscode:prepublish": "npm run compile:app && npm run compile:node && npm run build:tailwind",
+    "compile:app": "tsc -p tsconfig.app.json && npm run postprocess",
+    "compile:node": "tsc -p tsconfig.node.json",
+    "watch:app": "tsc -watch -p tsconfig.app.json && npm run postprocess",
+    "watch:node": "tsc -watch -p tsconfig.node.json",
+    "pretest": "npm run compile:app && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
     "build:tailwind": "npx tailwindcss -i ./src/lib/assets/styles/tailwind.css -o ./src/lib/assets/styles/tailwind.min.css --minify",
@@ -102,7 +105,8 @@
     "@vscode/test-electron": "^2.4.0",
     "eslint": "^8.57.0",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "undici-types": "^6.19.2"
   },
   "dependencies": {
     "@vscode/codicons": "^0.0.36"
