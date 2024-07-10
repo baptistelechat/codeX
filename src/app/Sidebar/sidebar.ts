@@ -198,13 +198,6 @@ window.addEventListener("message", (event) => {
             vscode.postMessage({
               type: "reload",
             });
-
-            // updateBorder(
-            //   openDocumentations,
-            //   favoriteDocumentations,
-            //   currentDocumentation,
-            //   documentationId
-            // );
           });
         } else {
           item.addEventListener("click", (event) => {
@@ -231,6 +224,9 @@ window.addEventListener("message", (event) => {
       openDocumentations = openDocumentations.filter(
         (id) => id !== message.documentationId
       );
+      if (openDocumentations.length === 0) {
+        currentDocumentation = "";
+      }
       removeBorder(openDocumentations, message.documentationId);
       break;
 
