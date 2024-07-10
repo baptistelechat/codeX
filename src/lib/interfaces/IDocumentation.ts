@@ -6,4 +6,5 @@ export interface IDocumentation {
   url: string;
   icon: string;
   isFavorite: boolean;
+  isHide: boolean;
 }
