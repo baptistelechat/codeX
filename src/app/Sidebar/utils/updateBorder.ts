@@ -1,12 +1,12 @@
 const updateBorder = (
-  openDocumentation: string[],
-  favoriteDocumentation: string[],
+  openDocumentations: string[],
+  favoriteDocumentations: string[],
   currentDocumentation: string,
   documentationId: string
 ) => {
   document.querySelectorAll(".item").forEach((item) => {
-    const isFavorite = favoriteDocumentation.includes(item.id);
-    const isOpen = openDocumentation.includes(item.id);
+    const isFavorite = favoriteDocumentations.includes(item.id);
+    const isOpen = openDocumentations.includes(item.id);
     const isCurrentDocumentation = currentDocumentation === item.id;
 
     // Reset classes

@@ -119,6 +119,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
         this._packageJson,
         this._favoriteDocumentations
       );
+
       this._view.webview.postMessage({
         type: "setDocumentations",
         documentations: this._documentations,

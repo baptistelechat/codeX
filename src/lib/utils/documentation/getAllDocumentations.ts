@@ -17,6 +17,10 @@ const getAllDocumentations = async (
     dependencies.map(async (dependency) => {
       const info = await getPackageInfo(dependency);
       if (info) {
+        if (info.name.startsWith("@types")) {
+          return null;
+        }
+
         const url =
           info.homepage || (info.repository && info.repository.url) || "";
         if (uniqueUrls.includes(url)) {
@@ -25,7 +29,7 @@ const getAllDocumentations = async (
         uniqueUrls.push(url);
 
         const documentationName = info.name.includes("/")
-          ? info.name.split("/")[0]
+          ? info.name.split("/")[0].replaceAll("@", "")
           : info.name;
 
         return {
@@ -37,7 +41,7 @@ const getAllDocumentations = async (
           description: info.description ?? "...",
           url,
           icon: getFaviconUrl(url) ?? "",
-          isFavorite: favoriteDocumentations.includes(info.name),
+          isFavorite: favoriteDocumentations.includes(documentationName),
         } as IDocumentation;
       }
       return null;
@@ -46,12 +50,10 @@ const getAllDocumentations = async (
 
   const validDocumentations = documentations
     .filter((doc) => doc !== null)
-    .filter(
-      (doc) => !doc?.id.startsWith("@types") && doc?.url !== ""
-    ) as IDocumentation[];
+    .filter((doc) => doc?.url !== "") as IDocumentation[];
 
   const sortedDocumentations = validDocumentations.sort((a, b) =>
-    a && b ? a.name.localeCompare(b.name) : 0
+    a && b ? a.id.localeCompare(b.id) : 0
   );
 
   return sortedDocumentations;
