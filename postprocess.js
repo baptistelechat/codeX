@@ -3,7 +3,7 @@ const path = require("path");
 
 const directory = "./out/app"; // Directory where JavaScript files are located
 
-// Fonction récursive pour parcourir tous les fichiers dans un répertoire et ses sous-répertoires
+// Recursive function to browse all files in a directory and its sub-directories
 function processFiles(dirPath) {
   fs.readdir(dirPath, (err, files) => {
     if (err) {
@@ -14,7 +14,7 @@ function processFiles(dirPath) {
     files.forEach((file) => {
       const filePath = path.join(dirPath, file);
 
-      // Vérifier si c'est un fichier
+      // Check if it's a file
       fs.stat(filePath, (err, stats) => {
         if (err) {
           console.error(`Error stating file ${filePath}:`, err);
@@ -22,14 +22,14 @@ function processFiles(dirPath) {
         }
 
         if (stats.isFile() && filePath.endsWith(".js")) {
-          // C'est un fichier .js, lire le contenu
+          // It's a .js file, read the contents
           fs.readFile(filePath, "utf8", (err, data) => {
             if (err) {
               console.error(`Error reading file ${filePath}:`, err);
               return;
             }
 
-            // Remplacer les imports sans extension par ceux avec l'extension ".js"
+            // Replace imports without extension by those with ".js" extension
             const updatedContent = data.replace(
               /from ['"](.+)['"]/g,
               (match, importPath) => {
@@ -41,7 +41,7 @@ function processFiles(dirPath) {
               }
             );
 
-            // Écrire le contenu mis à jour dans le fichier
+            // Write the updated content to the file
             fs.writeFile(filePath, updatedContent, "utf8", (err) => {
               if (err) {
                 console.error(`Error writing to file ${filePath}:`, err);
@@ -51,7 +51,7 @@ function processFiles(dirPath) {
             });
           });
         } else if (stats.isDirectory()) {
-          // C'est un répertoire, appeler récursivement la fonction pour traiter ses fichiers
+          // It's a directory, recursively call the function to process its files
           processFiles(filePath);
         }
       });
@@ -59,5 +59,5 @@ function processFiles(dirPath) {
   });
 }
 
-// Démarrer le traitement du répertoire racine
+// Start root directory processing
 processFiles(directory);
