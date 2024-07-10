@@ -1,4 +1,4 @@
-const updateHover = (openDocumentations: string[], documentationId: string) => {
+const updateHover = (documentationId: string, openDocumentations: string[]) => {
   document.querySelectorAll(".item").forEach((item) => {
     const isHovered = item.id === documentationId;
     const isOpen = openDocumentations.includes(item.id);

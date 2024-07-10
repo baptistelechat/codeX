@@ -130,10 +130,10 @@ window.addEventListener("message", (event) => {
       document.querySelectorAll(".item").forEach((item) => {
         const documentationId = item.id;
         updateBorder(
+          documentationId,
+          currentDocumentation,
           openDocumentations,
           favoriteDocumentations,
-          currentDocumentation,
-          documentationId
         );
 
         item.addEventListener("click", (event) => {
@@ -153,15 +153,16 @@ window.addEventListener("message", (event) => {
 
           currentDocumentation = documentationId;
           updateBorder(
-            openDocumentations,
-            favoriteDocumentations,
+            documentationId,
             currentDocumentation,
-            documentationId
+            openDocumentations,
+            favoriteDocumentations
           );
         });
 
         item.addEventListener("mouseenter", () => {
-          updateHover(openDocumentations, item.id);
+          const documentationId = item.id;
+          updateHover(documentationId, openDocumentations);
         });
 
         item.addEventListener("mouseleave", () => {
@@ -213,10 +214,10 @@ window.addEventListener("message", (event) => {
     case "documentationFocused":
       currentDocumentation = message.documentationId;
       updateBorder(
-        openDocumentations,
-        favoriteDocumentations,
+        message.documentationId,
         currentDocumentation,
-        message.documentationId
+        openDocumentations,
+        favoriteDocumentations
       );
       break;
 
@@ -227,7 +228,7 @@ window.addEventListener("message", (event) => {
       if (openDocumentations.length === 0) {
         currentDocumentation = "";
       }
-      removeBorder(openDocumentations, message.documentationId);
+      removeBorder(message.documentationId, openDocumentations);
       break;
 
     default:

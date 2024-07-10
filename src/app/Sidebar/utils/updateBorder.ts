@@ -1,8 +1,8 @@
 const updateBorder = (
-  openDocumentations: string[],
-  favoriteDocumentations: string[],
+  documentationId: string,
   currentDocumentation: string,
-  documentationId: string
+  openDocumentations: string[],
+  favoriteDocumentations: string[]
 ) => {
   document.querySelectorAll(".item").forEach((item) => {
     const isFavorite = favoriteDocumentations.includes(item.id);

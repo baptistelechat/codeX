@@ -1,4 +1,7 @@
-const removeBorder = (openDocumentations: string[], documentationId: string) => {
+const removeBorder = (
+  documentationId: string,
+  openDocumentations: string[]
+) => {
   const closedItem = document.getElementById(documentationId);
   if (closedItem) {
     closedItem.classList.add("brightness-50");
