@@ -6,7 +6,7 @@
     "lib": ["ES2022"],
     "sourceMap": true,
     "rootDir": "src",
-    "strict": true,
+    "strict": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "src/app/**/*.ts"]

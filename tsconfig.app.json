@@ -8,5 +8,6 @@
     "rootDir": "src",
     "strict": true
   },
-  "include": ["src/app/**/*.ts"]
+  "include": ["src/app/**/*.ts"],
+  "exclude": ["node_modules"]
 }

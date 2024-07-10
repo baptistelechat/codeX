@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning].
 ### Changed
 - Update "Add to favorites" icon
 - Update GitHub favicon for git documentation
+- Migrate many files from JavaScript to TypeScript
 
 ## [0.1.0] - 2024-06-27
 
@@ -38,4 +39,4 @@ and this project adheres to [Semantic Versioning].
 
 <!-- Versions -->
 
-[0.1.0]: https://github.com/baptistelechat/pyrevit-with-vscode/releases/tag/v0.1.0
+[0.1.0]: https://github.com/baptistelechat/codeX/releases/tag/v0.1.0

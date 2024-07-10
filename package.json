@@ -80,7 +80,6 @@
     }
   },
   "scripts": {
-    "postprocess": "node postprocess.js",
     "vscode:prepublish": "npm run compile:app && npm run compile:node && npm run build:tailwind",
     "compile:app": "tsc -p tsconfig.app.json && npm run postprocess",
     "compile:node": "tsc -p tsconfig.node.json",
@@ -90,14 +89,17 @@
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
     "build:tailwind": "npx tailwindcss -i ./src/lib/assets/styles/tailwind.css -o ./src/lib/assets/styles/tailwind.min.css --minify",
+    "postprocess": "node postprocess.js",
     "package": "vsce package",
     "publish:patch": "vsce publish patch --message=\"🚀 (Publish) - Increment patch version\"",
     "publish:minor": "vsce publish minor --message=\"🚀 (Publish) - Increment minor version\"",
-    "publish:major": "vsce publish major --message=\"🚀 (Publish) - Increment major version\""
+    "publish:major": "vsce publish major --message=\"🚀 (Publish) - Increment major version\"",
+    "reset:win": "rd /s /q node_modules && rd /s /q out && del yarn.lock && yarn install",
+    "reset:unix": "rm -rf node_modules out yarn.lock && yarn install"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
-    "@types/node": "18.x",
+    "@types/node": "20.0.0",
     "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
@@ -109,7 +111,9 @@
     "undici-types": "^6.19.2"
   },
   "dependencies": {
-    "@vscode/codicons": "^0.0.36"
+    "@vscode/codicons": "^0.0.36",
+    "cross-env": "^7.0.3",
+    "undici": "^6.19.2"
   },
   "packageManager": "yarn@1.22.22"
 }

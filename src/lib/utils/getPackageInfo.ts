@@ -1,3 +1,4 @@
+import { fetch } from "undici";
 import IPackageInformation from "../interfaces/IPackageInformation";
 
 const getPackageInfo = async (
