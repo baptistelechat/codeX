@@ -8,10 +8,10 @@ const removeBorder = (
     closedItem.classList.remove(
       "brightness-100",
       "border-l-8",
-      "border-l-sky-500",
-      "border-l-slate-700",
-      "border-l-yellow-500",
-      "border-l-yellow-800"
+      "border-l-sky-400",
+      "border-l-sky-900",
+      "border-l-yellow-400",
+      "border-l-yellow-900"
     );
   }
 

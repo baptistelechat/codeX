@@ -87,7 +87,7 @@ window.addEventListener("message", (event) => {
               }" class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
                 <div
                   class="codicon codicon-${actionItem.codicon} ${
-                actionItem.codicon === "star-full" ? "text-yellow-500" : ""
+                actionItem.codicon === "star-full" ? "text-yellow-400" : ""
               }"
                   aria-label="${actionItem.codicon}"
                 ></div>
@@ -105,8 +105,8 @@ window.addEventListener("message", (event) => {
             `<div
             id="${documentation.id}"
             class="${
-              documentation.isHide ? "blur-sm" : ""
-            } item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200"
+              documentation.isHide ? "blur-sm grayscale" : ""
+            } item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200 ease-in-out blur-none"
             data-url="${documentation.url}"
           >
             <div class="flex items-center gap-4">
@@ -144,7 +144,8 @@ window.addEventListener("message", (event) => {
           documentationId,
           currentDocumentation,
           openDocumentations,
-          favoriteDocumentations
+          favoriteDocumentations,
+          hideDocumentations
         );
 
         item.addEventListener("click", (event) => {
@@ -167,17 +168,18 @@ window.addEventListener("message", (event) => {
             documentationId,
             currentDocumentation,
             openDocumentations,
-            favoriteDocumentations
+            favoriteDocumentations,
+            hideDocumentations
           );
         });
 
         item.addEventListener("mouseenter", () => {
           const documentationId = item.id;
-          updateHover(documentationId, openDocumentations);
+          updateHover(documentationId, openDocumentations, hideDocumentations);
         });
 
         item.addEventListener("mouseleave", () => {
-          resetHover(openDocumentations);
+          resetHover(openDocumentations, hideDocumentations);
         });
       });
 
@@ -189,17 +191,27 @@ window.addEventListener("message", (event) => {
         if (documentationId && iconName.includes("star")) {
           item.addEventListener("click", (event) => {
             event.stopPropagation();
+            const isFavorite = favoriteDocumentations.includes(documentationId);
+            const isHide = hideDocumentations.includes(documentationId);
 
-            if (favoriteDocumentations.includes(documentationId)) {
+            if (isHide) {
+              vscode.postMessage({
+                type: "toggleHide",
+                documentationId,
+              });
+            }
+
+            if (isFavorite) {
               favoriteDocumentations = favoriteDocumentations.filter(
                 (id) => id !== documentationId
               );
+
               item.innerHTML = `<div class="codicon codicon-star-empty" aria-label="star-empty"></div>
-                  <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
+                    <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
             } else {
               favoriteDocumentations.push(documentationId);
-              item.innerHTML = `<div class="codicon codicon-star-full text-yellow-500" aria-label="star-full"></div>
-                  <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
+              item.innerHTML = `<div class="codicon codicon-star-full text-yellow-400" aria-label="star-full"></div>
+                    <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
             }
 
             vscode.postMessage({
@@ -214,8 +226,17 @@ window.addEventListener("message", (event) => {
         } else if (documentationId && iconName.includes("eye")) {
           item.addEventListener("click", (event) => {
             event.stopPropagation();
+            const isFavorite = favoriteDocumentations.includes(documentationId);
+            const isHide = hideDocumentations.includes(documentationId);
 
-            if (hideDocumentations.includes(documentationId)) {
+            if (isFavorite) {
+              vscode.postMessage({
+                type: "toggleFavorite",
+                documentationId,
+              });
+            }
+
+            if (isHide) {
               hideDocumentations = hideDocumentations.filter(
                 (id) => id !== documentationId
               );
@@ -253,7 +274,8 @@ window.addEventListener("message", (event) => {
         message.documentationId,
         currentDocumentation,
         openDocumentations,
-        favoriteDocumentations
+        favoriteDocumentations,
+        hideDocumentations
       );
       break;
 
