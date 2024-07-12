@@ -94,6 +94,15 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
           this.toggleHide(message.documentationId);
           break;
 
+        case "openExternalUri":
+          const { documentationId } = message;
+          const url = this._documentations.filter(
+            (documentation) => documentation.id === documentationId
+          )[0].url;
+
+          vscode.env.openExternal(vscode.Uri.parse(url));
+          break;
+
         case "reload":
           this.getDocumentations();
           break;
