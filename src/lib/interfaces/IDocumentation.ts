@@ -5,6 +5,7 @@ export interface IDocumentation {
   description: string;
   url: string;
   canBeIFrame: boolean;
+  documentationUrl:string;
   icon: string;
   isFavorite: boolean;
   isHide: boolean;

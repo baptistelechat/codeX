@@ -2,6 +2,7 @@ import { fetch } from "undici";
 import { IDocumentation } from "../../interfaces/IDocumentation";
 import IPackageInformation from "../../interfaces/IPackageInformation";
 import IPackageJson from "../../interfaces/IPackageJson";
+import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
 import getPackageInfo from "../getPackageInfo";
 
@@ -79,6 +80,8 @@ const getAllDocumentations = async (
         const canBeIFrame = await checkIframeSupport(url);
 
         uniqueUrls.push(url);
+
+        const documentationUrl = await findUrlDocumentation(url);
         uniqueIds.push(id);
 
         return {
@@ -87,8 +90,9 @@ const getAllDocumentations = async (
           version: info.version,
           description: info.description ?? "...",
           url,
+          documentationUrl,
           canBeIFrame,
-          icon: getFaviconUrl(url) ?? "",
+          icon: getFaviconUrl(documentationUrl) ?? "",
           isFavorite: favoriteDocumentations.includes(id),
           isHide: hideDocumentations.includes(id),
         } as IDocumentation;
