@@ -18,7 +18,7 @@ const getAllDocumentations = async (
     dependencies.map(async (dependency) => {
       const info = await getPackageInfo(dependency);
       if (info) {
-        if (info.name.startsWith("@types")) {
+        if (info.name.startsWith("@types") || info.name.includes("react-dom")) {
           return null;
         }
 

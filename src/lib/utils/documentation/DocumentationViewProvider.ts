@@ -135,6 +135,32 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  public async resetDocumentations() {
+    vscode.window
+      .showInformationMessage(
+        "Are you sure you want to reset codeX ?",
+        "Yes",
+        "No"
+      )
+      .then(async (action) => {
+        switch (action) {
+          case "Yes":
+            await this.context.globalState.update("favoriteDocumentations", []);
+            await this.context.globalState.update("hideDocumentations", []);
+
+            this._favoriteDocumentations = [];
+            this._hideDocumentations = [];
+
+            this.getDocumentations();
+            break;
+          case "No":
+            break;
+          default:
+            break;
+        }
+      });
+  }
+
   private async loadFavoriteDocumentations() {
     const savedFavorites = this.context.globalState.get<string[]>(
       "favoriteDocumentations"
