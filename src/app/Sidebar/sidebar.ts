@@ -188,75 +188,88 @@ window.addEventListener("message", (event) => {
         const documentationId =
           item.parentElement?.parentElement?.parentElement?.parentElement
             ?.parentElement?.id;
-        if (documentationId && iconName.includes("star")) {
-          item.addEventListener("click", (event) => {
-            event.stopPropagation();
-            const isFavorite = favoriteDocumentations.includes(documentationId);
-            const isHide = hideDocumentations.includes(documentationId);
 
-            if (isHide) {
+        if (documentationId) {
+          if (iconName.includes("preview")) {
+            item.addEventListener("click", (event) => {
+              event.stopPropagation();
               vscode.postMessage({
-                type: "toggleHide",
+                type: "openExternalUri",
                 documentationId,
               });
-            }
-
-            if (isFavorite) {
-              favoriteDocumentations = favoriteDocumentations.filter(
-                (id) => id !== documentationId
-              );
-
-              item.innerHTML = `<div class="codicon codicon-star-empty" aria-label="star-empty"></div>
-                    <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
-            } else {
-              favoriteDocumentations.push(documentationId);
-              item.innerHTML = `<div class="codicon codicon-star-full text-yellow-400" aria-label="star-full"></div>
-                    <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
-            }
-
-            vscode.postMessage({
-              type: "toggleFavorite",
-              documentationId,
             });
+          } else if (iconName.includes("star")) {
+            item.addEventListener("click", (event) => {
+              event.stopPropagation();
+              const isFavorite =
+                favoriteDocumentations.includes(documentationId);
+              const isHide = hideDocumentations.includes(documentationId);
 
-            vscode.postMessage({
-              type: "reload",
-            });
-          });
-        } else if (documentationId && iconName.includes("eye")) {
-          item.addEventListener("click", (event) => {
-            event.stopPropagation();
-            const isFavorite = favoriteDocumentations.includes(documentationId);
-            const isHide = hideDocumentations.includes(documentationId);
+              if (isHide) {
+                vscode.postMessage({
+                  type: "toggleHide",
+                  documentationId,
+                });
+              }
 
-            if (isFavorite) {
+              if (isFavorite) {
+                favoriteDocumentations = favoriteDocumentations.filter(
+                  (id) => id !== documentationId
+                );
+
+                item.innerHTML = `<div class="codicon codicon-star-empty" aria-label="star-empty"></div>
+                      <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
+              } else {
+                favoriteDocumentations.push(documentationId);
+                item.innerHTML = `<div class="codicon codicon-star-full text-yellow-400" aria-label="star-full"></div>
+                      <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
+              }
+
               vscode.postMessage({
                 type: "toggleFavorite",
                 documentationId,
               });
-            }
 
-            if (isHide) {
-              hideDocumentations = hideDocumentations.filter(
-                (id) => id !== documentationId
-              );
-              item.innerHTML = `<div class="codicon codicon-eye-closed" aria-label="eye-closed"></div>
-                  <div class="tooltip tooltip-star-empty">Hide</div>`;
-            } else {
-              hideDocumentations.push(documentationId);
-              item.innerHTML = `<div class="codicon codicon-eye" aria-label="eye"></div>
-                  <div class="tooltip tooltip-star-empty">Unhide</div>`;
-            }
-
-            vscode.postMessage({
-              type: "toggleHide",
-              documentationId,
+              vscode.postMessage({
+                type: "reload",
+              });
             });
+          } else if (iconName.includes("eye")) {
+            item.addEventListener("click", (event) => {
+              event.stopPropagation();
+              const isFavorite =
+                favoriteDocumentations.includes(documentationId);
+              const isHide = hideDocumentations.includes(documentationId);
 
-            vscode.postMessage({
-              type: "reload",
+              if (isFavorite) {
+                vscode.postMessage({
+                  type: "toggleFavorite",
+                  documentationId,
+                });
+              }
+
+              if (isHide) {
+                hideDocumentations = hideDocumentations.filter(
+                  (id) => id !== documentationId
+                );
+                item.innerHTML = `<div class="codicon codicon-eye-closed" aria-label="eye-closed"></div>
+                    <div class="tooltip tooltip-star-empty">Hide</div>`;
+              } else {
+                hideDocumentations.push(documentationId);
+                item.innerHTML = `<div class="codicon codicon-eye" aria-label="eye"></div>
+                    <div class="tooltip tooltip-star-empty">Unhide</div>`;
+              }
+
+              vscode.postMessage({
+                type: "toggleHide",
+                documentationId,
+              });
+
+              vscode.postMessage({
+                type: "reload",
+              });
             });
-          });
+          }
         } else {
           item.addEventListener("click", (event) => {
             event.stopPropagation();
