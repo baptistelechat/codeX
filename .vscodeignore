@@ -13,3 +13,6 @@ vsc-extension-quickstart.md
 # Custom rules
 !src/lib/assets/
 !src/lib/components/
+**/**.zip
+**/tsconfig.**.json
+**/postprocess.js

@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning].
 
 ## Unreleased
 
+- Add a search bar to filter the list of documentation or get the documentation of an uninstalled package
+- Get the documentation url, not the package home page
+
+## [0.2.0] - 2024-07-12
+
 ### Added
 - Action items :
   - Open in default browser
   - Bookmark documentation for easier access in the future
   - Hide the desired documentation if the user doesn't think it's useful to display it
+- Add possibility to reset preferences of the extension
 
 ### Changed
 - Update "Add to favorites" icon
@@ -40,3 +46,4 @@ and this project adheres to [Semantic Versioning].
 <!-- Versions -->
 
 [0.1.0]: https://github.com/baptistelechat/codeX/releases/tag/v0.1.0
+[0.2.0]: https://github.com/baptistelechat/codeX/releases/tag/v0.2.0
