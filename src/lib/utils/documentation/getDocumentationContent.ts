@@ -12,10 +12,10 @@ const getDocumentationContent = (
   webview: vscode.Webview,
   extensionUri: vscode.Uri
 ) => {
-  if (documentation.url.includes("github.com")) {
+  if (documentation.documentationUrl.includes("github.com")) {
     const nonce = getNonce();
 
-    const url = documentation.url.split("https://github.com/");
+    const url = documentation.documentationUrl.split("https://github.com/");
     const ownerRepo = url[1].split("/");
     const owner = ownerRepo[0];
     const repo = ownerRepo[1].split("#")[0];
@@ -54,7 +54,7 @@ const getDocumentationContent = (
             <a
               id="openBrowser"
               class="flex w-fit items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400 hover:text-slate-50  hover:no-underline"
-              href="${documentation.url}"
+              href="${documentation.documentationUrl}"
               target="_blank"
             >
               <div class="codicon codicon-browser" aria-label="browser"></div>
@@ -89,7 +89,7 @@ const getDocumentationContent = (
         <div class="flex flex-col h-screen">
           <div class="flex-1 overflow-auto">
             <iframe width="100%" height="100%" src="${
-              documentation.url
+              documentation.documentationUrl
             }" frameborder="0" class="bg-white">
               <p>Can't load ${documentation.name}</p>
             </iframe>
@@ -101,7 +101,7 @@ const getDocumentationContent = (
             <a
               id="openBrowser"
               class="flex w-fit items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400 hover:text-slate-50  hover:no-underline"
-              href="${documentation.url}"
+              href="${documentation.documentationUrl}"
               target="_blank"
             >
               <div class="codicon codicon-browser" aria-label="browser"></div>

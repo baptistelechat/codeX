@@ -1,5 +1,6 @@
 import { IDocumentation } from "../../interfaces/IDocumentation";
 import IPackageJson from "../../interfaces/IPackageJson";
+import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
 import getPackageInfo from "../getPackageInfo";
 
@@ -29,6 +30,8 @@ const getAllDocumentations = async (
         }
         uniqueUrls.push(url);
 
+        const documentationUrl = await findUrlDocumentation(url);
+
         const documentationName = info.name.includes("/")
           ? info.name.split("/")[0].replaceAll("@", "")
           : info.name;
@@ -41,7 +44,8 @@ const getAllDocumentations = async (
           version: info.version,
           description: info.description ?? "...",
           url,
-          icon: getFaviconUrl(url) ?? "",
+          documentationUrl,
+          icon: getFaviconUrl(documentationUrl) ?? "",
           isFavorite: favoriteDocumentations.includes(documentationName),
           isHide: hideDocumentations.includes(documentationName),
         } as IDocumentation;
