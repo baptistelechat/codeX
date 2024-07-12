@@ -2,35 +2,35 @@ const updateBorder = (
   documentationId: string,
   currentDocumentation: string,
   openDocumentations: string[],
-  favoriteDocumentations: string[]
+  favoriteDocumentations: string[],
+  hideDocumentations: string[]
 ) => {
   document.querySelectorAll(".item").forEach((item) => {
-    const isFavorite = favoriteDocumentations.includes(item.id);
-    const isOpen = openDocumentations.includes(item.id);
     const isCurrentDocumentation = currentDocumentation === item.id;
+    const isOpen = openDocumentations.includes(item.id);
+    const isFavorite = favoriteDocumentations.includes(item.id);
 
     // Reset classes
     item.classList.remove(
       "brightness-50",
       "brightness-100",
       "border-l-8",
-      "border-l-slate-700",
-      "border-l-sky-500",
-      "border-l-yellow-500",
-      "border-l-yellow-800"
+      "border-l-sky-400",
+      "border-l-sky-900",
+      "border-l-yellow-400",
+      "border-l-yellow-900"
     );
 
     if (isCurrentDocumentation || (isOpen && item.id === documentationId)) {
-      item.classList.add("brightness-100");
-      item.classList.add("border-l-8");
+      item.classList.add("brightness-100", "border-l-8");
 
       if (isFavorite) {
         item.classList.add(
-          isCurrentDocumentation ? "border-l-yellow-500" : "border-l-yellow-800"
+          isCurrentDocumentation ? "border-l-yellow-400" : "border-l-yellow-900"
         );
       } else {
         item.classList.add(
-          isCurrentDocumentation ? "border-l-sky-500" : "border-l-slate-700"
+          isCurrentDocumentation ? "border-l-sky-400" : "border-l-sky-900"
         );
       }
     } else if (isOpen) {
@@ -38,9 +38,9 @@ const updateBorder = (
       item.classList.add("border-l-8");
 
       if (isFavorite) {
-        item.classList.add("border-l-yellow-800");
+        item.classList.add("border-l-yellow-900");
       } else {
-        item.classList.add("border-l-slate-700");
+        item.classList.add("border-l-sky-900");
       }
     } else {
       item.classList.add("brightness-50");

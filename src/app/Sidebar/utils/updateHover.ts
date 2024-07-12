@@ -1,9 +1,30 @@
-const updateHover = (documentationId: string, openDocumentations: string[]) => {
+const updateHover = (
+  documentationId: string,
+  openDocumentations: string[],
+  hideDocumentations: string[]
+) => {
   document.querySelectorAll(".item").forEach((item) => {
     const isHovered = item.id === documentationId;
     const isOpen = openDocumentations.includes(item.id);
-    item.classList.toggle("brightness-100", isHovered);
-    item.classList.toggle("brightness-50", !isHovered && !isOpen);
+    const isHide = hideDocumentations.includes(item.id);
+
+    if (isHovered) {
+      item.classList.add("brightness-100");
+      item.classList.remove("brightness-50");
+
+      if (isHide) {
+        item.classList.remove("blur-sm");
+        item.classList.add("blur-none");
+      }
+    } else {
+      item.classList.remove("brightness-100");
+      item.classList.toggle("brightness-50", !isOpen);
+
+      if (isHide) {
+        item.classList.add("blur-sm");
+        item.classList.remove("blur-none");
+      }
+    }
   });
 };
 

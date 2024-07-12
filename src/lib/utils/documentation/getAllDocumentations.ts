@@ -5,7 +5,8 @@ import getPackageInfo from "../getPackageInfo";
 
 const getAllDocumentations = async (
   packageJson: IPackageJson,
-  favoriteDocumentations: string[]
+  favoriteDocumentations: string[],
+  hideDocumentations: string[]
 ) => {
   const dependencies = [
     ...Object.keys(packageJson.dependencies || {}),
@@ -17,7 +18,7 @@ const getAllDocumentations = async (
     dependencies.map(async (dependency) => {
       const info = await getPackageInfo(dependency);
       if (info) {
-        if (info.name.startsWith("@types")) {
+        if (info.name.startsWith("@types") || info.name.includes("react-dom")) {
           return null;
         }
 
@@ -42,6 +43,7 @@ const getAllDocumentations = async (
           url,
           icon: getFaviconUrl(url) ?? "",
           isFavorite: favoriteDocumentations.includes(documentationName),
+          isHide: hideDocumentations.includes(documentationName),
         } as IDocumentation;
       }
       return null;

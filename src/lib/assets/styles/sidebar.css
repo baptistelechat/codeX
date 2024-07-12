@@ -79,3 +79,15 @@
   left: 85%;
   transform: translateX(-85%);
 }
+
+.tooltip-eye {
+  width: 50px;
+  border-radius: 5px;
+  left: 100%;
+  transform: translateX(-100%);
+}
+
+.tooltip-eye::after {
+  left: 85%;
+  transform: translateX(-85%);
+}

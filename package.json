@@ -58,6 +58,12 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "codeX.reset",
+        "category": "CodeX",
+        "title": "Reset preferences",
+        "icon": "$(clear-all)"
+      },
+      {
         "command": "codeX.feedback",
         "category": "CodeX",
         "title": "Feedback",
@@ -68,12 +74,17 @@
       "view/title": [
         {
           "command": "codeX.reload",
-          "group": "navigation",
+          "group": "navigation@1",
           "when": "view == codeX.documentations"
         },
         {
           "command": "codeX.feedback",
-          "group": "navigation",
+          "group": "navigation@2",
+          "when": "view == codeX.documentations"
+        },
+        {
+          "command": "codeX.reset",
+          "group": "navigation@3",
           "when": "view == codeX.documentations"
         }
       ]

@@ -16,12 +16,14 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   private _packageJson: IPackageJson = {};
   private _documentations: IDocumentation[] = [];
   private _favoriteDocumentations: string[] = [];
+  private _hideDocumentations: string[] = [];
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
     private readonly context: vscode.ExtensionContext
   ) {
     this.loadFavoriteDocumentations();
+    this.loadHideDocumentations();
   }
 
   public async resolveWebviewView(
@@ -87,6 +89,11 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
         case "toggleFavorite":
           this.toggleFavorite(message.documentationId);
           break;
+
+        case "toggleHide":
+          this.toggleHide(message.documentationId);
+          break;
+
         case "reload":
           this.getDocumentations();
           break;
@@ -117,7 +124,8 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     if (this._view && this._packageJson) {
       this._documentations = await getAllDocumentations(
         this._packageJson,
-        this._favoriteDocumentations
+        this._favoriteDocumentations,
+        this._hideDocumentations
       );
 
       this._view.webview.postMessage({
@@ -125,6 +133,32 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
         documentations: this._documentations,
       });
     }
+  }
+
+  public async resetDocumentations() {
+    vscode.window
+      .showInformationMessage(
+        "Are you sure you want to reset codeX ?",
+        "Yes",
+        "No"
+      )
+      .then(async (action) => {
+        switch (action) {
+          case "Yes":
+            await this.context.globalState.update("favoriteDocumentations", []);
+            await this.context.globalState.update("hideDocumentations", []);
+
+            this._favoriteDocumentations = [];
+            this._hideDocumentations = [];
+
+            this.getDocumentations();
+            break;
+          case "No":
+            break;
+          default:
+            break;
+        }
+      });
   }
 
   private async loadFavoriteDocumentations() {
@@ -157,5 +191,36 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     }
 
     this.saveFavoriteDocumentations();
+  }
+
+  private async loadHideDocumentations() {
+    const hidedFavorites =
+      this.context.globalState.get<string[]>("hideDocumentations");
+    if (hidedFavorites) {
+      this._hideDocumentations = hidedFavorites;
+    }
+  }
+
+  private async saveHideDocumentations() {
+    await this.context.globalState.update(
+      "hideDocumentations",
+      this._hideDocumentations
+    );
+  }
+
+  private toggleHide(documentationId: string) {
+    const index = this._hideDocumentations.indexOf(documentationId);
+    const documentationName = this._documentations.filter(
+      (documentation) => documentation.id === documentationId
+    )[0].name;
+    if (index !== -1) {
+      this._hideDocumentations.splice(index, 1);
+      showInformationMessage(`${documentationName} unhide.`);
+    } else {
+      this._hideDocumentations.push(documentationId);
+      showInformationMessage(`${documentationName} hide.`);
+    }
+
+    this.saveHideDocumentations();
   }
 }

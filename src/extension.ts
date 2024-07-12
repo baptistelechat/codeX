@@ -22,6 +22,12 @@ export const activate = (context: vscode.ExtensionContext) => {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("codeX.reset", () => {
+      documentationViewProvider.resetDocumentations();
+    })
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand("codeX.feedback", () => {
       openFeedbackForms(context);
     })
