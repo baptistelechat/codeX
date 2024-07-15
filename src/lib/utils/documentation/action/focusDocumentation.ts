@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import IDocumentationViewActionParams from "../../interfaces/IDocumentationViewActionParams";
+import IDocumentationViewActionParams from "../../../interfaces/IDocumentationViewActionParams";
 import openDocumentation from "./openDocumentation";
 
 const focusDocumentation = ({

@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import IDocumentationViewActionParams from "../../interfaces/IDocumentationViewActionParams";
-import isValidUrl from "../isValidUrl";
-import { showErrorMessage } from "../showMessage";
-import getDocumentationContent from "./getDocumentationContent";
+import isValidUrl from "../../isValidUrl";
+import IDocumentationViewActionParams from "../../../interfaces/IDocumentationViewActionParams";
+import { showErrorMessage } from "../../showMessage";
+import getDocumentationContent from "../getDocumentationContent";
 
 const openDocumentation = ({
   id,
