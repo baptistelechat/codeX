@@ -10,9 +10,21 @@ and this project adheres to [Semantic Versioning].
 - Add a search bar to filter the list of documentation or get the documentation of an uninstalled package
 - Get the documentation url, not the package home page
 
+## [0.2.1] - 2024-07-17
+
+### Added
+
+- Manage Radix-ui documentations by updating the url of each installed component
+
+### Fixed
+
+- Manage the list of documentations if the name has the same prefix
+- Display error page if documentation page fails to load due to website security policy (X-Frame-Options)
+
 ## [0.2.0] - 2024-07-12
 
 ### Added
+
 - Action items :
   - Open in default browser
   - Bookmark documentation for easier access in the future
@@ -20,6 +32,7 @@ and this project adheres to [Semantic Versioning].
 - Add possibility to reset preferences of the extension
 
 ### Changed
+
 - Update "Add to favorites" icon
 - Update GitHub favicon for git documentation
 - Migrate many files from JavaScript to TypeScript

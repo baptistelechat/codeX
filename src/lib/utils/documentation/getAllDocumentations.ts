@@ -28,6 +28,26 @@ const formatUrl = async (info: IPackageInformation) => {
   return url;
 };
 
+const checkIframeSupport = async (url: string) => {
+  try {
+    const response = await fetch(url, {
+      method: "HEAD",
+    });
+
+    const xFrameOptions = response.headers.get("X-Frame-Options");
+
+    if (xFrameOptions) {
+      // console.log(`X-Frame-Options: ${xFrameOptions}`);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    // console.error("Error fetching the URL:", error);
+    return false;
+  }
+};
+
 const getAllDocumentations = async (
   packageJson: IPackageJson,
   favoriteDocumentations: string[],
@@ -50,12 +70,13 @@ const getAllDocumentations = async (
         }
 
         const url = await formatUrl(info);
-
         const id = info.name.replaceAll("@", "");
 
         if (uniqueIds.includes(id) || !url) {
           return null;
         }
+
+        const canBeIFrame = await checkIframeSupport(url);
 
         uniqueUrls.push(url);
         uniqueIds.push(id);
@@ -66,6 +87,7 @@ const getAllDocumentations = async (
           version: info.version,
           description: info.description ?? "...",
           url,
+          canBeIFrame,
           icon: getFaviconUrl(url) ?? "",
           isFavorite: favoriteDocumentations.includes(id),
           isHide: hideDocumentations.includes(id),
