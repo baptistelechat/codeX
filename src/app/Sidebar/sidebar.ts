@@ -62,6 +62,10 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
 
     return [
       {
+        codicon: "home",
+        description: "Open in browser",
+      },
+      {
         codicon: "preview",
         description: "Open in browser",
       },
