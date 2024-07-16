@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import isValidUrl from "../../isValidUrl";
 import IDocumentationViewActionParams from "../../../interfaces/IDocumentationViewActionParams";
+import isValidUrl from "../../isValidUrl";
 import { showErrorMessage } from "../../showMessage";
 import getDocumentationContent from "../getDocumentationContent";
 
@@ -12,7 +12,7 @@ const openDocumentation = ({
   webview,
 }: IDocumentationViewActionParams) => {
   const documentation = documentations.find((doc) => doc?.id === id);
-  if (documentation && isValidUrl(documentation.url)) {
+  if (documentation && isValidUrl(documentation.documentationPage.url)) {
     const panel = vscode.window.createWebviewPanel(
       id,
       documentation.name,

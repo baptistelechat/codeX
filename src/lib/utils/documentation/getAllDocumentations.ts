@@ -59,7 +59,6 @@ const getAllDocumentations = async (
     ...Object.keys(packageJson.devDependencies || {}),
   ];
 
-  const uniqueUrls: string[] = [];
   const uniqueIds: string[] = [];
 
   const documentations = await Promise.all(
@@ -70,18 +69,34 @@ const getAllDocumentations = async (
           return null;
         }
 
-        const url = await formatUrl(info);
         const id = info.name.replaceAll("@", "");
 
-        if (uniqueIds.includes(id) || !url) {
+        const homepageUrl = await formatUrl(info);
+
+        if (!homepageUrl) {
           return null;
         }
 
-        const canBeIFrame = await checkIframeSupport(url);
+        const homepageCanBeIFrame = await checkIframeSupport(homepageUrl);
 
-        uniqueUrls.push(url);
+        const documentationPageUrl = homepageUrl.includes(
+          "radix-ui.com/primitives"
+        )
+          ? homepageUrl
+          : await findUrlDocumentation(homepageUrl);
 
-        const documentationUrl = await findUrlDocumentation(url);
+        if (!documentationPageUrl) {
+          return null;
+        }
+
+        const documentationPageCanBeIFrame = await checkIframeSupport(
+          documentationPageUrl
+        );
+
+        if (uniqueIds.includes(id)) {
+          return null;
+        }
+
         uniqueIds.push(id);
 
         return {
@@ -89,10 +104,15 @@ const getAllDocumentations = async (
           id,
           version: info.version,
           description: info.description ?? "...",
-          url,
-          documentationUrl,
-          canBeIFrame,
-          icon: getFaviconUrl(documentationUrl) ?? "",
+          homepage: {
+            url: homepageUrl,
+            canBeIframe: homepageCanBeIFrame,
+          },
+          documentationPage: {
+            url: documentationPageUrl,
+            canBeIframe: documentationPageCanBeIFrame,
+          },
+          icon: getFaviconUrl(documentationPageUrl) ?? "",
           isFavorite: favoriteDocumentations.includes(id),
           isHide: hideDocumentations.includes(id),
         } as IDocumentation;
@@ -102,8 +122,12 @@ const getAllDocumentations = async (
   );
 
   const validDocumentations = documentations
-    .filter((doc) => doc !== null)
-    .filter((doc) => doc?.url !== "") as IDocumentation[];
+    .filter((documentation) => documentation !== null)
+    .filter(
+      (documentation) =>
+        documentation?.homepage.url !== "" &&
+        documentation?.documentationPage.url !== ""
+    ) as IDocumentation[];
 
   const sortedDocumentations = validDocumentations.sort((a, b) =>
     a && b ? a.id.localeCompare(b.id) : 0

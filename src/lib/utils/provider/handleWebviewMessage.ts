@@ -41,7 +41,7 @@ export async function handleWebviewMessage(
       const { documentationId } = message;
       const url = provider._documentations.filter(
         (documentation) => documentation.id === documentationId
-      )[0].url;
+      )[0].documentationPage.url;
 
       vscode.env.openExternal(vscode.Uri.parse(url));
       break;

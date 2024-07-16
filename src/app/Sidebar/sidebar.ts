@@ -101,7 +101,7 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
             class="${
               documentation.isHide ? "blur-sm grayscale" : ""
             } item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200 ease-in-out blur-none"
-            data-url="${documentation.url}"
+            data-url="${documentation.documentationPage.url}"
           >
             <div class="flex items-center gap-4">
               ${
