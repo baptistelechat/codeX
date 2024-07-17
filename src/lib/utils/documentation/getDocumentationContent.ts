@@ -38,7 +38,7 @@ const getDocumentationContent = (
         const owner = "${owner}";
         const repo = "${repo}";
         </script>
-        <script nonce="${nonce}" src="${scriptGitHubUri(
+        <script type="module" nonce="${nonce}" src="${scriptGitHubUri(
       webview,
       extensionUri
     )}"></script>
