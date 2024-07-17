@@ -16,6 +16,7 @@ export async function handleWebviewMessage(
         extensionUri: provider._extensionUri,
         panels: provider._panels,
         webview: provider._view!.webview,
+        homepage: message.homepage,
       });
       break;
 
@@ -26,6 +27,7 @@ export async function handleWebviewMessage(
         extensionUri: provider._extensionUri,
         panels: provider._panels,
         webview: provider._view!.webview,
+        homepage: message.homepage,
       });
       break;
 

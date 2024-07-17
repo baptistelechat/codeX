@@ -8,6 +8,7 @@ const focusDocumentation = ({
   extensionUri,
   panels,
   webview,
+  homepage
 }: IDocumentationViewActionParams) => {
   const panel = panels[id];
   if (panel) {
@@ -16,10 +17,11 @@ const focusDocumentation = ({
     if (webview) {
       openDocumentation({
         id,
-        documentations: documentations,
-        extensionUri: extensionUri,
-        panels: panels,
-        webview: webview,
+        documentations,
+        extensionUri,
+        panels,
+        webview,
+        homepage
       });
     }
   }

@@ -10,6 +10,7 @@ const openDocumentation = ({
   extensionUri,
   panels,
   webview,
+  homepage,
 }: IDocumentationViewActionParams) => {
   const documentation = documentations.find((doc) => doc?.id === id);
   if (documentation && isValidUrl(documentation.documentationPage.url)) {
@@ -27,7 +28,8 @@ const openDocumentation = ({
     const content = getDocumentationContent(
       documentation,
       panel.webview,
-      extensionUri
+      extensionUri,
+      homepage
     );
     panel.webview.html = content;
     panels[id] = panel;
