@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import styleCodiconUri from "../../../assets/uri/styleCodiconUri";
+import styleDocumentationUri from "../../../assets/uri/styleDocumentationUri";
 import styleTailwindUri from "../../../assets/uri/styleTailwindUri";
-import styleDocumentationUri from "../../../components/Documentation/uri/styleDocumentationUri";
 import { IDocumentation } from "../../../interfaces/IDocumentation";
 import getContentBody from "./getContentBody";
 

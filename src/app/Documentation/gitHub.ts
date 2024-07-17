@@ -1,4 +1,4 @@
-const checkIframeSupport = async (url) => {
+const checkIframeSupport = async (url: string) => {
   try {
     const response = await fetch(url, {
       method: "HEAD",
@@ -18,7 +18,8 @@ const checkIframeSupport = async (url) => {
   }
 };
 
-window.replaceBodyContent = async (href) => {
+// @ts-ignore
+window.replaceBodyContent = async (href: string) => {
   if (href.includes("github.com")) {
     const url = href.split("https://github.com/");
     const ownerRepo = url[1].split("/");
@@ -27,19 +28,26 @@ window.replaceBodyContent = async (href) => {
 
     getReadmeContent(owner, repo)
       .then((content) => {
+        // @ts-ignore
         const htmlContent = marked.parse(content);
-        document.getElementById("readme-content").innerHTML = htmlContent;
+        const readmeContentDiv = document.getElementById("readme-content");
+        if (readmeContentDiv) {
+          readmeContentDiv.innerHTML = htmlContent;
+        }
       })
       .catch((error) => {
         console.error("Error fetching README:", error);
-        document.getElementById("readme-content").innerText =
-          "Error fetching README. Please check the console for details.";
+        const readmeContentDiv = document.getElementById("readme-content");
+        if (readmeContentDiv) {
+          readmeContentDiv.innerHTML =
+            "Error fetching README. Please check the console for details.";
+        }
       });
   } else {
-    document.documentElement.style.padding = 0;
+    document.documentElement.style.padding = "0";
     document.documentElement.style.height = "100vh";
     document.body.style.height = "100vh";
-    document.body.style.padding = 0;
+    document.body.style.padding = "0";
 
     const canBeIframe = await checkIframeSupport(href);
 
@@ -78,6 +86,7 @@ window.replaceBodyContent = async (href) => {
   }
 };
 
+// @ts-ignore
 const getReadmeContent = async (owner, repo) => {
   const response = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/readme`,
@@ -96,22 +105,34 @@ const getReadmeContent = async (owner, repo) => {
   return content;
 };
 
+// @ts-ignore
 const renderer = new marked.Renderer();
-renderer.link = (href, title, text) => {
+
+// @ts-ignore
+renderer.link = ( href, title, text ) => {
   return `<a href="#" onclick="replaceBodyContent('${href}')">${text}</a>`;
 };
 
+// @ts-ignore
 marked.use({ renderer });
 
 window.onload = () => {
+  // @ts-ignore
   getReadmeContent(owner, repo)
     .then((content) => {
+      // @ts-ignore
       const htmlContent = marked.parse(content);
-      document.getElementById("readme-content").innerHTML = htmlContent;
+      const readmeContentDiv = document.getElementById("readme-content");
+      if (readmeContentDiv) {
+        readmeContentDiv.innerHTML = htmlContent;
+      }
     })
     .catch((error) => {
       console.error("Error fetching README:", error);
-      document.getElementById("readme-content").innerText =
-        "❌ Error fetching README. Please check the console for details.";
+      const readmeContentDiv = document.getElementById("readme-content");
+      if (readmeContentDiv) {
+        readmeContentDiv.innerHTML =
+          "Error fetching README. Please check the console for details.";
+      }
     });
 };

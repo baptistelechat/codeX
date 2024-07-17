@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
     "module": "ESNext",
+    "moduleResolution": "node",
     "target": "ES2022",
     "outDir": "out",
     "lib": ["DOM", "ES2022"],
     "sourceMap": true,
     "rootDir": "src",
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
   },
   "include": ["src/app/**/*.ts"],
   "exclude": ["node_modules"]

@@ -4,12 +4,10 @@ const scriptGitHubUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
   webview.asWebviewUri(
     vscode.Uri.joinPath(
       extensionUri,
-      "src",
-      "lib",
-      "components",
+      "out",
+      "app",
       "Documentation",
-      "scripts",
-      "github.js"
+      "gitHub.js"
     )
   );
 
