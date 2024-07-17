@@ -7,6 +7,7 @@ interface IDocumentationViewActionParams {
   extensionUri: vscode.Uri;
   panels: { [id: string]: vscode.WebviewPanel };
   webview: vscode.Webview;
+  homepage: boolean;
 }
 
 export default IDocumentationViewActionParams;

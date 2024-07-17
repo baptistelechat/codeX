@@ -1,22 +1,24 @@
-const getReadmeContent = async (owner, repo) => {
-  const response = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/readme`,
-    {
-      headers: {
-        Accept: "application/vnd.github.v3.raw",
-      },
+const checkIframeSupport = async (url) => {
+  try {
+    const response = await fetch(url, {
+      method: "HEAD",
+    });
+
+    const xFrameOptions = response.headers.get("X-Frame-Options");
+
+    if (xFrameOptions) {
+      // console.log(`X-Frame-Options: ${xFrameOptions}`);
+      return false;
     }
-  );
 
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
+    return true;
+  } catch (error) {
+    // console.error("Error fetching the URL:", error);
+    return false;
   }
-
-  const content = await response.text();
-  return content;
 };
 
-const replaceBodyContent = (href) => {
+window.replaceBodyContent = async (href) => {
   if (href.includes("github.com")) {
     const url = href.split("https://github.com/");
     const ownerRepo = url[1].split("/");
@@ -38,7 +40,12 @@ const replaceBodyContent = (href) => {
     document.documentElement.style.height = "100vh";
     document.body.style.height = "100vh";
     document.body.style.padding = 0;
-    document.body.innerHTML = `<div class="flex flex-col h-screen">
+
+    const canBeIframe = await checkIframeSupport(href);
+
+    if (canBeIframe) {
+      document.body.innerHTML = `
+        <div class="flex flex-col h-screen">
           <div class="flex-1 overflow-auto">
             <iframe width="100%" height="100%" src="${href}" frameborder="0" class="bg-white">
               <p>Can't load ${href}</p>
@@ -57,7 +64,36 @@ const replaceBodyContent = (href) => {
             >
           </div>
         </div>`;
+    } else {
+      document.body.innerHTML = `
+        <div class="flex h-screen w-screen flex-col items-center justify-center gap-4">
+          <p class="m-0">Failed to load page due to the website's security policy.</p>
+          <p>You can open it in a browser instead.</p>
+          <a id="openBrowser" class="flex w-fit items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400 hover:text-slate-50 hover:no-underline" href="${href}" target="_blank">
+            <div class="codicon codicon-browser" aria-label="browser"></div>
+            Open in Browser
+          </a>
+        </div>`;
+    }
   }
+};
+
+const getReadmeContent = async (owner, repo) => {
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/readme`,
+    {
+      headers: {
+        Accept: "application/vnd.github.v3.raw",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const content = await response.text();
+  return content;
 };
 
 const renderer = new marked.Renderer();

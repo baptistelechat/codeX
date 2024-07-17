@@ -62,6 +62,10 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
 
     return [
       {
+        codicon: "home",
+        description: "Open homepage",
+      },
+      {
         codicon: "preview",
         description: "Open in browser",
       },
@@ -148,11 +152,13 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
         vscode.postMessage({
           type: "focusDocumentation",
           documentationId,
+          homepage: false,
         });
       } else {
         vscode.postMessage({
           type: "openDocumentation",
           documentationId,
+          homepage: false,
         });
         openDocumentations.push(documentationId);
       }
@@ -184,7 +190,34 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
         ?.parentElement?.id;
 
     if (documentationId) {
-      if (iconName.includes("preview")) {
+      if (iconName.includes("home")) {
+        item.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (openDocumentations.includes(documentationId)) {
+            vscode.postMessage({
+              type: "focusDocumentation",
+              documentationId,
+              homepage: true,
+            });
+          } else {
+            vscode.postMessage({
+              type: "openDocumentation",
+              documentationId,
+              homepage: true,
+            });
+            openDocumentations.push(documentationId);
+          }
+
+          currentDocumentation = documentationId;
+          updateBorder(
+            documentationId,
+            currentDocumentation,
+            openDocumentations,
+            favoriteDocumentations,
+            hideDocumentations
+          );
+        });
+      } else if (iconName.includes("preview")) {
         item.addEventListener("click", (event) => {
           event.stopPropagation();
           vscode.postMessage({
