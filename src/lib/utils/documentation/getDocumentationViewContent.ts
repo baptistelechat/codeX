@@ -38,14 +38,14 @@ const getDocumentationViewContent = (
         </script>
       </head>
       <body>
-        <div id="no-documentation-found" class="flex flex-col gap-4 py-4">
+        <div id="no-documentation-found" class="flex flex-col gap-4 px-6 py-4">
           <p>No documentation found. Try to reload the extension.</p>
           <div id="reload" class="flex items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
             <div class="codicon codicon-refresh" aria-label="refresh"></div>
             <p class="text-slate-50">Reload</p>
           </div>
         </div>
-        <div id="documentation-list" class="mt-2 space-y-2 max-w-full"></div>
+        <div id="documentation-list" class="overflow-hidden max-w-full"></div>
       </body>
       </html>`;
 };

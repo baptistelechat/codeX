@@ -35,6 +35,7 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
   );
 
   const container = document.getElementById("documentation-list");
+
   if (!container) {
     return console.error("Documentation container not found!");
   }
@@ -43,7 +44,16 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
     .getElementById("no-documentation-found")
     ?.style.setProperty("display", "none");
 
-  container.innerHTML = documentations.map(createDocumentationItem).join("");
+  container.innerHTML = `
+  <div class="relative flex flex-col h-screen">
+    <div class="absolute top-0 left-0 right-0 z-10 px-4 py-2">
+      <input id="search-package-input" type="text" placeholder="Search documentations..." class="w-full appearance-none rounded-md p-4 leading-tight ring-1 ring-inset focus:outline-none focus:ring-sky-500" />
+    </div>
+
+    <div class="space-y-2 flex-1 mt-16 overflow-y-auto p-4">
+      ${documentations.map(createDocumentationItem).join("")}
+    </div>
+  </div>`;
 
   setupEventListeners();
 };

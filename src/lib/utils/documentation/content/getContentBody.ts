@@ -26,7 +26,7 @@ const getContentBody = (
           <div class="codicon codicon-browser" aria-label="browser"></div>
           Open in Browser
         </a>
-       </div>`;
+      </div>`;
 
   return `
     <div class="flex flex-col h-screen">
