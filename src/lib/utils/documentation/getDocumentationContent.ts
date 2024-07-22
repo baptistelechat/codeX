@@ -18,11 +18,29 @@ const getDocumentationContent = (
     : documentation.documentationPage.canBeIframe;
 
   if (url.includes("github.com")) {
-    return getGitHubContent(documentation, webview, extensionUri, url);
+    return getGitHubContent(
+      documentation,
+      webview,
+      extensionUri,
+      url,
+      homepage
+    );
   } else if (canBeIframe) {
-    return getIframeContent(documentation, webview, extensionUri, url);
+    return getIframeContent(
+      documentation,
+      webview,
+      extensionUri,
+      url,
+      homepage
+    );
   } else {
-    return getFallbackContent(documentation, webview, extensionUri, url);
+    return getFallbackContent(
+      documentation,
+      webview,
+      extensionUri,
+      url,
+      homepage
+    );
   }
 };
 
