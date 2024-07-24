@@ -7,12 +7,17 @@ import getDocumentationContent from "../getDocumentationContent";
 const openDocumentation = ({
   id,
   documentations,
+  searchDocumentations,
   extensionUri,
   panels,
   webview,
   homepage,
 }: IDocumentationViewActionParams) => {
-  const documentation = documentations.find((doc) => doc?.id === id);
+  let documentation =
+    searchDocumentations.length > 0
+      ? searchDocumentations.find((doc) => doc?.id === id)
+      : documentations.find((doc) => doc?.id === id);
+
   if (documentation && isValidUrl(documentation.documentationPage.url)) {
     const panel = vscode.window.createWebviewPanel(
       id,

@@ -2,14 +2,14 @@ import * as vscode from "vscode";
 import { IDocumentation } from "../../interfaces/IDocumentation";
 import IPackageJson from "../../interfaces/IPackageJson";
 import { getDocumentations } from "../documentation/getDocumentations";
+import { loadFavoriteDocumentations } from "../favoriteDocumentations/loadFavoriteDocumentations";
 import { saveFavoriteDocumentations } from "../favoriteDocumentations/saveFavoriteDocumentations";
 import { toggleFavorite } from "../favoriteDocumentations/toggleFavorite";
 import { loadHideDocumentations } from "../hideDocumentations/loadDocumentations";
 import { saveHideDocumentations } from "../hideDocumentations/saveHideDocumentations";
 import { toggleHide } from "../hideDocumentations/toggleHide";
-import { resolveWebviewView } from "./resolveWebviewView";
-import { loadFavoriteDocumentations } from "../favoriteDocumentations/loadFavoriteDocumentations";
 import { resetExtension } from "./resetExtension";
+import { resolveWebviewView } from "./resolveWebviewView";
 
 export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
@@ -17,6 +17,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public _panels: { [id: string]: vscode.WebviewPanel } = {};
   public _packageJson: IPackageJson = {};
   public _documentations: IDocumentation[] = [];
+  public _searchDocumentations: IDocumentation[] = [];
   public _favoriteDocumentations: string[] = [];
   public _hideDocumentations: string[] = [];
 

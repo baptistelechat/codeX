@@ -4,6 +4,7 @@ import { IDocumentation } from "./IDocumentation";
 interface IDocumentationViewActionParams {
   id: string;
   documentations: IDocumentation[];
+  searchDocumentations: IDocumentation[];
   extensionUri: vscode.Uri;
   panels: { [id: string]: vscode.WebviewPanel };
   webview: vscode.Webview;

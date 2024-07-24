@@ -5,10 +5,11 @@ import openDocumentation from "./openDocumentation";
 const focusDocumentation = ({
   id,
   documentations,
+  searchDocumentations,
   extensionUri,
   panels,
   webview,
-  homepage
+  homepage,
 }: IDocumentationViewActionParams) => {
   const panel = panels[id];
   if (panel) {
@@ -18,10 +19,11 @@ const focusDocumentation = ({
       openDocumentation({
         id,
         documentations,
+        searchDocumentations,
         extensionUri,
         panels,
         webview,
-        homepage
+        homepage,
       });
     }
   }
