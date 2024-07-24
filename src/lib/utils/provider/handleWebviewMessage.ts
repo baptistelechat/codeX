@@ -52,6 +52,11 @@ export async function handleWebviewMessage(
       provider.getDocumentations();
       break;
 
+    case "searchDocumentation":
+      const { searchValue } = message;
+      console.log(searchValue);
+      break;
+
     case "wip":
       showInformationMessage(
         "Work in progress. Stay tuned to know when this feature will be ready."

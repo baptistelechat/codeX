@@ -1,4 +1,5 @@
 import { IDocumentation } from "../../lib/interfaces/IDocumentation";
+import debounce from "./utils/debounce";
 import removeBorder from "./utils/removeBorder";
 import resetHover from "./utils/resetHover";
 import sortDocumentations from "./utils/sortDocumentations";
@@ -154,6 +155,24 @@ const setupEventListeners = () => {
       );
     }
   });
+
+  const searchInput = document.getElementById(
+    "search-package-input"
+  ) as HTMLInputElement;
+
+  if (searchInput) {
+    const debouncedPostMessage = debounce((searchValue: string) => {
+      vscode.postMessage({
+        type: "searchDocumentation",
+        searchValue,
+      });
+    }, 300);
+
+    searchInput.addEventListener("input", () => {
+      const searchValue = searchInput.value;
+      debouncedPostMessage(searchValue);
+    });
+  }
 };
 
 const handleItemClick = (documentationId: string) => {
