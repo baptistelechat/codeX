@@ -17,9 +17,10 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public _panels: { [id: string]: vscode.WebviewPanel } = {};
   public _packageJson: IPackageJson = {};
   public _documentations: IDocumentation[] = [];
-  public _searchDocumentations: IDocumentation[] = [];
   public _favoriteDocumentations: string[] = [];
   public _hideDocumentations: string[] = [];
+  public _searchValue: string = "";
+  public _searchDocumentations: IDocumentation[] = [];
 
   constructor(
     public readonly _extensionUri: vscode.Uri,

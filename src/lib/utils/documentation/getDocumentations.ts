@@ -13,6 +13,7 @@ export async function getDocumentations(provider: DocumentationViewProvider) {
       type: "setDocumentations",
       documentations: provider._documentations,
       searchMode: false,
+      searchValue: provider._searchValue,
     });
   }
 }
