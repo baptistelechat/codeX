@@ -50,7 +50,7 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
   <div class="relative flex flex-col h-screen">
     <div class="absolute left-0 right-0 top-0 z-10 flex gap-2 px-4 py-2">
       <input id="search-package-input" type="text" placeholder="Search documentations..." class="w-full appearance-none rounded-md p-4 leading-tight ring-1 ring-inset focus:outline-none focus:ring-sky-500" />
-      <div id="reload" class="flex items-center justify-center gap-2 rounded bg-sky-500  px-3 py-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
+      <div id="search-package-button" class="flex items-center justify-center gap-2 rounded bg-sky-500  px-3 py-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
         <div class="codicon codicon-search" aria-label="search"></div>
       </div>
     </div>
@@ -160,14 +160,25 @@ const setupEventListeners = () => {
     }
   });
 
-  const searchInput = document.getElementById(
+  const searchPackageInput = document.getElementById(
     "search-package-input"
   ) as HTMLInputElement;
 
-  if (searchInput) {
-    searchInput.addEventListener("change", () => {
-      const searchValue = searchInput.value;
+  const searchPackageButton = document.getElementById(
+    "search-package-button"
+  ) as HTMLInputElement;
 
+  if (searchPackageInput && searchPackageButton) {
+    searchPackageInput.addEventListener("change", () => {
+      const searchValue = searchPackageInput.value;
+      vscode.postMessage({
+        type: "searchDocumentation",
+        searchValue,
+      });
+    });
+
+    searchPackageButton.addEventListener("click", () => {
+      const searchValue = searchPackageInput.value;
       vscode.postMessage({
         type: "searchDocumentation",
         searchValue,
