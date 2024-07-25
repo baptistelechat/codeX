@@ -1,5 +1,4 @@
 import { IDocumentation } from "../../lib/interfaces/IDocumentation";
-import debounce from "./utils/debounce";
 import removeBorder from "./utils/removeBorder";
 import resetHover from "./utils/resetHover";
 import sortDocumentations from "./utils/sortDocumentations";
@@ -14,6 +13,7 @@ let openDocumentations: string[] = [];
 let currentDocumentation: string = "";
 let favoriteDocumentations: string[] = [];
 let hideDocumentations: string[] = [];
+let searchMode: boolean = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   const reloadButton = document.getElementById("reload");
@@ -32,7 +32,8 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
   documentations = sortDocumentations(
     newDocumentations,
     favoriteDocumentations,
-    hideDocumentations
+    hideDocumentations,
+    searchMode
   );
 
   const container = document.getElementById("documentation-list");
@@ -47,8 +48,11 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
 
   container.innerHTML = `
   <div class="relative flex flex-col h-screen">
-    <div class="absolute top-0 left-0 right-0 z-10 px-4 py-2">
+    <div class="absolute left-0 right-0 top-0 z-10 flex gap-2 px-4 py-2">
       <input id="search-package-input" type="text" placeholder="Search documentations..." class="w-full appearance-none rounded-md p-4 leading-tight ring-1 ring-inset focus:outline-none focus:ring-sky-500" />
+      <div id="reload" class="flex items-center justify-center gap-2 rounded bg-sky-500  px-3 py-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
+        <div class="codicon codicon-search" aria-label="search"></div>
+      </div>
     </div>
 
     <div class="space-y-2 flex-1 mt-16 overflow-y-auto p-4">
@@ -161,16 +165,13 @@ const setupEventListeners = () => {
   ) as HTMLInputElement;
 
   if (searchInput) {
-    const debouncedPostMessage = debounce((searchValue: string) => {
+    searchInput.addEventListener("change", () => {
+      const searchValue = searchInput.value;
+
       vscode.postMessage({
         type: "searchDocumentation",
         searchValue,
       });
-    }, 300);
-
-    searchInput.addEventListener("input", () => {
-      const searchValue = searchInput.value;
-      debouncedPostMessage(searchValue);
     });
   }
 };
@@ -297,7 +298,8 @@ const updateDocumentation = (
     documentations = sortDocumentations(
       documentations,
       favoriteDocumentations,
-      hideDocumentations
+      hideDocumentations,
+      searchMode
     );
     loadDocumentations(documentations);
     updateBorder(
@@ -315,7 +317,9 @@ window.addEventListener("message", (event) => {
 
   switch (message.type) {
     case "setDocumentations":
-      loadDocumentations(message.documentations);
+      const { documentations, searchMode: newSearchMode } = message;
+      searchMode = newSearchMode;
+      loadDocumentations(documentations);
       break;
     case "documentationFocused":
       currentDocumentation = message.documentationId;

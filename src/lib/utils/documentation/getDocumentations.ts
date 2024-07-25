@@ -12,6 +12,7 @@ export async function getDocumentations(provider: DocumentationViewProvider) {
     provider._view.webview.postMessage({
       type: "setDocumentations",
       documentations: provider._documentations,
+      searchMode: false,
     });
   }
 }

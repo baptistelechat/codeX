@@ -86,11 +86,7 @@ const getAllDocumentations = async (
         documentation?.documentationPage.url !== ""
     ) as IDocumentation[];
 
-  const sortedDocumentations = validDocumentations.sort((a, b) =>
-    a && b ? a.id.localeCompare(b.id) : 0
-  );
-
-  return sortedDocumentations;
+  return validDocumentations;
 };
 
 export default getAllDocumentations;

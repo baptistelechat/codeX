@@ -1,8 +1,8 @@
 import { IDocumentation } from "../../interfaces/IDocumentation";
-import searchPackage from "../searchPackage";
 import checkIframeSupport from "../checkIframeSupport";
 import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
+import searchPackage from "../searchPackage";
 import formatUrl from "./formatUrl";
 
 const searchDocumentation = async (
@@ -81,11 +81,7 @@ const searchDocumentation = async (
           documentation?.documentationPage.url !== ""
       ) as IDocumentation[];
 
-    const sortedDocumentations = validDocumentations.sort((a, b) =>
-      a && b ? a.id.localeCompare(b.id) : 0
-    );
-
-    return sortedDocumentations;
+    return validDocumentations;
   } catch (error) {
     console.error("Error getting documentations:", error);
     return [];

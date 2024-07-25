@@ -57,17 +57,19 @@ export async function handleWebviewMessage(
 
     case "searchDocumentation":
       const { searchValue } = message;
+      console.log("searchValue:", searchValue);
       const searchDocumentations = await searchDocumentation(
         searchValue,
         provider._favoriteDocumentations,
         provider._hideDocumentations
       );
       provider._searchDocumentations = searchDocumentations;
-      console.log(searchDocumentations);
+      console.log("searchDocumentations:", searchDocumentations);
       if (provider._view) {
         provider._view.webview.postMessage({
           type: "setDocumentations",
           documentations: searchDocumentations,
+          searchMode: true,
         });
       }
       break;
