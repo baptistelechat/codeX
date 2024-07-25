@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning].
 
 ## Unreleased
 
-- Add a search bar to filter the list of documentation or get the documentation of an uninstalled package
+### Added
+
+- Add a search bar to obtain the documentation of an non-installed package
+- Use search bar to filter the list of documentation
+
+### Changed
+
 - Get the documentation url, not the package home page
 
 ## [0.2.1] - 2024-07-17
