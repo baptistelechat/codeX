@@ -1,4 +1,8 @@
+import getRandomLottieFile from "../utils/getRandomLottieFile";
+
 const loader = () => {
+  const lottieFileUrl = getRandomLottieFile().url;
+
   const skeleton = `<div class="flex animate-pulse items-center gap-4">
     <div class="size-10 rounded-md bg-slate-300"></div>
     <div class="size-full flex-col space-y-2">
@@ -20,7 +24,7 @@ const loader = () => {
         ${skeletons}
       </div>
       <div class="relative z-10 size-full p-4">
-        <dotlottie-player src="https://lottie.host/69705bbe-c1a2-452c-bfe5-50bde057f547/v94H0QiYgu.lottie" background="transparent" speed="1" loop autoplay class="size-full"></dotlottie-player>
+        <dotlottie-player src="${lottieFileUrl}" background="transparent" speed="1" loop autoplay class="size-full"></dotlottie-player>
       </div>
     </div>`;
 };

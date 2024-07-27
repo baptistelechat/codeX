@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Add a search bar to obtain the documentation of an non-installed package
-- Use search bar to filter the list of documentation
+- Random loading animation added when a search is launched
 
 ### Changed
 
