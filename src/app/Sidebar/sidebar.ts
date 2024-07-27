@@ -1,4 +1,5 @@
 import { IDocumentation } from "../../lib/interfaces/IDocumentation";
+import loader from "./utils/loader";
 import removeBorder from "./utils/removeBorder";
 import resetHover from "./utils/resetHover";
 import sortDocumentations from "./utils/sortDocumentations";
@@ -37,7 +38,7 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
     searchMode
   );
 
-  const container = document.getElementById("documentation-list");
+  const container = document.getElementById("documentation-container");
 
   if (!container) {
     return console.error("Documentation container not found!");
@@ -48,15 +49,15 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
     ?.style.setProperty("display", "none");
 
   container.innerHTML = `
-  <div class="relative flex flex-col h-screen">
+  <div class="relative flex flex-col h-screen w-full">
     <div class="absolute left-0 right-0 top-0 z-10 flex gap-2 px-4 py-2">
       <input id="search-package-input" type="text" placeholder="Search documentations..." class="w-full appearance-none rounded-md p-4 leading-tight ring-1 ring-inset focus:outline-none focus:ring-sky-500" value="${searchValue}"/>
       <div id="search-package-button" class="flex items-center justify-center gap-2 rounded bg-sky-500  px-3 py-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
         <div class="codicon codicon-search" aria-label="search"></div>
       </div>
     </div>
-
-    <div class="space-y-2 flex-1 mt-16 overflow-y-auto p-4">
+    ${loader()}  
+    <div id="documentation-list" class="space-y-2 flex-1 mt-16 overflow-y-auto p-4">
       ${documentations.map(createDocumentationItem).join("")}
     </div>
   </div>`;
@@ -169,9 +170,20 @@ const setupEventListeners = () => {
     "search-package-button"
   ) as HTMLInputElement;
 
-  if (searchPackageInput && searchPackageButton) {
+  const loader = document.getElementById("loader");
+  const documentationList = document.getElementById("documentation-list");
+
+  if (
+    searchPackageInput &&
+    searchPackageButton &&
+    loader &&
+    documentationList
+  ) {
     searchPackageInput.addEventListener("change", () => {
       const searchValue = searchPackageInput.value;
+      documentationList.style.setProperty("display", "none");
+      loader.style.setProperty("display", "flex");
+
       vscode.postMessage({
         type: "searchDocumentation",
         searchValue,
@@ -180,6 +192,9 @@ const setupEventListeners = () => {
 
     searchPackageButton.addEventListener("click", () => {
       const searchValue = searchPackageInput.value;
+      documentationList.style.setProperty("display", "none");
+      loader.style.setProperty("display", "flex");
+
       vscode.postMessage({
         type: "searchDocumentation",
         searchValue,
