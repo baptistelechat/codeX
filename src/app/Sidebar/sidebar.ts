@@ -1,9 +1,11 @@
 import { IDocumentation } from "../../lib/interfaces/IDocumentation";
-import loader from "./utils/loader";
-import removeBorder from "./utils/removeBorder";
-import resetHover from "./utils/resetHover";
+import loader from "./components/loader";
+import searchInput from "./components/searchInput";
+import createDocumentationItem from "./utils/createDocumentationItem";
+import removeBorder from "./utils/border/removeBorder";
+import resetHover from "./utils/border/resetHover";
 import sortDocumentations from "./utils/sortDocumentations";
-import updateBorder from "./utils/updateBorder";
+import updateBorder from "./utils/border/updateBorder";
 import updateHover from "./utils/updateHover";
 
 // @ts-ignore
@@ -51,85 +53,23 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
   container.innerHTML = `
   <div class="relative flex flex-col h-screen w-full">
     <div class="absolute left-0 right-0 top-0 z-10 flex gap-2 px-4 py-2">
-      <input id="search-package-input" type="text" placeholder="Search documentations..." class="w-full appearance-none rounded-md p-4 leading-tight ring-1 ring-inset focus:outline-none focus:ring-sky-500" value="${searchValue}"/>
-      <div id="search-package-button" class="flex items-center justify-center gap-2 rounded bg-sky-500  px-3 py-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
-        <div class="codicon codicon-search" aria-label="search"></div>
-      </div>
+      ${searchInput(searchValue)}
     </div>
     ${loader()}  
     <div id="documentation-list" class="space-y-2 flex-1 mt-16 overflow-y-auto p-4">
-      ${documentations.map(createDocumentationItem).join("")}
+      ${documentations
+        .map((documentation) =>
+          createDocumentationItem(
+            documentation,
+            favoriteDocumentations,
+            hideDocumentations
+          )
+        )
+        .join("")}
     </div>
   </div>`;
 
   setupEventListeners();
-};
-
-const createDocumentationItem = (documentation: IDocumentation) => {
-  const { id, icon, name, description, version, isHide } = documentation;
-  const actionItems = createActionItems(id);
-
-  return `
-    <div id="${id}" class="${
-    isHide ? "blur-sm grayscale" : ""
-  } item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200 ease-in-out" data-url="${
-    documentation.documentationPage.url
-  }">
-      <div class="flex items-center gap-4">
-        ${
-          icon.includes("github")
-            ? '<div class="codicon codicon-github-inverted" aria-label="github-inverted" style="font-size:32px"></div>'
-            : `<img src="${icon}" alt="${name} icon" class="size-10" />`
-        }
-        <div class="flex w-full flex-col gap-1 overflow-hidden">
-          <h2 class="text-xl font-semibold">${name}</h2>
-          <p class="truncate text-slate-400">${description}</p>
-          <div class="flex justify-between">
-            <p class="font-semibold italic text-slate-400">v${version}</p>
-            <div class="mr-2 flex gap-1.5">${actionItems}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-};
-
-const createActionItems = (documentationId: string) => {
-  const actions = [
-    { codicon: "home", description: "Open homepage" },
-    { codicon: "preview", description: "Open in browser" },
-    {
-      codicon: favoriteDocumentations.includes(documentationId)
-        ? "star-full"
-        : "star-empty",
-      description: favoriteDocumentations.includes(documentationId)
-        ? "Remove favorite"
-        : "Add to favorites",
-    },
-    {
-      codicon: hideDocumentations.includes(documentationId)
-        ? "eye"
-        : "eye-closed",
-      description: hideDocumentations.includes(documentationId)
-        ? "Unhide"
-        : "Hide",
-    },
-  ];
-
-  return actions
-    .map(
-      (action) => `
-    <div id="${
-      action.codicon
-    }" class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-      <div class="codicon codicon-${action.codicon} ${
-        action.codicon === "star-full" ? "text-yellow-400" : ""
-      }" aria-label="${action.codicon}"></div>
-      <div class="tooltip tooltip-${action.codicon}">${action.description}</div>
-    </div>
-  `
-    )
-    .join("");
 };
 
 const setupEventListeners = () => {

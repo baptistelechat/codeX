@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { IDocumentation } from "./IDocumentation";
 
-interface IDocumentationViewActionParams {
+interface IOpenDocumentationProps {
   id: string;
   documentations: IDocumentation[];
   searchDocumentations: IDocumentation[];
@@ -11,4 +11,4 @@ interface IDocumentationViewActionParams {
   homepage: boolean;
 }
 
-export default IDocumentationViewActionParams;
+export default IOpenDocumentationProps;

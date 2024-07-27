@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import IDocumentationViewActionParams from "../../../interfaces/IDocumentationViewActionParams";
+import IOpenDocumentationProps from "../../../interfaces/IOpenDocumentationProps";
 import openDocumentation from "./openDocumentation";
 
 const focusDocumentation = ({
@@ -10,7 +10,7 @@ const focusDocumentation = ({
   panels,
   webview,
   homepage,
-}: IDocumentationViewActionParams) => {
+}: IOpenDocumentationProps) => {
   const panel = panels[id];
   if (panel) {
     panel.reveal(vscode.ViewColumn.Two);

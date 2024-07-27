@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import IDocumentationViewActionParams from "../../../interfaces/IDocumentationViewActionParams";
+import IOpenDocumentationProps from "../../../interfaces/IOpenDocumentationProps";
 import isValidUrl from "../../isValidUrl";
 import { showErrorMessage } from "../../showMessage";
 import getDocumentationContent from "../getDocumentationContent";
@@ -12,7 +12,7 @@ const openDocumentation = ({
   panels,
   webview,
   homepage,
-}: IDocumentationViewActionParams) => {
+}: IOpenDocumentationProps) => {
   let documentation =
     searchDocumentations.length > 0
       ? searchDocumentations.find((doc) => doc?.id === id)
