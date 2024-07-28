@@ -2,12 +2,12 @@ import * as vscode from "vscode";
 import { IDocumentation } from "../../interfaces/IDocumentation";
 import IPackageJson from "../../interfaces/IPackageJson";
 import { getDocumentations } from "../documentation/getDocumentations";
-import { loadFavoriteDocumentations } from "../favoriteDocumentations/loadFavoriteDocumentations";
-import { saveFavoriteDocumentations } from "../favoriteDocumentations/saveFavoriteDocumentations";
-import { toggleFavorite } from "../favoriteDocumentations/toggleFavorite";
-import { loadHideDocumentations } from "../hideDocumentations/loadDocumentations";
-import { saveHideDocumentations } from "../hideDocumentations/saveHideDocumentations";
-import { toggleHide } from "../hideDocumentations/toggleHide";
+import loadFavoriteDocumentations from "../favoriteDocumentations/loadFavoriteDocumentations";
+import saveFavoriteDocumentations from "../favoriteDocumentations/saveFavoriteDocumentations";
+import toggleFavorite from "../favoriteDocumentations/toggleFavorite";
+import { loadHideDocumentations } from "../hideDocumentations/loadHideDocumentations";
+import saveHideDocumentations from "../hideDocumentations/saveHideDocumentations";
+import toggleHide from "../hideDocumentations/toggleHide";
 import { resetExtension } from "./resetExtension";
 import { resolveWebviewView } from "./resolveWebviewView";
 
@@ -55,6 +55,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   }
 
   public async saveFavoriteDocumentations() {
+    console.log(this._favoriteDocumentations);
     await saveFavoriteDocumentations(
       this.context,
       this._favoriteDocumentations
@@ -71,6 +72,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   }
 
   public async saveHideDocumentations() {
+    console.log(this._hideDocumentations);
     await saveHideDocumentations(this.context, this._hideDocumentations);
   }
 

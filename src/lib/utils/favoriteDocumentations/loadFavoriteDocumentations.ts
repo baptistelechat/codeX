@@ -1,10 +1,12 @@
 import * as vscode from "vscode";
 
-export async function loadFavoriteDocumentations(
+const loadFavoriteDocumentations = async (
   context: vscode.ExtensionContext
-): Promise<string[]> {
+): Promise<string[]> => {
   const savedFavorites = context.globalState.get<string[]>(
     "favoriteDocumentations"
   );
   return savedFavorites || [];
-}
+};
+
+export default loadFavoriteDocumentations;
