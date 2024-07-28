@@ -53,11 +53,11 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
 
   container.innerHTML = `
   <div class="relative flex flex-col h-screen w-full">
-    <div class="absolute left-0 right-0 top-0 z-10 flex gap-2 px-4 py-2">
-      ${searchInput(searchValue)}
+    <div class="absolute left-0 right-0 top-0 z-10 flex flex-col gap-2 p-4 pb-0">
+      ${searchInput(searchValue, documentations.length)}
     </div>
     ${loader()}  
-    <div id="documentation-list" class="space-y-2 flex-1 mt-16 overflow-y-auto p-4">
+    <div id="documentation-list" class="space-y-2 flex-1 mt-28 overflow-y-auto p-4 pt-0">
       ${documentations
         .map((documentation) =>
           createDocumentationItem(
@@ -111,6 +111,10 @@ const setupEventListeners = () => {
     "search-package-button"
   ) as HTMLInputElement;
 
+  const documentationFoundLength = document.getElementById(
+    "documentation-found-length"
+  ) as HTMLInputElement;
+
   const loader = document.getElementById("loader");
   const lottieAnimations = document.querySelectorAll(".lottieAnimation");
 
@@ -119,6 +123,7 @@ const setupEventListeners = () => {
   if (
     searchPackageInput &&
     searchPackageButton &&
+    documentationFoundLength &&
     loader &&
     documentationList &&
     lottieAnimations
@@ -126,6 +131,7 @@ const setupEventListeners = () => {
     searchPackageInput.addEventListener("change", () => {
       const searchValue = searchPackageInput.value;
 
+      documentationFoundLength.style.setProperty("display", "none");
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
 
@@ -144,13 +150,14 @@ const setupEventListeners = () => {
         searchValue,
       });
     });
-
+    
     searchPackageButton.addEventListener("click", () => {
       const searchValue = searchPackageInput.value;
-
+      
+      documentationFoundLength.style.setProperty("display", "none");
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
-
+      
       const activeLottieFileId =
         "lottie-animation-" + getRandomLottieFile().id.toString();
       lottieAnimations.forEach((lottieAnimation) => {
