@@ -1,11 +1,12 @@
 import { IDocumentation } from "../../lib/interfaces/IDocumentation";
 import loader from "./components/loader";
 import searchInput from "./components/searchInput";
-import createDocumentationItem from "./utils/createDocumentationItem";
 import removeBorder from "./utils/border/removeBorder";
 import resetHover from "./utils/border/resetHover";
-import sortDocumentations from "./utils/sortDocumentations";
 import updateBorder from "./utils/border/updateBorder";
+import createDocumentationItem from "./utils/createDocumentationItem";
+import getRandomLottieFile from "./utils/getRandomLottieFile";
+import sortDocumentations from "./utils/sortDocumentations";
 import updateHover from "./utils/updateHover";
 
 // @ts-ignore
@@ -111,18 +112,32 @@ const setupEventListeners = () => {
   ) as HTMLInputElement;
 
   const loader = document.getElementById("loader");
+  const lottieAnimations = document.querySelectorAll(".lottieAnimation");
+
   const documentationList = document.getElementById("documentation-list");
 
   if (
     searchPackageInput &&
     searchPackageButton &&
     loader &&
-    documentationList
+    documentationList &&
+    lottieAnimations
   ) {
     searchPackageInput.addEventListener("change", () => {
       const searchValue = searchPackageInput.value;
+
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
+
+      const activeLottieFileId =
+        "lottie-animation-" + getRandomLottieFile().id.toString();
+      lottieAnimations.forEach((lottieAnimation) => {
+        if (lottieAnimation.id === activeLottieFileId) {
+          lottieAnimation.classList.remove("hidden");
+        } else {
+          lottieAnimation.classList.add("hidden");
+        }
+      });
 
       vscode.postMessage({
         type: "searchDocumentation",
@@ -132,8 +147,19 @@ const setupEventListeners = () => {
 
     searchPackageButton.addEventListener("click", () => {
       const searchValue = searchPackageInput.value;
+
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
+
+      const activeLottieFileId =
+        "lottie-animation-" + getRandomLottieFile().id.toString();
+      lottieAnimations.forEach((lottieAnimation) => {
+        if (lottieAnimation.id === activeLottieFileId) {
+          lottieAnimation.classList.remove("hidden");
+        } else {
+          lottieAnimation.classList.add("hidden");
+        }
+      });
 
       vscode.postMessage({
         type: "searchDocumentation",
