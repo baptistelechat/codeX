@@ -22,7 +22,7 @@ const loader = () => {
     .map(
       (lottieFile) => `<div id="lottie-animation-${
         lottieFile.id
-      }" class="lottieAnimation relative z-10 size-full p-4 ${
+      }" class="lottieAnimation relative z-10 size-full px-6 py-4 ${
         lottieFile.id === activeLottieFileId ? "" : "hidden"
       }">
         <dotlottie-player id="loader-dotlottie-player" src="${
