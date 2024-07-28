@@ -69,7 +69,7 @@ const getAllDocumentations = async (
             url: documentationPageUrl,
             canBeIframe: documentationPageCanBeIFrame,
           },
-          icon: getFaviconUrl(documentationPageUrl) ?? "",
+          icon: (await getFaviconUrl(documentationPageUrl)) ?? "",
           isFavorite: favoriteDocumentations.includes(id),
           isHide: hideDocumentations.includes(id),
         } as IDocumentation;

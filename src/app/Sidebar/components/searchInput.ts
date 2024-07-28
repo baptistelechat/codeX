@@ -7,6 +7,6 @@ const searchInput = (
       <div class="codicon codicon-search" aria-label="search"></div>
     </div>
   </div>
-  <p id="documentation-found-length" class="italic text-slate-400">${documentationFoundLength} documentation(s) founds</p>`;
+  <p id="documentation-found-length" class="italic text-slate-400">${documentationFoundLength} documentation(s) found</p>`;
 
 export default searchInput;

@@ -150,14 +150,14 @@ const setupEventListeners = () => {
         searchValue,
       });
     });
-    
+
     searchPackageButton.addEventListener("click", () => {
       const searchValue = searchPackageInput.value;
-      
+
       documentationFoundLength.style.setProperty("display", "none");
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
-      
+
       const activeLottieFileId =
         "lottie-animation-" + getRandomLottieFile().id.toString();
       lottieAnimations.forEach((lottieAnimation) => {

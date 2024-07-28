@@ -9,6 +9,7 @@ export function toggleFavorite(
   const documentationName = provider._documentations.filter(
     (documentation) => documentation.id === documentationId
   )[0].name;
+  
   if (index !== -1) {
     provider._favoriteDocumentations.splice(index, 1);
     showInformationMessage(`${documentationName} removed from favorites.`);
