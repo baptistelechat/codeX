@@ -3,7 +3,6 @@ const updateBorder = (
   currentDocumentation: string,
   openDocumentations: string[],
   favoriteDocumentations: string[],
-  hideDocumentations: string[]
 ) => {
   document.querySelectorAll(".item").forEach((item) => {
     const isCurrentDocumentation = currentDocumentation === item.id;
