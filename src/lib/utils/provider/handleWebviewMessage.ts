@@ -13,11 +13,7 @@ export async function handleWebviewMessage(
     case "openDocumentation":
       openDocumentation({
         id: message.documentationId,
-        documentations: provider._documentations,
-        searchDocumentations: provider._searchDocumentations,
-        extensionUri: provider._extensionUri,
-        panels: provider._panels,
-        webview: provider._view!.webview,
+        provider,
         homepage: message.homepage,
       });
       break;
@@ -25,11 +21,7 @@ export async function handleWebviewMessage(
     case "focusDocumentation":
       focusDocumentation({
         id: message.documentationId,
-        documentations: provider._documentations,
-        searchDocumentations: provider._searchDocumentations,
-        extensionUri: provider._extensionUri,
-        panels: provider._panels,
-        webview: provider._view!.webview,
+        provider,
         homepage: message.homepage,
       });
       break;
@@ -57,15 +49,12 @@ export async function handleWebviewMessage(
 
     case "searchDocumentation":
       const { searchValue } = message;
-      console.log("searchValue:", searchValue);
+      // console.log("searchValue:", searchValue);
       provider._searchValue = searchValue;
-      const searchDocumentations = await searchDocumentation(
-        searchValue,
-        provider._favoriteDocumentations,
-        provider._hideDocumentations
-      );
+      provider._searchMode = true;
+      const searchDocumentations = await searchDocumentation(provider);
       provider._searchDocumentations = searchDocumentations;
-      console.log("searchDocumentations:", searchDocumentations);
+      // console.log("searchDocumentations:", searchDocumentations);
       if (provider._view) {
         provider._view.webview.postMessage({
           type: "setDocumentations",
@@ -74,6 +63,11 @@ export async function handleWebviewMessage(
           searchValue,
         });
       }
+      break;
+
+    case "resetSearch":
+      provider._searchMode = false;
+      provider._searchValue = "";
       break;
 
     case "wip":

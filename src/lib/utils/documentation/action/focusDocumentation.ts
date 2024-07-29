@@ -4,25 +4,17 @@ import openDocumentation from "./openDocumentation";
 
 const focusDocumentation = ({
   id,
-  documentations,
-  searchDocumentations,
-  extensionUri,
-  panels,
-  webview,
+  provider,
   homepage,
 }: IOpenDocumentationProps) => {
-  const panel = panels[id];
+  const panel = provider._panels[id];
   if (panel) {
     panel.reveal(vscode.ViewColumn.Two);
   } else {
-    if (webview) {
+    if (provider._view!.webview) {
       openDocumentation({
         id,
-        documentations,
-        searchDocumentations,
-        extensionUri,
-        panels,
-        webview,
+        provider,
         homepage,
       });
     }

@@ -210,6 +210,10 @@ const setupEventListeners = () => {
         searchMode = false;
         searchValue = "";
         loadDocumentations(documentations);
+
+        vscode.postMessage({
+          type: "resetSearch",
+        });
       });
     }
   }
@@ -329,22 +333,47 @@ const updateDocumentation = (
   documentationId: string,
   updates: Partial<IDocumentation>
 ) => {
-  const index = documentations.findIndex((doc) => doc.id === documentationId);
-  if (index !== -1) {
-    documentations[index] = { ...documentations[index], ...updates };
-    documentations = sortDocumentations(
-      documentations,
-      favoriteDocumentations,
-      hideDocumentations,
-      searchMode
+  if (searchMode) {
+    const index = searchDocumentations.findIndex(
+      (doc) => doc.id === documentationId
     );
-    loadDocumentations(documentations);
-    updateBorder(
-      documentationId,
-      currentDocumentation,
-      openDocumentations,
-      favoriteDocumentations
-    );
+    if (index !== -1) {
+      searchDocumentations[index] = {
+        ...searchDocumentations[index],
+        ...updates,
+      };
+      searchDocumentations = sortDocumentations(
+        searchDocumentations,
+        favoriteDocumentations,
+        hideDocumentations,
+        searchMode
+      );
+      loadDocumentations(searchDocumentations);
+      updateBorder(
+        documentationId,
+        currentDocumentation,
+        openDocumentations,
+        favoriteDocumentations
+      );
+    }
+  } else {
+    const index = documentations.findIndex((doc) => doc.id === documentationId);
+    if (index !== -1) {
+      documentations[index] = { ...documentations[index], ...updates };
+      documentations = sortDocumentations(
+        documentations,
+        favoriteDocumentations,
+        hideDocumentations,
+        searchMode
+      );
+      loadDocumentations(documentations);
+      updateBorder(
+        documentationId,
+        currentDocumentation,
+        openDocumentations,
+        favoriteDocumentations
+      );
+    }
   }
 };
 
@@ -354,13 +383,13 @@ window.addEventListener("message", (event) => {
   switch (message.type) {
     case "setDocumentations":
       const {
-        documentations,
+        documentations: newDocumentations,
         searchMode: newSearchMode,
         searchValue: newSearchValue,
       } = message;
       searchMode = newSearchMode;
       searchValue = newSearchValue;
-      loadDocumentations(documentations);
+      loadDocumentations(newDocumentations);
       break;
     case "documentationFocused":
       currentDocumentation = message.documentationId;

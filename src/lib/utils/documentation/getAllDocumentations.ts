@@ -1,19 +1,15 @@
 import { IDocumentation } from "../../interfaces/IDocumentation";
-import IPackageJson from "../../interfaces/IPackageJson";
 import checkIframeSupport from "../checkIframeSupport";
 import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
 import getPackageInfo from "../getPackageInfo";
+import { DocumentationViewProvider } from "../provider/DocumentationViewProvider";
 import formatUrl from "./formatUrl";
 
-const getAllDocumentations = async (
-  packageJson: IPackageJson,
-  favoriteDocumentations: string[],
-  hideDocumentations: string[]
-) => {
+const getAllDocumentations = async (provider: DocumentationViewProvider) => {
   const dependencies = [
-    ...Object.keys(packageJson.dependencies || {}),
-    ...Object.keys(packageJson.devDependencies || {}),
+    ...Object.keys(provider._packageJson.dependencies || {}),
+    ...Object.keys(provider._packageJson.devDependencies || {}),
   ];
 
   const uniqueIds: string[] = [];
@@ -70,8 +66,8 @@ const getAllDocumentations = async (
             canBeIframe: documentationPageCanBeIFrame,
           },
           icon: (await getFaviconUrl(documentationPageUrl)) ?? "",
-          isFavorite: favoriteDocumentations.includes(id),
-          isHide: hideDocumentations.includes(id),
+          isFavorite: provider._favoriteDocumentations.includes(id),
+          isHide: provider._hideDocumentations.includes(id),
         } as IDocumentation;
       }
       return null;

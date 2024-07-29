@@ -2,16 +2,15 @@ import { IDocumentation } from "../../interfaces/IDocumentation";
 import checkIframeSupport from "../checkIframeSupport";
 import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
+import { DocumentationViewProvider } from "../provider/DocumentationViewProvider";
 import searchPackage from "../searchPackage";
 import formatUrl from "./formatUrl";
 
 const searchDocumentation = async (
-  searchValue: string,
-  favoriteDocumentations: string[],
-  hideDocumentations: string[]
+  provider: DocumentationViewProvider
 ): Promise<IDocumentation[]> => {
   try {
-    const packages = await searchPackage(searchValue);
+    const packages = await searchPackage(provider._searchValue);
     const uniqueIds: string[] = [];
 
     const documentations = await Promise.all(
@@ -65,8 +64,8 @@ const searchDocumentation = async (
             canBeIframe: documentationPageCanBeIFrame,
           },
           icon: (await getFaviconUrl(documentationPageUrl)) ?? "",
-          isFavorite: favoriteDocumentations.includes(id),
-          isHide: hideDocumentations.includes(id),
+          isFavorite: provider._favoriteDocumentations.includes(id),
+          isHide: provider._hideDocumentations.includes(id),
         } as IDocumentation;
 
         return doc;

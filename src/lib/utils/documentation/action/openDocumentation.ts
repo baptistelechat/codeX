@@ -6,17 +6,12 @@ import getDocumentationContent from "../getDocumentationContent";
 
 const openDocumentation = ({
   id,
-  documentations,
-  searchDocumentations,
-  extensionUri,
-  panels,
-  webview,
+  provider,
   homepage,
 }: IOpenDocumentationProps) => {
-  let documentation =
-    searchDocumentations.length > 0
-      ? searchDocumentations.find((doc) => doc?.id === id)
-      : documentations.find((doc) => doc?.id === id);
+  let documentation = provider._searchMode
+    ? provider._searchDocumentations.find((doc) => doc?.id === id)
+    : provider._documentations.find((doc) => doc?.id === id);
 
   if (documentation && isValidUrl(documentation.documentationPage.url)) {
     const panel = vscode.window.createWebviewPanel(
@@ -26,22 +21,22 @@ const openDocumentation = ({
       {
         enableScripts: true,
         retainContextWhenHidden: true,
-        localResourceRoots: [extensionUri],
+        localResourceRoots: [provider._extensionUri],
       }
     );
 
     const content = getDocumentationContent(
       documentation,
       panel.webview,
-      extensionUri,
+      provider._extensionUri,
       homepage
     );
     panel.webview.html = content;
-    panels[id] = panel;
+    provider._panels[id] = panel;
 
     panel.onDidDispose(() => {
-      delete panels[id];
-      webview.postMessage({
+      delete provider._panels[id];
+      provider._view!.webview.postMessage({
         type: "documentationClosed",
         documentationId: id,
       });
@@ -49,7 +44,7 @@ const openDocumentation = ({
 
     panel.onDidChangeViewState(() => {
       if (panel.visible) {
-        webview.postMessage({
+        provider._view!.webview.postMessage({
           type: "documentationFocused",
           documentationId: id,
         });

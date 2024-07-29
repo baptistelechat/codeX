@@ -20,6 +20,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public _favoriteDocumentations: string[] = [];
   public _hideDocumentations: string[] = [];
   public _searchValue: string = "";
+  public _searchMode: boolean = false;
   public _searchDocumentations: IDocumentation[] = [];
 
   constructor(
@@ -55,7 +56,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   }
 
   public async saveFavoriteDocumentations() {
-    console.log(this._favoriteDocumentations);
+    // console.log(this._favoriteDocumentations);
     await saveFavoriteDocumentations(
       this.context,
       this._favoriteDocumentations
@@ -72,7 +73,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   }
 
   public async saveHideDocumentations() {
-    console.log(this._hideDocumentations);
+    // console.log(this._hideDocumentations);
     await saveHideDocumentations(this.context, this._hideDocumentations);
   }
 
