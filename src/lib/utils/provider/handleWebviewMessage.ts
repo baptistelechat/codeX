@@ -65,8 +65,8 @@ export async function handleWebviewMessage(
       }
       break;
 
-    case "resetSearch":
-      provider._searchMode = false;
+    case "toggleSearchMode":
+      provider._searchMode = !provider._searchMode;
       provider._searchValue = "";
       break;
 

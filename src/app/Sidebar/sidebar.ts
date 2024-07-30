@@ -68,7 +68,8 @@ const loadDocumentations = (newDocumentations: IDocumentation[]) => {
       ${searchInput(
         searchValue,
         searchMode,
-        searchMode ? searchDocumentations.length : documentations.length
+        documentations.length,
+        searchDocumentations.length
       )}
     </div>
     ${loader()}  
@@ -137,8 +138,8 @@ const setupEventListeners = () => {
     "search-package-button"
   ) as HTMLButtonElement;
 
-  const goBackButton = document.getElementById(
-    "go-back-button"
+  const navigationButton = document.getElementById(
+    "navigation-button"
   ) as HTMLButtonElement;
 
   const documentationFoundLength = document.getElementById(
@@ -153,7 +154,7 @@ const setupEventListeners = () => {
   if (
     searchPackageInput &&
     searchPackageButton &&
-    goBackButton &&
+    navigationButton &&
     documentationFoundLength &&
     loader &&
     documentationList &&
@@ -206,13 +207,23 @@ const setupEventListeners = () => {
     });
 
     if (searchMode) {
-      goBackButton.addEventListener("click", () => {
+      navigationButton.addEventListener("click", () => {
         searchMode = false;
         searchValue = "";
         loadDocumentations(documentations);
 
         vscode.postMessage({
-          type: "resetSearch",
+          type: "toggleSearchMode",
+        });
+      });
+    } else if (!searchMode && searchDocumentations.length > 0) {
+      navigationButton.addEventListener("click", () => {
+        searchMode = true;
+        searchValue = "";
+        loadDocumentations(searchDocumentations);
+
+        vscode.postMessage({
+          type: "toggleSearchMode",
         });
       });
     }
