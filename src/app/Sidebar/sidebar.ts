@@ -22,6 +22,14 @@ let searchValue: string = "";
 let searchMode: boolean = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+   const root = document.documentElement;
+  const styles = getComputedStyle(root);
+  const color = styles.getPropertyValue("--vscode-editor-foreground").trim();
+  const loader = document.querySelector("l-zoomies");
+  if (loader) {
+    loader.setAttribute("color", color);
+  }
+
   const reloadButton = document.getElementById("reload");
   reloadButton?.addEventListener("click", () =>
     vscode.postMessage({ type: "reload" })
@@ -391,8 +399,11 @@ const updateDocumentation = (
 window.addEventListener("message", (event) => {
   const message = event.data;
 
+  console.log(message.type);
+
   switch (message.type) {
     case "setDocumentations":
+      console.log("SET DOC");
       const {
         documentations: newDocumentations,
         searchMode: newSearchMode,

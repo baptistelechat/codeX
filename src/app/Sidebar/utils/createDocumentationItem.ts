@@ -43,11 +43,11 @@ const createDocumentationItem = (
         ${formatIcon(icon)}
         <div class="flex w-full flex-col gap-1 overflow-hidden">
           <h2 class="text-xl font-semibold">${escapeHTML(name)}</h2>
-          <p class="truncate text-slate-400">${formatDescription(
+          <p class="truncate">${formatDescription(
             description
           )}</p>
           <div class="flex justify-between">
-            <p class="font-semibold italic text-slate-400">v${escapeHTML(
+            <p class="font-semibold italic">v${escapeHTML(
               version
             )}</p>
             <div class="mr-2 flex gap-1.5">${actionItems}</div>

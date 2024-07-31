@@ -44,7 +44,16 @@ export async function handleWebviewMessage(
       break;
 
     case "reload":
-      provider.getDocumentations();
+      if (provider._documentations.length === 0) {
+        provider.getDocumentations();
+      } else {
+        provider._view?.webview.postMessage({
+          type: "setDocumentations",
+          documentations: provider._documentations,
+          searchMode: provider._searchMode,
+          searchValue: provider._searchValue,
+        });
+      }
       break;
 
     case "searchDocumentation":

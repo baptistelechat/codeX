@@ -7,10 +7,7 @@ import { DocumentationViewProvider } from "../provider/DocumentationViewProvider
 import formatUrl from "./formatUrl";
 
 const getAllDocumentations = async (provider: DocumentationViewProvider) => {
-  const dependencies = [
-    ...Object.keys(provider._packageJson.dependencies || {}),
-    ...Object.keys(provider._packageJson.devDependencies || {}),
-  ];
+  const dependencies = provider._packageJson;
 
   const uniqueIds: string[] = [];
 

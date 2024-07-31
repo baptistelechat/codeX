@@ -1,14 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { showErrorMessage } from "../showMessage";
-import { handleWebviewMessage } from "./handleWebviewMessage";
 import getDocumentationViewContent from "../documentation/getDocumentationViewContent";
+import { showErrorMessage } from "../showMessage";
 import { DocumentationViewProvider } from "./DocumentationViewProvider";
+import { handleWebviewMessage } from "./handleWebviewMessage";
 
 export async function resolveWebviewView(
   provider: DocumentationViewProvider,
-  webviewView: vscode.WebviewView,
+  webviewView: vscode.WebviewView
 ) {
   provider._view = webviewView;
 
@@ -25,7 +25,13 @@ export async function resolveWebviewView(
   if (fs.existsSync(packageJsonPath)) {
     try {
       const packageJsonContent = fs.readFileSync(packageJsonPath, "utf8");
-      provider._packageJson = JSON.parse(packageJsonContent);
+      const packageJSONContentParse = JSON.parse(packageJsonContent);
+      const dependencies = [
+        ...Object.keys(packageJSONContentParse.dependencies || {}),
+        ...Object.keys(packageJSONContentParse.devDependencies || {}),
+      ];
+
+      provider._packageJson = dependencies;
     } catch (error) {
       showErrorMessage("Failed to read package.json.");
       return;
@@ -39,7 +45,16 @@ export async function resolveWebviewView(
 
   webviewView.onDidChangeVisibility(() => {
     if (webviewView.visible) {
-      provider.getDocumentations();
+      if (provider._documentations.length === 0) {
+        provider.getDocumentations();
+      } else {
+        provider._view?.webview.postMessage({
+          type: "setDocumentations",
+          documentations: provider._documentations,
+          searchMode: provider._searchMode,
+          searchValue: provider._searchValue,
+        });
+      }
     }
   });
 

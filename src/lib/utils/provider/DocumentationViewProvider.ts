@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { IDocumentation } from "../../interfaces/IDocumentation";
-import IPackageJson from "../../interfaces/IPackageJson";
 import { getDocumentations } from "../documentation/getDocumentations";
 import loadFavoriteDocumentations from "../favoriteDocumentations/loadFavoriteDocumentations";
 import saveFavoriteDocumentations from "../favoriteDocumentations/saveFavoriteDocumentations";
@@ -15,7 +14,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
   public _view?: vscode.WebviewView;
   public _panels: { [id: string]: vscode.WebviewPanel } = {};
-  public _packageJson: IPackageJson = {};
+  public _packageJson: string[] = [];
   public _documentations: IDocumentation[] = [];
   public _favoriteDocumentations: string[] = [];
   public _hideDocumentations: string[] = [];
