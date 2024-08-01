@@ -409,9 +409,13 @@ window.addEventListener("message", (event) => {
       const {
         documentations: newDocumentations,
         searchDocumentations: newSearchDocumentations,
+        openDocumentations: newOpenDocumentations,
+        currentDocumentation: newCurrentDocumentations,
         searchMode: newSearchMode,
         searchValue: newSearchValue,
       } = message;
+      openDocumentations = newOpenDocumentations;
+      currentDocumentation = newCurrentDocumentations;
       searchMode = newSearchMode;
       searchValue = newSearchValue;
       loadDocumentations(newDocumentations, newSearchDocumentations);
@@ -429,8 +433,10 @@ window.addEventListener("message", (event) => {
       openDocumentations = openDocumentations.filter(
         (id) => id !== message.documentationId
       );
-      currentDocumentation =
-        openDocumentations.length === 0 ? "" : currentDocumentation;
+
+      if (openDocumentations.length === 0) {
+        currentDocumentation = "";
+      }
       removeBorder(message.documentationId, openDocumentations);
       break;
   }

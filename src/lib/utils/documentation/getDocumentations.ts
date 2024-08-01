@@ -9,6 +9,8 @@ export async function getDocumentations(provider: DocumentationViewProvider) {
       type: "setDocumentations",
       documentations: provider._documentations,
       searchDocumentations: provider._searchDocumentations,
+      openDocumentations: provider._openDocumentations,
+      currentDocumentation: provider._currentDocumentations,
       searchMode: false,
       searchValue: provider._searchValue,
     });

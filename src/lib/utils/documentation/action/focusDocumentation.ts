@@ -10,6 +10,7 @@ const focusDocumentation = ({
   const panel = provider._panels[id];
   if (panel) {
     panel.reveal(vscode.ViewColumn.Two);
+    provider._currentDocumentations = id;
   } else {
     if (provider._view!.webview) {
       openDocumentation({

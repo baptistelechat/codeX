@@ -21,6 +21,8 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public _searchValue: string = "";
   public _searchMode: boolean = false;
   public _searchDocumentations: IDocumentation[] = [];
+  public _currentDocumentations: string = "";
+  public _openDocumentations: string[] = [];
 
   constructor(
     public readonly _extensionUri: vscode.Uri,

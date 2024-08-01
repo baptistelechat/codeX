@@ -31,6 +31,7 @@ const openDocumentation = ({
       provider._extensionUri,
       homepage
     );
+
     panel.webview.html = content;
     provider._panels[id] = panel;
 
@@ -40,6 +41,14 @@ const openDocumentation = ({
         type: "documentationClosed",
         documentationId: id,
       });
+
+      provider._openDocumentations = provider._openDocumentations.filter(
+        (docId) => docId !== id
+      );
+
+      if (provider._openDocumentations.length === 0) {
+        provider._currentDocumentations = "";
+      }
     });
 
     panel.onDidChangeViewState(() => {
@@ -48,6 +57,8 @@ const openDocumentation = ({
           type: "documentationFocused",
           documentationId: id,
         });
+
+        provider._currentDocumentations = id;
       }
     });
   } else {

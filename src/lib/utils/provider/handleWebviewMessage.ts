@@ -16,6 +16,11 @@ export async function handleWebviewMessage(
         provider,
         homepage: message.homepage,
       });
+
+      if (!provider._openDocumentations.includes(message.documentationId)) {
+        provider._openDocumentations.push(message.documentationId);
+      }
+      provider._currentDocumentations = message.documentationId;
       break;
 
     case "focusDocumentation":
@@ -51,6 +56,8 @@ export async function handleWebviewMessage(
           type: "setDocumentations",
           documentations: provider._documentations,
           searchDocumentations: provider._searchDocumentations,
+          openDocumentations: provider._openDocumentations,
+          currentDocumentation: provider._currentDocumentations,
           searchMode: provider._searchMode,
           searchValue: provider._searchValue,
         });
@@ -70,6 +77,8 @@ export async function handleWebviewMessage(
           type: "setDocumentations",
           documentations: provider._documentations,
           searchDocumentations,
+          openDocumentations: provider._openDocumentations,
+          currentDocumentation: provider._currentDocumentations,
           searchMode: true,
           searchValue,
         });
