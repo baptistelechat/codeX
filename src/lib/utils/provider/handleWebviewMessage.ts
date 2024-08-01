@@ -51,14 +51,17 @@ export async function handleWebviewMessage(
       if (provider._documentations.length === 0) {
         provider.getDocumentations();
       } else {
+        const searchMode = provider._searchDocumentations
+          .map((documentation) => documentation.id)
+          .includes(provider._currentDocumentations);
+
         provider._view?.webview.postMessage({
           type: "setDocumentations",
           documentations: provider._documentations,
           searchDocumentations: provider._searchDocumentations,
           openDocumentations: provider._openDocumentations,
           currentDocumentation: provider._currentDocumentations,
-          searchMode: provider._searchMode,
-          searchValue: provider._searchValue,
+          searchMode,
         });
       }
       break;
@@ -86,7 +89,6 @@ export async function handleWebviewMessage(
 
     case "toggleSearchMode":
       provider._searchMode = !provider._searchMode;
-      provider._searchValue = "";
       break;
 
     case "wip":

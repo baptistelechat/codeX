@@ -173,27 +173,29 @@ const setupEventListeners = () => {
     documentationList &&
     lottieAnimations
   ) {
-    searchPackageInput.addEventListener("change", () => {
-      const searchValue = searchPackageInput.value;
+    searchPackageInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        const searchValue = searchPackageInput.value;
 
-      documentationFoundLength.style.setProperty("display", "none");
-      documentationList.style.setProperty("display", "none");
-      loader.style.setProperty("display", "flex");
+        documentationFoundLength.style.setProperty("display", "none");
+        documentationList.style.setProperty("display", "none");
+        loader.style.setProperty("display", "flex");
 
-      const activeLottieFileId =
-        "lottie-animation-" + getRandomLottieFile().id.toString();
-      lottieAnimations.forEach((lottieAnimation) => {
-        if (lottieAnimation.id === activeLottieFileId) {
-          lottieAnimation.classList.remove("hidden");
-        } else {
-          lottieAnimation.classList.add("hidden");
-        }
-      });
+        const activeLottieFileId =
+          "lottie-animation-" + getRandomLottieFile().id.toString();
+        lottieAnimations.forEach((lottieAnimation) => {
+          if (lottieAnimation.id === activeLottieFileId) {
+            lottieAnimation.classList.remove("hidden");
+          } else {
+            lottieAnimation.classList.add("hidden");
+          }
+        });
 
-      vscode.postMessage({
-        type: "searchDocumentation",
-        searchValue,
-      });
+        vscode.postMessage({
+          type: "searchDocumentation",
+          searchValue,
+        });
+      }
     });
 
     searchPackageButton.addEventListener("click", () => {
@@ -219,27 +221,14 @@ const setupEventListeners = () => {
       });
     });
 
-    if (searchMode) {
-      navigationButton.addEventListener("click", () => {
-        searchMode = false;
-        searchValue = "";
-        loadDocumentations(documentations, searchDocumentations);
+    navigationButton.addEventListener("click", () => {
+      searchMode = !searchMode;
+      loadDocumentations(documentations, searchDocumentations);
 
-        vscode.postMessage({
-          type: "toggleSearchMode",
-        });
+      vscode.postMessage({
+        type: "toggleSearchMode",
       });
-    } else if (!searchMode && searchDocumentations.length > 0) {
-      navigationButton.addEventListener("click", () => {
-        searchMode = true;
-        searchValue = "";
-        loadDocumentations(documentations, searchDocumentations);
-
-        vscode.postMessage({
-          type: "toggleSearchMode",
-        });
-      });
-    }
+    });
   }
 };
 

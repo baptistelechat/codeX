@@ -48,13 +48,17 @@ export async function resolveWebviewView(
       if (provider._documentations.length === 0) {
         provider.getDocumentations();
       } else {
+        const searchMode = provider._searchDocumentations
+          .map((documentation) => documentation.id)
+          .includes(provider._currentDocumentations);
+
         provider._view?.webview.postMessage({
           type: "setDocumentations",
           documentations: provider._documentations,
           searchDocumentations: provider._searchDocumentations,
           openDocumentations: provider._openDocumentations,
           currentDocumentation: provider._currentDocumentations,
-          searchMode: provider._searchMode,
+          searchMode,
           searchValue: provider._searchValue,
         });
       }

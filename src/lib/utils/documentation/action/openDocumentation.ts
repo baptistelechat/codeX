@@ -63,6 +63,20 @@ const openDocumentation = ({
         });
 
         provider._currentDocumentations = id;
+
+        const searchMode = provider._searchDocumentations
+          .map((documentation) => documentation.id)
+          .includes(id);
+
+        provider._view?.webview.postMessage({
+          type: "setDocumentations",
+          documentations: provider._documentations,
+          searchDocumentations: provider._searchDocumentations,
+          openDocumentations: provider._openDocumentations,
+          currentDocumentation: id,
+          searchMode,
+          searchValue: provider._searchValue,
+        });
       }
     });
   } else {
