@@ -50,6 +50,7 @@ export async function handleWebviewMessage(
         provider._view?.webview.postMessage({
           type: "setDocumentations",
           documentations: provider._documentations,
+          searchDocumentations: provider._searchDocumentations,
           searchMode: provider._searchMode,
           searchValue: provider._searchValue,
         });
@@ -67,7 +68,8 @@ export async function handleWebviewMessage(
       if (provider._view) {
         provider._view.webview.postMessage({
           type: "setDocumentations",
-          documentations: searchDocumentations,
+          documentations: provider._documentations,
+          searchDocumentations,
           searchMode: true,
           searchValue,
         });

@@ -22,7 +22,7 @@ let searchValue: string = "";
 let searchMode: boolean = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-   const root = document.documentElement;
+  const root = document.documentElement;
   const styles = getComputedStyle(root);
   const color = styles.getPropertyValue("--vscode-editor-foreground").trim();
   const loader = document.querySelector("l-zoomies");
@@ -36,29 +36,34 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 });
 
-const loadDocumentations = (newDocumentations: IDocumentation[]) => {
-  favoriteDocumentations = newDocumentations
-    .filter((doc) => doc.isFavorite)
-    .map((doc) => doc.id);
-  hideDocumentations = newDocumentations
-    .filter((doc) => doc.isHide)
-    .map((doc) => doc.id);
+const loadDocumentations = (
+  newDocumentations: IDocumentation[],
+  newSearchDocumentations: IDocumentation[]
+) => {
+  favoriteDocumentations = [
+    ...newDocumentations.filter((doc) => doc.isFavorite).map((doc) => doc.id),
+    ...newSearchDocumentations
+      .filter((doc) => doc.isFavorite)
+      .map((doc) => doc.id),
+  ];
+  hideDocumentations = [
+    ...newDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
+    ...newSearchDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
+  ];
 
-  if (searchMode) {
-    searchDocumentations = sortDocumentations(
-      newDocumentations,
-      favoriteDocumentations,
-      hideDocumentations,
-      searchMode
-    );
-  } else {
-    documentations = sortDocumentations(
-      newDocumentations,
-      favoriteDocumentations,
-      hideDocumentations,
-      searchMode
-    );
-  }
+  searchDocumentations = sortDocumentations(
+    newSearchDocumentations,
+    favoriteDocumentations,
+    hideDocumentations,
+    searchMode
+  );
+
+  documentations = sortDocumentations(
+    newDocumentations,
+    favoriteDocumentations,
+    hideDocumentations,
+    searchMode
+  );
 
   const container = document.getElementById("documentation-container");
 
@@ -218,7 +223,7 @@ const setupEventListeners = () => {
       navigationButton.addEventListener("click", () => {
         searchMode = false;
         searchValue = "";
-        loadDocumentations(documentations);
+        loadDocumentations(documentations, searchDocumentations);
 
         vscode.postMessage({
           type: "toggleSearchMode",
@@ -228,7 +233,7 @@ const setupEventListeners = () => {
       navigationButton.addEventListener("click", () => {
         searchMode = true;
         searchValue = "";
-        loadDocumentations(searchDocumentations);
+        loadDocumentations(documentations, searchDocumentations);
 
         vscode.postMessage({
           type: "toggleSearchMode",
@@ -367,7 +372,7 @@ const updateDocumentation = (
         hideDocumentations,
         searchMode
       );
-      loadDocumentations(searchDocumentations);
+      loadDocumentations(documentations, searchDocumentations);
       updateBorder(
         documentationId,
         currentDocumentation,
@@ -385,7 +390,7 @@ const updateDocumentation = (
         hideDocumentations,
         searchMode
       );
-      loadDocumentations(documentations);
+      loadDocumentations(documentations, searchDocumentations);
       updateBorder(
         documentationId,
         currentDocumentation,
@@ -399,19 +404,17 @@ const updateDocumentation = (
 window.addEventListener("message", (event) => {
   const message = event.data;
 
-  console.log(message.type);
-
   switch (message.type) {
     case "setDocumentations":
-      console.log("SET DOC");
       const {
         documentations: newDocumentations,
+        searchDocumentations: newSearchDocumentations,
         searchMode: newSearchMode,
         searchValue: newSearchValue,
       } = message;
       searchMode = newSearchMode;
       searchValue = newSearchValue;
-      loadDocumentations(newDocumentations);
+      loadDocumentations(newDocumentations, newSearchDocumentations);
       break;
     case "documentationFocused":
       currentDocumentation = message.documentationId;

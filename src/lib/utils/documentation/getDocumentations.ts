@@ -8,6 +8,7 @@ export async function getDocumentations(provider: DocumentationViewProvider) {
     provider._view.webview.postMessage({
       type: "setDocumentations",
       documentations: provider._documentations,
+      searchDocumentations: provider._searchDocumentations,
       searchMode: false,
       searchValue: provider._searchValue,
     });

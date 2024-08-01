@@ -51,6 +51,7 @@ export async function resolveWebviewView(
         provider._view?.webview.postMessage({
           type: "setDocumentations",
           documentations: provider._documentations,
+          searchDocumentations: provider._searchDocumentations,
           searchMode: provider._searchMode,
           searchValue: provider._searchValue,
         });
