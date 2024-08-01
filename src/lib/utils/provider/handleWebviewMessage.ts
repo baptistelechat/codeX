@@ -16,10 +16,10 @@ export async function handleWebviewMessage(
         provider,
         homepage: message.homepage,
       });
-
       if (!provider._openDocumentations.includes(message.documentationId)) {
         provider._openDocumentations.push(message.documentationId);
       }
+
       provider._currentDocumentations = message.documentationId;
       break;
 
@@ -27,7 +27,6 @@ export async function handleWebviewMessage(
       focusDocumentation({
         id: message.documentationId,
         provider,
-        homepage: message.homepage,
       });
       break;
 

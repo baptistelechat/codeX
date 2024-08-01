@@ -1,24 +1,18 @@
 import * as vscode from "vscode";
-import IOpenDocumentationProps from "../../../interfaces/IOpenDocumentationProps";
-import openDocumentation from "./openDocumentation";
+import { DocumentationViewProvider } from "../../provider/DocumentationViewProvider";
 
 const focusDocumentation = ({
   id,
   provider,
-  homepage,
-}: IOpenDocumentationProps) => {
+}: {
+  id: string;
+  provider: DocumentationViewProvider;
+}) => {
   const panel = provider._panels[id];
   if (panel) {
     panel.reveal(vscode.ViewColumn.Two);
+
     provider._currentDocumentations = id;
-  } else {
-    if (provider._view!.webview) {
-      openDocumentation({
-        id,
-        provider,
-        homepage,
-      });
-    }
   }
 };
 

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import IOpenDocumentationProps from "../../../interfaces/IOpenDocumentationProps";
 import isValidUrl from "../../isValidUrl";
+import { DocumentationViewProvider } from "../../provider/DocumentationViewProvider";
 import { showErrorMessage } from "../../showMessage";
 import getDocumentationContent from "../getDocumentationContent";
 
@@ -8,7 +8,11 @@ const openDocumentation = ({
   id,
   provider,
   homepage,
-}: IOpenDocumentationProps) => {
+}: {
+  id: string;
+  provider: DocumentationViewProvider;
+  homepage: boolean;
+}) => {
   let documentation = provider._searchMode
     ? provider._searchDocumentations.find((doc) => doc?.id === id)
     : provider._documentations.find((doc) => doc?.id === id);
