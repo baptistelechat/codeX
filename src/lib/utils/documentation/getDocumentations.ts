@@ -11,7 +11,7 @@ export async function getDocumentations(provider: DocumentationViewProvider) {
       searchDocumentations: provider._searchDocumentations,
       openDocumentations: provider._openDocumentations,
       currentDocumentation: provider._currentDocumentations,
-      searchMode: false,
+      searchMode: provider._searchMode,
       searchValue: provider._searchValue,
     });
   }

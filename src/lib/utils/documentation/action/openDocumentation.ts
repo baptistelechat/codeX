@@ -13,7 +13,11 @@ const openDocumentation = ({
   provider: DocumentationViewProvider;
   homepage: boolean;
 }) => {
-  let documentation = provider._searchMode
+  const searchMode = provider._searchDocumentations
+    .map((documentation) => documentation.id)
+    .includes(id);
+
+  const documentation = searchMode
     ? provider._searchDocumentations.find((doc) => doc?.id === id)
     : provider._documentations.find((doc) => doc?.id === id);
 
@@ -63,10 +67,6 @@ const openDocumentation = ({
         });
 
         provider._currentDocumentations = id;
-
-        const searchMode = provider._searchDocumentations
-          .map((documentation) => documentation.id)
-          .includes(id);
 
         provider._view?.webview.postMessage({
           type: "setDocumentations",
