@@ -64,6 +64,7 @@ const searchDocumentation = async (
             canBeIframe: documentationPageCanBeIFrame,
           },
           icon: (await getFaviconUrl(documentationPageUrl)) ?? "",
+          isPinned: provider._pinnedDocumentations.includes(id),
           isFavorite: provider._favoriteDocumentations.includes(id),
           isHide: provider._hideDocumentations.includes(id),
         } as IDocumentation;

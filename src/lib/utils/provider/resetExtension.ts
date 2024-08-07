@@ -12,11 +12,16 @@ export async function resetExtension(provider: DocumentationViewProvider) {
       switch (action) {
         case "Yes":
           await provider.context.globalState.update(
+            "pinnedDocumentations",
+            []
+          );
+          await provider.context.globalState.update(
             "favoriteDocumentations",
             []
           );
           await provider.context.globalState.update("hideDocumentations", []);
 
+          provider._pinnedDocumentations = [];
           provider._favoriteDocumentations = [];
           provider._hideDocumentations = [];
 

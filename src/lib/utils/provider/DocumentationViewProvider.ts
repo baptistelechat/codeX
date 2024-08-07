@@ -7,6 +7,9 @@ import toggleFavorite from "../favoriteDocumentations/toggleFavorite";
 import { loadHideDocumentations } from "../hideDocumentations/loadHideDocumentations";
 import saveHideDocumentations from "../hideDocumentations/saveHideDocumentations";
 import toggleHide from "../hideDocumentations/toggleHide";
+import loadPinnedDocumentations from "../pinnedDocumentations/loadPinnedDocumentations";
+import savePinnedDocumentations from "../pinnedDocumentations/savePinnedDocumentations";
+import togglePinned from "../pinnedDocumentations/togglePinned";
 import { resetExtension } from "./resetExtension";
 import { resolveWebviewView } from "./resolveWebviewView";
 
@@ -16,6 +19,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public _panels: { [id: string]: vscode.WebviewPanel } = {};
   public _packageJson: string[] = [];
   public _documentations: IDocumentation[] = [];
+  public _pinnedDocumentations: string[] = [];
   public _favoriteDocumentations: string[] = [];
   public _hideDocumentations: string[] = [];
   public _searchValue: string = "";
@@ -28,6 +32,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     public readonly _extensionUri: vscode.Uri,
     public readonly context: vscode.ExtensionContext
   ) {
+    this.loadPinnedDocumentations();
     this.loadFavoriteDocumentations();
     this.loadHideDocumentations();
   }
@@ -47,6 +52,20 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
 
   public async resetExtension() {
     await resetExtension(this);
+  }
+
+  // Save documentations
+  private async loadPinnedDocumentations() {
+    this._pinnedDocumentations = await loadPinnedDocumentations(this.context);
+  }
+
+  public async savePinnedDocumentations() {
+    // console.log(this._pinnedDocumentations);
+    await savePinnedDocumentations(this.context, this._pinnedDocumentations);
+  }
+
+  public togglePinned(documentationId: string) {
+    togglePinned(this, documentationId);
   }
 
   // Favorite documentations

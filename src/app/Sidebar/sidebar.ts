@@ -16,6 +16,7 @@ let documentations: IDocumentation[] = [];
 let searchDocumentations: IDocumentation[] = [];
 let openDocumentations: string[] = [];
 let currentDocumentation: string = "";
+let pinnedDocumentations: string[] = [];
 let favoriteDocumentations: string[] = [];
 let hideDocumentations: string[] = [];
 let searchValue: string = "";
@@ -40,19 +41,34 @@ const loadDocumentations = (
   newDocumentations: IDocumentation[],
   newSearchDocumentations: IDocumentation[]
 ) => {
-  favoriteDocumentations = [
-    ...newDocumentations.filter((doc) => doc.isFavorite).map((doc) => doc.id),
-    ...newSearchDocumentations
-      .filter((doc) => doc.isFavorite)
-      .map((doc) => doc.id),
-  ];
-  hideDocumentations = [
-    ...newDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
-    ...newSearchDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
-  ];
+  if (pinnedDocumentations.length === 0) {
+    pinnedDocumentations = [
+      ...newDocumentations.filter((doc) => doc.isPinned).map((doc) => doc.id),
+      ...newSearchDocumentations
+        .filter((doc) => doc.isPinned)
+        .map((doc) => doc.id),
+    ];
+  }
+  if (favoriteDocumentations.length === 0) {
+    favoriteDocumentations = [
+      ...newDocumentations.filter((doc) => doc.isFavorite).map((doc) => doc.id),
+      ...newSearchDocumentations
+        .filter((doc) => doc.isFavorite)
+        .map((doc) => doc.id),
+    ];
+  }
+  if (hideDocumentations.length === 0) {
+    hideDocumentations = [
+      ...newDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
+      ...newSearchDocumentations
+        .filter((doc) => doc.isHide)
+        .map((doc) => doc.id),
+    ];
+  }
 
   searchDocumentations = sortDocumentations(
     newSearchDocumentations,
+    pinnedDocumentations,
     favoriteDocumentations,
     hideDocumentations,
     searchMode
@@ -60,6 +76,7 @@ const loadDocumentations = (
 
   documentations = sortDocumentations(
     newDocumentations,
+    pinnedDocumentations,
     favoriteDocumentations,
     hideDocumentations,
     searchMode
@@ -93,6 +110,7 @@ const loadDocumentations = (
               .map((documentation) =>
                 createDocumentationItem(
                   documentation,
+                  pinnedDocumentations,
                   favoriteDocumentations,
                   hideDocumentations
                 )
@@ -102,6 +120,7 @@ const loadDocumentations = (
               .map((documentation) =>
                 createDocumentationItem(
                   documentation,
+                  pinnedDocumentations,
                   favoriteDocumentations,
                   hideDocumentations
                 )
@@ -121,6 +140,7 @@ const setupEventListeners = () => {
       documentationId,
       currentDocumentation,
       openDocumentations,
+      pinnedDocumentations,
       favoriteDocumentations
     );
 
@@ -237,7 +257,6 @@ const handleItemClick = (documentationId: string) => {
     vscode.postMessage({
       type: "focusDocumentation",
       documentationId,
-      homepage: false,
     });
   } else {
     vscode.postMessage({
@@ -253,6 +272,7 @@ const handleItemClick = (documentationId: string) => {
     documentationId,
     currentDocumentation,
     openDocumentations,
+    pinnedDocumentations,
     favoriteDocumentations
   );
 };
@@ -268,6 +288,8 @@ const handleActionItemClick = (
     home: () => openHomepage(documentationId),
     preview: () =>
       vscode.postMessage({ type: "openExternalUri", documentationId }),
+    pinned: () => togglePinned(documentationId),
+    "pinned-dirty": () => togglePinned(documentationId),
     "star-empty": () => toggleFavorite(documentationId),
     "star-full": () => toggleFavorite(documentationId),
     "eye-closed": () => toggleHide(documentationId),
@@ -287,7 +309,6 @@ const openHomepage = (documentationId: string) => {
     vscode.postMessage({
       type: "focusDocumentation",
       documentationId,
-      homepage: true,
     });
   } else {
     vscode.postMessage({
@@ -303,8 +324,28 @@ const openHomepage = (documentationId: string) => {
     documentationId,
     currentDocumentation,
     openDocumentations,
+    pinnedDocumentations,
     favoriteDocumentations
   );
+};
+
+const togglePinned = (documentationId: string) => {
+  const isPinned = pinnedDocumentations.includes(documentationId);
+  const isHide = hideDocumentations.includes(documentationId);
+
+  if (isHide) {
+    toggleHide(documentationId);
+  }
+
+  pinnedDocumentations = isPinned
+    ? pinnedDocumentations.filter((id) => id !== documentationId)
+    : [...pinnedDocumentations, documentationId];
+
+  vscode.postMessage({ type: "togglePinned", documentationId });
+  updateDocumentation(documentationId, {
+    isPinned: !isPinned,
+    isHide: false,
+  });
 };
 
 const toggleFavorite = (documentationId: string) => {
@@ -357,6 +398,7 @@ const updateDocumentation = (
       };
       searchDocumentations = sortDocumentations(
         searchDocumentations,
+        pinnedDocumentations,
         favoriteDocumentations,
         hideDocumentations,
         searchMode
@@ -366,6 +408,7 @@ const updateDocumentation = (
         documentationId,
         currentDocumentation,
         openDocumentations,
+        pinnedDocumentations,
         favoriteDocumentations
       );
     }
@@ -375,6 +418,7 @@ const updateDocumentation = (
       documentations[index] = { ...documentations[index], ...updates };
       documentations = sortDocumentations(
         documentations,
+        pinnedDocumentations,
         favoriteDocumentations,
         hideDocumentations,
         searchMode
@@ -384,6 +428,7 @@ const updateDocumentation = (
         documentationId,
         currentDocumentation,
         openDocumentations,
+        pinnedDocumentations,
         favoriteDocumentations
       );
     }
@@ -415,6 +460,7 @@ window.addEventListener("message", (event) => {
         message.documentationId,
         currentDocumentation,
         openDocumentations,
+        pinnedDocumentations,
         favoriteDocumentations
       );
       break;

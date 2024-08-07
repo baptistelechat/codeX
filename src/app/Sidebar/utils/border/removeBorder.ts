@@ -8,6 +8,8 @@ const removeBorder = (
     closedItem.classList.remove(
       "brightness-100",
       "border-l-8",
+      "border-l-lime-400",
+      "border-l-lime-900",
       "border-l-sky-400",
       "border-l-sky-900",
       "border-l-yellow-400",

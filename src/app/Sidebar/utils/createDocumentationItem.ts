@@ -4,11 +4,13 @@ import escapeHTML from "./escapeHTML";
 
 const createDocumentationItem = (
   documentation: IDocumentation,
+  pinnedDocumentations: string[],
   favoriteDocumentations: string[],
   hideDocumentations: string[]
 ) => {
   const { id, icon, name, description, version, isHide } = documentation;
   const actionItems = createActionItems(
+    pinnedDocumentations,
     favoriteDocumentations,
     hideDocumentations,
     id
@@ -43,13 +45,9 @@ const createDocumentationItem = (
         ${formatIcon(icon)}
         <div class="flex w-full flex-col gap-1 overflow-hidden">
           <h2 class="text-xl font-semibold">${escapeHTML(name)}</h2>
-          <p class="truncate">${formatDescription(
-            description
-          )}</p>
+          <p class="truncate">${formatDescription(description)}</p>
           <div class="flex justify-between">
-            <p class="font-semibold italic">v${escapeHTML(
-              version
-            )}</p>
+            <p class="font-semibold italic">v${escapeHTML(version)}</p>
             <div class="mr-2 flex gap-1.5">${actionItems}</div>
           </div>
         </div>

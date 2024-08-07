@@ -11,6 +11,7 @@ export interface IDocumentation {
   homepage: Url;
   documentationPage: Url;
   icon: string;
+  isPinned: boolean;
   isFavorite: boolean;
   isHide: boolean;
 }

@@ -30,6 +30,10 @@ export async function handleWebviewMessage(
       });
       break;
 
+    case "togglePinned":
+      provider.togglePinned(message.documentationId);
+      break;
+
     case "toggleFavorite":
       provider.toggleFavorite(message.documentationId);
       break;
@@ -62,6 +66,7 @@ export async function handleWebviewMessage(
           openDocumentations: provider._openDocumentations,
           currentDocumentation: provider._currentDocumentations,
           searchMode,
+          searchValue: provider._searchValue,
         });
       }
       break;
