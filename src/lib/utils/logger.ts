@@ -1,5 +1,11 @@
-const logger = (message: any, prefix?: string) => {
-  console.log(`CODEX ${prefix?.toUpperCase()}`, message);
+const logger = ({
+  message,
+  extraTitle,
+}: {
+  message: any;
+  extraTitle?: string;
+}) => {
+  return console.log(`CODEX ${extraTitle}`, message);
 };
 
 export default logger;
