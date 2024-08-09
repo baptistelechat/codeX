@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import isValidUrl from "../../isValidUrl";
-import logger from "../../logger";
 import { DocumentationViewProvider } from "../../provider/DocumentationViewProvider";
 import { showErrorMessage } from "../../showMessage";
 import getDocumentationContent from "../getDocumentationContent";
@@ -14,9 +13,14 @@ const openDocumentation = ({
   provider: DocumentationViewProvider;
   homepage: boolean;
 }) => {
-  const searchMode = provider._searchDocumentations
+  const inSearchDocumentations = provider._searchDocumentations
     .map((documentation) => documentation.id)
     .includes(id);
+  const inDocumentations = provider._documentations
+    .map((documentation) => documentation.id)
+    .includes(id);
+
+  const searchMode = inSearchDocumentations && !inDocumentations;
 
   const documentation = searchMode
     ? provider._searchDocumentations.find((doc) => doc?.id === id)

@@ -64,7 +64,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     await savePinnedDocumentations(this.context, this._pinnedDocumentations);
   }
 
-  public togglePinned(documentationId: string) {
+  public async togglePinned(documentationId: string) {
     togglePinned(this, documentationId);
   }
 

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import focusDocumentation from "../documentation/action/focusDocumentation";
 import openDocumentation from "../documentation/action/openDocumentation";
+import { getDocumentations } from "../documentation/getDocumentations";
 import searchDocumentation from "../documentation/searchDocumentation";
 import { showInformationMessage } from "../showMessage";
 import { DocumentationViewProvider } from "./DocumentationViewProvider";
@@ -53,7 +54,7 @@ export async function handleWebviewMessage(
 
     case "reload":
       if (provider._documentations.length === 0) {
-        provider.getDocumentations();
+        getDocumentations(provider);
       } else {
         const searchMode = provider._searchDocumentations
           .map((documentation) => documentation.id)
