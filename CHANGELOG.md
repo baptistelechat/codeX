@@ -11,12 +11,17 @@ and this project adheres to [Semantic Versioning].
 
 - Add a search bar to obtain the documentation of an non-installed package
 - Random loading animation added when a search is launched
+- Add a pinned documentation category
 
 ### Changed
 
 - Get the documentation url, not the package home page
 - Use VSCode's css variables for text color instead of tailwind's gray color
 - Add a loader to the launch page
+
+### Fixed
+
+- Fix extension reset function
 
 ## [0.2.1] - 2024-07-17
 

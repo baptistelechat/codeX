@@ -18,7 +18,9 @@ export async function getDocumentations(provider: DocumentationViewProvider) {
     provider._documentations = [
       ...pinnedDocumentations,
       ...documentations.filter((documentation) => !documentation.isPinned),
-    ];
+    ].filter(
+      (doc, index, self) => index === self.findIndex((d) => d.id === doc.id)
+    );
 
     provider._view.webview.postMessage({
       type: "setDocumentations",

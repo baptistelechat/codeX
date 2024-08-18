@@ -447,11 +447,17 @@ window.addEventListener("message", (event) => {
         currentDocumentation: newCurrentDocumentations,
         searchMode: newSearchMode,
         searchValue: newSearchValue,
+        reset,
       } = message;
       openDocumentations = newOpenDocumentations;
       currentDocumentation = newCurrentDocumentations;
       searchMode = newSearchMode;
       searchValue = newSearchValue;
+      if (reset) {
+        pinnedDocumentations = [];
+        favoriteDocumentations = [];
+        hideDocumentations = [];
+      }
       loadDocumentations(newDocumentations, newSearchDocumentations);
       break;
     case "documentationFocused":
