@@ -92,6 +92,8 @@ const loadDocumentations = (
     .getElementById("no-documentation-found")
     ?.style.setProperty("display", "none");
 
+  container.style.setProperty("display", "flex");
+
   container.innerHTML = `
   <div class="relative flex flex-col h-screen w-full">
     <div class="absolute left-0 right-0 top-0 z-10 flex flex-col gap-2 p-4 pb-0">
@@ -439,6 +441,15 @@ window.addEventListener("message", (event) => {
   const message = event.data;
 
   switch (message.type) {
+    case "reloadExtension":
+      document
+        .getElementById("documentation-container")
+        ?.style.setProperty("display", "none");
+
+      document
+        .getElementById("no-documentation-found")
+        ?.style.setProperty("display", "flex");
+      break;
     case "setDocumentations":
       const {
         documentations: newDocumentations,

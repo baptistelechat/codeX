@@ -10,7 +10,6 @@ const getAllDocumentations = async (
   provider: DocumentationViewProvider,
   dependencies: string[]
 ) => {
-
   const uniqueIds: string[] = [];
 
   const documentations = await Promise.all(
@@ -37,6 +36,18 @@ const getAllDocumentations = async (
           ? homepageUrl
           : await findUrlDocumentation(homepageUrl);
 
+        const description = () => {
+          if (info.description) {
+            return info.description;
+          }
+
+          if (homepageUrl.includes("radix-ui.com/primitives")) {
+            return "Radix-ui component";
+          }
+
+          return "...";
+        };
+
         if (!documentationPageUrl) {
           return null;
         }
@@ -55,7 +66,7 @@ const getAllDocumentations = async (
           name: id.charAt(0).toUpperCase() + id.slice(1),
           id,
           version: info.version,
-          description: info.description ?? "...",
+          description: description(),
           homepage: {
             url: homepageUrl,
             canBeIframe: homepageCanBeIFrame,

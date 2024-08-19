@@ -43,7 +43,7 @@ const getDocumentationViewContent = (
       </head>
       <body>
         <div id="no-documentation-found" class="flex flex-col gap-4 px-6 py-4">
-          <p>No documentation found or loading too long ? Try to reload the extension.</p>
+          <p>No documentation found or loading too long ? Try to reload the extension or window.</p>
           <div class="flex w-full flex-col items-center justify-center gap-6">
             <div id="reload" class="flex w-full items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
               <div class="codicon codicon-refresh" aria-label="refresh"></div>
@@ -58,7 +58,7 @@ const getDocumentationViewContent = (
             ></l-zoomies>
           </div>
         </div>
-        <div id="documentation-container" class="overflow-hidden max-w-full"></div>
+        <div id="documentation-container" class="flex overflow-hidden max-w-full"></div>
       </body>
       </html>`;
 };

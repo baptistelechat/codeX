@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning].
 ### Fixed
 
 - Fix extension reset function
+- Fix extension reload function
 
 ## [0.2.1] - 2024-07-17
 

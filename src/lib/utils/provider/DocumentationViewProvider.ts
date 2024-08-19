@@ -54,6 +54,12 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     await resetExtension(this);
   }
 
+  public reloadExtension() {
+    this._view?.webview.postMessage({
+      type: "reloadExtension",
+    });
+  }
+
   // Save documentations
   private async loadPinnedDocumentations() {
     this._pinnedDocumentations = await loadPinnedDocumentations(this.context);

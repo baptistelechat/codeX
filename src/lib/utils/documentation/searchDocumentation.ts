@@ -36,6 +36,18 @@ const searchDocumentation = async (
           ? homepageUrl
           : await findUrlDocumentation(homepageUrl);
 
+        const description = () => {
+          if (info.description) {
+            return info.description;
+          }
+
+          if (homepageUrl.includes("radix-ui.com/primitives")) {
+            return "Radix-ui component";
+          }
+
+          return "...";
+        };
+
         if (!documentationPageUrl) {
           return null;
         }
@@ -54,7 +66,7 @@ const searchDocumentation = async (
           name: id.charAt(0).toUpperCase() + id.slice(1),
           id,
           version: info.version,
-          description: info.description ?? "...",
+          description: description(),
           homepage: {
             url: homepageUrl,
             canBeIframe: homepageCanBeIFrame,
