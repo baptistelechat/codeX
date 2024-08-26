@@ -31,14 +31,19 @@ const togglePinned = async (
         .map((documentation) => documentation.id),
     ]);
 
-    provider._documentations = [
-      ...pinnedDocumentations,
-      ...provider._documentations.filter(
-        (documentation) => !documentation.isPinned
-      ),
-    ].filter(
-      (doc, index, self) => index === self.findIndex((d) => d.id === doc.id)
+    const seenIds = new Set();
+
+    const uniqueDocumentations = provider._documentations.filter(
+      (documentation) => {
+        if (seenIds.has(documentation.id)) {
+          return false;
+        }
+        seenIds.add(documentation.id);
+        return true;
+      }
     );
+
+    provider._documentations = uniqueDocumentations;
 
     provider._view.webview.postMessage({
       type: "setDocumentations",
