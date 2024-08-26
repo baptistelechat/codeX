@@ -9,7 +9,8 @@ const getIframeContent = (
   documentation: IDocumentation,
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
-  url: string
+  url: string,
+  homepage: boolean
 ) => {
   return `
     <!DOCTYPE html>
@@ -28,7 +29,7 @@ const getIframeContent = (
         <title>${documentation.name}</title>
       </head>
       <body>
-        ${getContentBody(documentation, url, "iframe")}
+        ${getContentBody(documentation, url, "iframe", homepage)}
       </body>
     </html>`;
 };

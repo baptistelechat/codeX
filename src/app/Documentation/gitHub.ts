@@ -109,7 +109,10 @@ const getReadmeContent = async (owner, repo) => {
 const renderer = new marked.Renderer();
 
 // @ts-ignore
-renderer.link = ( href, title, text ) => {
+renderer.link = (link) => {
+  const href = link.href;
+  const text = link.text.split("](")[0].replace("![", "");
+
   return `<a href="#" onclick="replaceBodyContent('${href}')">${text}</a>`;
 };
 

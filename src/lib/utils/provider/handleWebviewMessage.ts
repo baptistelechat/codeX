@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import focusDocumentation from "../documentation/action/focusDocumentation";
 import openDocumentation from "../documentation/action/openDocumentation";
+import { getDocumentations } from "../documentation/getDocumentations";
+import searchDocumentation from "../documentation/searchDocumentation";
 import { showInformationMessage } from "../showMessage";
 import { DocumentationViewProvider } from "./DocumentationViewProvider";
 
@@ -12,23 +14,25 @@ export async function handleWebviewMessage(
     case "openDocumentation":
       openDocumentation({
         id: message.documentationId,
-        documentations: provider._documentations,
-        extensionUri: provider._extensionUri,
-        panels: provider._panels,
-        webview: provider._view!.webview,
+        provider,
         homepage: message.homepage,
       });
+      if (!provider._openDocumentations.includes(message.documentationId)) {
+        provider._openDocumentations.push(message.documentationId);
+      }
+
+      provider._currentDocumentations = message.documentationId;
       break;
 
     case "focusDocumentation":
       focusDocumentation({
         id: message.documentationId,
-        documentations: provider._documentations,
-        extensionUri: provider._extensionUri,
-        panels: provider._panels,
-        webview: provider._view!.webview,
-        homepage: message.homepage,
+        provider,
       });
+      break;
+
+    case "togglePinned":
+      provider.togglePinned(message.documentationId);
       break;
 
     case "toggleFavorite":
@@ -49,7 +53,48 @@ export async function handleWebviewMessage(
       break;
 
     case "reload":
-      provider.getDocumentations();
+      if (provider._documentations.length === 0) {
+        getDocumentations(provider);
+      } else {
+        const searchMode = provider._searchDocumentations
+          .map((documentation) => documentation.id)
+          .includes(provider._currentDocumentations);
+
+        provider._view?.webview.postMessage({
+          type: "setDocumentations",
+          documentations: provider._documentations,
+          searchDocumentations: provider._searchDocumentations,
+          openDocumentations: provider._openDocumentations,
+          currentDocumentation: provider._currentDocumentations,
+          searchMode,
+          searchValue: provider._searchValue,
+        });
+      }
+      break;
+
+    case "searchDocumentation":
+      const { searchValue } = message;
+      // console.log("searchValue:", searchValue);
+      provider._searchValue = searchValue;
+      provider._searchMode = true;
+      const searchDocumentations = await searchDocumentation(provider);
+      provider._searchDocumentations = searchDocumentations;
+      // console.log("searchDocumentations:", searchDocumentations);
+      if (provider._view) {
+        provider._view.webview.postMessage({
+          type: "setDocumentations",
+          documentations: provider._documentations,
+          searchDocumentations,
+          openDocumentations: provider._openDocumentations,
+          currentDocumentation: provider._currentDocumentations,
+          searchMode: true,
+          searchValue,
+        });
+      }
+      break;
+
+    case "toggleSearchMode":
+      provider._searchMode = !provider._searchMode;
       break;
 
     case "wip":

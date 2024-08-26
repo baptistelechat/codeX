@@ -17,7 +17,9 @@ export const activate = (context: vscode.ExtensionContext) => {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("codeX.reload", () => {
+      documentationViewProvider.reloadExtension();
       documentationViewProvider.getDocumentations();
+      // vscode.commands.executeCommand("workbench.action.reloadWindow");
     })
   );
 

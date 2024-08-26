@@ -9,7 +9,8 @@ const getFallbackContent = (
   documentation: IDocumentation,
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
-  url: string
+  url: string,
+  homepage: boolean
 ) => {
   return `
     <!DOCTYPE html>
@@ -28,7 +29,7 @@ const getFallbackContent = (
         <title>${documentation.name}</title>
       </head>
       <body>
-        ${getContentBody(documentation, url, "fallback")}
+        ${getContentBody(documentation, url, "fallback", homepage)}
       </body>
     </html>`;
 };

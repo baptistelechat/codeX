@@ -11,7 +11,8 @@ const getGitHubContent = (
   documentation: IDocumentation,
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
-  url: string
+  url: string,
+  homepage: boolean
 ) => {
   const nonce = getNonce();
   const [owner, repo] = url.split("https://github.com/")[1].split("/");
@@ -37,7 +38,7 @@ const getGitHubContent = (
       <title>GitHub README</title>
     </head>
     <body>
-      ${getContentBody(documentation, url, "github")}
+      ${getContentBody(documentation, url, "github", homepage)}
     </body>
     </html>`;
 };

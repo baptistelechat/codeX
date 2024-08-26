@@ -2,7 +2,12 @@ import { fetch } from "undici";
 import IPackageInformation from "../../interfaces/IPackageInformation";
 
 const formatUrl = async (info: IPackageInformation) => {
-  const url = info.homepage || (info.repository && info.repository.url) || "";
+  const url =
+    info.homepage ||
+    (info.repository && info.repository.url) ||
+    (info.links && info.links.homepage) ||
+    (info.links && info.links.repository) ||
+    "";
 
   if (url.includes("radix-ui.com/primitives")) {
     const componentName = info.name.split("/")[1].split("react-")[1];

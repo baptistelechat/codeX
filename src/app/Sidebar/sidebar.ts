@@ -1,403 +1,495 @@
 import { IDocumentation } from "../../lib/interfaces/IDocumentation";
-import removeBorder from "./utils/removeBorder";
-import resetHover from "./utils/resetHover";
+import loader from "./components/loader";
+import searchInput from "./components/searchInput";
+import removeBorder from "./utils/border/removeBorder";
+import resetHover from "./utils/border/resetHover";
+import updateBorder from "./utils/border/updateBorder";
+import createDocumentationItem from "./utils/createDocumentationItem";
+import getRandomLottieFile from "./utils/getRandomLottieFile";
 import sortDocumentations from "./utils/sortDocumentations";
-import updateBorder from "./utils/updateBorder";
 import updateHover from "./utils/updateHover";
 
 // @ts-ignore
 const vscode = acquireVsCodeApi();
 
 let documentations: IDocumentation[] = [];
+let searchDocumentations: IDocumentation[] = [];
 let openDocumentations: string[] = [];
 let currentDocumentation: string = "";
+let pinnedDocumentations: string[] = [];
 let favoriteDocumentations: string[] = [];
 let hideDocumentations: string[] = [];
+let searchValue: string = "";
+let searchMode: boolean = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const reloadButton = document.getElementById("reload");
-  if (reloadButton) {
-    reloadButton.addEventListener("click", () => {
-      vscode.postMessage({
-        type: "reload",
-      });
-    });
+  const root = document.documentElement;
+  const styles = getComputedStyle(root);
+  const color = styles.getPropertyValue("--vscode-editor-foreground").trim();
+  const loader = document.querySelector("l-zoomies");
+  if (loader) {
+    loader.setAttribute("color", color);
   }
+
+  const reloadButton = document.getElementById("reload");
+  reloadButton?.addEventListener("click", () =>
+    vscode.postMessage({ type: "reload" })
+  );
 });
 
-const loadDocumentations = (newDocumentations: IDocumentation[]) => {
-  favoriteDocumentations = newDocumentations
-    .filter((documentation: IDocumentation) => documentation.isFavorite)
-    .map((documentation: IDocumentation) => documentation.id);
+const loadDocumentations = (
+  newDocumentations: IDocumentation[],
+  newSearchDocumentations: IDocumentation[]
+) => {
+  if (pinnedDocumentations.length === 0) {
+    pinnedDocumentations = [
+      ...newDocumentations.filter((doc) => doc.isPinned).map((doc) => doc.id),
+      ...newSearchDocumentations
+        .filter((doc) => doc.isPinned)
+        .map((doc) => doc.id),
+    ];
+  }
+  if (favoriteDocumentations.length === 0) {
+    favoriteDocumentations = [
+      ...newDocumentations.filter((doc) => doc.isFavorite).map((doc) => doc.id),
+      ...newSearchDocumentations
+        .filter((doc) => doc.isFavorite)
+        .map((doc) => doc.id),
+    ];
+  }
+  if (hideDocumentations.length === 0) {
+    hideDocumentations = [
+      ...newDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
+      ...newSearchDocumentations
+        .filter((doc) => doc.isHide)
+        .map((doc) => doc.id),
+    ];
+  }
 
-  hideDocumentations = newDocumentations
-    .filter((documentation: IDocumentation) => documentation.isHide)
-    .map((documentation: IDocumentation) => documentation.id);
-
-  const sortedDocumentations = sortDocumentations(
-    newDocumentations,
+  searchDocumentations = sortDocumentations(
+    newSearchDocumentations,
+    pinnedDocumentations,
     favoriteDocumentations,
-    hideDocumentations
+    hideDocumentations,
+    searchMode
   );
 
-  documentations = sortedDocumentations;
+  documentations = sortDocumentations(
+    newDocumentations,
+    pinnedDocumentations,
+    favoriteDocumentations,
+    hideDocumentations,
+    searchMode
+  );
 
-  const container = document.getElementById("documentation-list");
+  const container = document.getElementById("documentation-container");
+
   if (!container) {
-    console.error("Documentation container not found!");
-    return;
+    return console.error("Documentation container not found!");
   }
 
-  const noDocumentationFoundElement = document.getElementById(
-    "no-documentation-found"
-  );
+  document
+    .getElementById("no-documentation-found")
+    ?.style.setProperty("display", "none");
 
-  if (noDocumentationFoundElement) {
-    noDocumentationFoundElement.style.display = "none";
-  }
+  container.style.setProperty("display", "flex");
 
-  const actionItems = (documentationId: string) => {
-    const isFavorite = favoriteDocumentations.includes(documentationId);
-    const isHide = hideDocumentations.includes(documentationId);
+  container.innerHTML = `
+  <div class="relative flex flex-col h-screen w-full">
+    <div class="absolute left-0 right-0 top-0 z-10 flex flex-col gap-2 p-4 pb-0">
+      ${searchInput(
+        searchValue,
+        searchMode,
+        documentations.length,
+        searchDocumentations.length
+      )}
+    </div>
+    ${loader()}  
+    <div id="documentation-list" class="space-y-2 flex-1 mt-28 overflow-y-auto p-4 pt-0">
+      ${
+        searchMode
+          ? searchDocumentations
+              .map((documentation) =>
+                createDocumentationItem(
+                  documentation,
+                  pinnedDocumentations,
+                  favoriteDocumentations,
+                  hideDocumentations
+                )
+              )
+              .join("")
+          : documentations
+              .map((documentation) =>
+                createDocumentationItem(
+                  documentation,
+                  pinnedDocumentations,
+                  favoriteDocumentations,
+                  hideDocumentations
+                )
+              )
+              .join("")
+      }
+    </div>
+  </div>`;
 
-    return [
-      {
-        codicon: "home",
-        description: "Open homepage",
-      },
-      {
-        codicon: "preview",
-        description: "Open in browser",
-      },
-      {
-        codicon: isFavorite ? "star-full" : "star-empty",
-        description: isFavorite ? "Remove favorite" : "Add to favorites",
-      },
-      {
-        codicon: isHide ? "eye" : "eye-closed",
-        description: isHide ? "Unhide" : "Hide",
-      },
-    ]
-      .map(
-        (actionItem) =>
-          `<div id="${
-            actionItem.codicon
-          }" class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
-                <div
-                  class="codicon codicon-${actionItem.codicon} ${
-            actionItem.codicon === "star-full" ? "text-yellow-400" : ""
-          }"
-                  aria-label="${actionItem.codicon}"
-                ></div>
-                <div class="tooltip tooltip-${actionItem.codicon}">${
-            actionItem.description
-          }</div>
-              </div>`
-      )
-      .join("");
-  };
+  setupEventListeners();
+};
 
-  container.innerHTML = documentations
-    .map(
-      (documentation: IDocumentation) =>
-        `<div
-            id="${documentation.id}"
-            class="${
-              documentation.isHide ? "blur-sm grayscale" : ""
-            } item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200 ease-in-out blur-none"
-            data-url="${documentation.documentationPage.url}"
-          >
-            <div class="flex items-center gap-4">
-              ${
-                documentation.icon.includes("github")
-                  ? '<div class="codicon codicon-github-inverted" aria-label="github-inverted" style="font-size:32px"></div>'
-                  : `<img
-                      src="${documentation.icon}"
-                      alt="${documentation.name} icon"
-                      class="size-10"
-                    />`
-              }
-              <div class="flex w-full flex-col gap-1 overflow-hidden">
-                <h2 class="text-xl font-semibold">${documentation.name}</h2>
-                <p class="truncate text-slate-400">
-                  ${documentation.description}
-                </p>
-                <div class="flex justify-between">
-                  <p class="font-semibold italic text-slate-400">
-                    v${documentation.version}
-                  </p>
-                  <div class="mr-2 flex gap-1.5">${actionItems(
-                    documentation.id
-                  )}</div>
-                </div>
-              </div>
-            </div>
-          </div>`
-    )
-    .join("");
-
+const setupEventListeners = () => {
   document.querySelectorAll(".item").forEach((item) => {
     const documentationId = item.id;
     updateBorder(
       documentationId,
       currentDocumentation,
       openDocumentations,
-      favoriteDocumentations,
-      hideDocumentations
+      pinnedDocumentations,
+      favoriteDocumentations
     );
 
-    item.addEventListener("click", (event) => {
-      const documentationId = item.id;
-      if (openDocumentations.includes(documentationId)) {
-        vscode.postMessage({
-          type: "focusDocumentation",
-          documentationId,
-          homepage: false,
-        });
-      } else {
-        vscode.postMessage({
-          type: "openDocumentation",
-          documentationId,
-          homepage: false,
-        });
-        openDocumentations.push(documentationId);
-      }
-
-      currentDocumentation = documentationId;
-      updateBorder(
-        documentationId,
-        currentDocumentation,
-        openDocumentations,
-        favoriteDocumentations,
-        hideDocumentations
-      );
-    });
-
-    item.addEventListener("mouseenter", () => {
-      const documentationId = item.id;
-      updateHover(documentationId, openDocumentations, hideDocumentations);
-    });
-
-    item.addEventListener("mouseleave", () => {
-      resetHover(openDocumentations, hideDocumentations);
-    });
+    item.addEventListener("click", () => handleItemClick(documentationId));
+    item.addEventListener("mouseenter", () =>
+      updateHover(documentationId, openDocumentations, hideDocumentations)
+    );
+    item.addEventListener("mouseleave", () =>
+      resetHover(openDocumentations, hideDocumentations)
+    );
   });
 
   document.querySelectorAll(".action-item").forEach((item) => {
     const iconName = item.id;
-    const documentationId =
-      item.parentElement?.parentElement?.parentElement?.parentElement
-        ?.parentElement?.id;
-
+    const documentationId = item.closest(".item")?.id;
     if (documentationId) {
-      if (iconName.includes("home")) {
-        item.addEventListener("click", (event) => {
-          event.stopPropagation();
-          if (openDocumentations.includes(documentationId)) {
-            vscode.postMessage({
-              type: "focusDocumentation",
-              documentationId,
-              homepage: true,
-            });
-          } else {
-            vscode.postMessage({
-              type: "openDocumentation",
-              documentationId,
-              homepage: true,
-            });
-            openDocumentations.push(documentationId);
-          }
-
-          currentDocumentation = documentationId;
-          updateBorder(
-            documentationId,
-            currentDocumentation,
-            openDocumentations,
-            favoriteDocumentations,
-            hideDocumentations
-          );
-        });
-      } else if (iconName.includes("preview")) {
-        item.addEventListener("click", (event) => {
-          event.stopPropagation();
-          vscode.postMessage({
-            type: "openExternalUri",
-            documentationId,
-          });
-        });
-      } else if (iconName.includes("star")) {
-        item.addEventListener("click", (event) => {
-          event.stopPropagation();
-          const isFavorite = favoriteDocumentations.includes(documentationId);
-          const isHide = hideDocumentations.includes(documentationId);
-
-          if (isHide) {
-            vscode.postMessage({
-              type: "toggleHide",
-              documentationId,
-            });
-          }
-
-          if (isFavorite) {
-            favoriteDocumentations = favoriteDocumentations.filter(
-              (id) => id !== documentationId
-            );
-
-            item.innerHTML = `<div class="codicon codicon-star-empty" aria-label="star-empty"></div>
-                      <div class="tooltip tooltip-star-empty">Add to favorites</div>`;
-          } else {
-            favoriteDocumentations.push(documentationId);
-            item.innerHTML = `<div class="codicon codicon-star-full text-yellow-400" aria-label="star-full"></div>
-                      <div class="tooltip tooltip-star-empty">Remove favorite</div>`;
-          }
-
-          vscode.postMessage({
-            type: "toggleFavorite",
-            documentationId,
-          });
-
-          const index = documentations.findIndex(
-            (doc) => doc.id === documentationId
-          );
-
-          if (index !== -1) {
-            const updatedDocumentation = { ...documentations[index] };
-
-            updatedDocumentation.isFavorite = !updatedDocumentation.isFavorite;
-            if (isHide) {
-              updatedDocumentation.isHide = false;
-            }
-
-            const newDocumentations = [
-              ...documentations.slice(0, index),
-              updatedDocumentation,
-              ...documentations.slice(index + 1),
-            ];
-
-            documentations = sortDocumentations(
-              newDocumentations,
-              favoriteDocumentations,
-              hideDocumentations
-            );
-
-            loadDocumentations(documentations);
-
-            updateBorder(
-              documentationId,
-              currentDocumentation,
-              openDocumentations,
-              favoriteDocumentations,
-              hideDocumentations
-            );
-          }
-        });
-      } else if (iconName.includes("eye")) {
-        item.addEventListener("click", (event) => {
-          event.stopPropagation();
-          const isFavorite = favoriteDocumentations.includes(documentationId);
-          const isHide = hideDocumentations.includes(documentationId);
-
-          if (isFavorite) {
-            vscode.postMessage({
-              type: "toggleFavorite",
-              documentationId,
-            });
-          }
-
-          if (isHide) {
-            hideDocumentations = hideDocumentations.filter(
-              (id) => id !== documentationId
-            );
-            item.innerHTML = `<div class="codicon codicon-eye-closed" aria-label="eye-closed"></div>
-                    <div class="tooltip tooltip-star-empty">Hide</div>`;
-          } else {
-            hideDocumentations.push(documentationId);
-            item.innerHTML = `<div class="codicon codicon-eye" aria-label="eye"></div>
-                    <div class="tooltip tooltip-star-empty">Unhide</div>`;
-          }
-
-          vscode.postMessage({
-            type: "toggleHide",
-            documentationId,
-          });
-
-          const index = documentations.findIndex(
-            (doc) => doc.id === documentationId
-          );
-
-          if (index !== -1) {
-            const updatedDocumentation = { ...documentations[index] };
-
-            updatedDocumentation.isHide = !updatedDocumentation.isHide;
-            if (isFavorite) {
-              updatedDocumentation.isFavorite = false;
-            }
-            const newDocumentations = [
-              ...documentations.slice(0, index),
-              updatedDocumentation,
-              ...documentations.slice(index + 1),
-            ];
-
-            documentations = sortDocumentations(
-              newDocumentations,
-              favoriteDocumentations,
-              hideDocumentations
-            );
-
-            loadDocumentations(documentations);
-
-            updateBorder(
-              documentationId,
-              currentDocumentation,
-              openDocumentations,
-              favoriteDocumentations,
-              hideDocumentations
-            );
-          }
-        });
-      }
-    } else {
-      item.addEventListener("click", (event) => {
-        event.stopPropagation();
-        vscode.postMessage({
-          type: "wip",
-        });
-      });
+      item.addEventListener("click", (event) =>
+        handleActionItemClick(event, iconName, documentationId)
+      );
     }
   });
+
+  const searchPackageInput = document.getElementById(
+    "search-package-input"
+  ) as HTMLInputElement;
+
+  const searchPackageButton = document.getElementById(
+    "search-package-button"
+  ) as HTMLButtonElement;
+
+  const navigationButton = document.getElementById(
+    "navigation-button"
+  ) as HTMLButtonElement;
+
+  const documentationFoundLength = document.getElementById(
+    "documentation-found-length"
+  ) as HTMLInputElement;
+
+  const loader = document.getElementById("loader");
+  const lottieAnimations = document.querySelectorAll(".lottieAnimation");
+
+  const documentationList = document.getElementById("documentation-list");
+
+  if (
+    searchPackageInput &&
+    searchPackageButton &&
+    navigationButton &&
+    documentationFoundLength &&
+    loader &&
+    documentationList &&
+    lottieAnimations
+  ) {
+    searchPackageInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        const searchValue = searchPackageInput.value;
+
+        documentationFoundLength.style.setProperty("display", "none");
+        documentationList.style.setProperty("display", "none");
+        loader.style.setProperty("display", "flex");
+
+        const activeLottieFileId =
+          "lottie-animation-" + getRandomLottieFile().id.toString();
+        lottieAnimations.forEach((lottieAnimation) => {
+          if (lottieAnimation.id === activeLottieFileId) {
+            lottieAnimation.classList.remove("hidden");
+          } else {
+            lottieAnimation.classList.add("hidden");
+          }
+        });
+
+        vscode.postMessage({
+          type: "searchDocumentation",
+          searchValue,
+        });
+      }
+    });
+
+    searchPackageButton.addEventListener("click", () => {
+      const searchValue = searchPackageInput.value;
+
+      documentationFoundLength.style.setProperty("display", "none");
+      documentationList.style.setProperty("display", "none");
+      loader.style.setProperty("display", "flex");
+
+      const activeLottieFileId =
+        "lottie-animation-" + getRandomLottieFile().id.toString();
+      lottieAnimations.forEach((lottieAnimation) => {
+        if (lottieAnimation.id === activeLottieFileId) {
+          lottieAnimation.classList.remove("hidden");
+        } else {
+          lottieAnimation.classList.add("hidden");
+        }
+      });
+
+      vscode.postMessage({
+        type: "searchDocumentation",
+        searchValue,
+      });
+    });
+
+    navigationButton.addEventListener("click", () => {
+      searchMode = !searchMode;
+      loadDocumentations(documentations, searchDocumentations);
+
+      vscode.postMessage({
+        type: "toggleSearchMode",
+      });
+    });
+  }
+};
+
+const handleItemClick = (documentationId: string) => {
+  if (openDocumentations.includes(documentationId)) {
+    vscode.postMessage({
+      type: "focusDocumentation",
+      documentationId,
+    });
+  } else {
+    vscode.postMessage({
+      type: "openDocumentation",
+      documentationId,
+      homepage: false,
+    });
+    openDocumentations.push(documentationId);
+  }
+
+  currentDocumentation = documentationId;
+  updateBorder(
+    documentationId,
+    currentDocumentation,
+    openDocumentations,
+    pinnedDocumentations,
+    favoriteDocumentations
+  );
+};
+
+const handleActionItemClick = (
+  event: Event,
+  iconName: string,
+  documentationId: string
+) => {
+  event.stopPropagation();
+
+  const actions: Record<string, () => void> = {
+    home: () => openHomepage(documentationId),
+    preview: () =>
+      vscode.postMessage({ type: "openExternalUri", documentationId }),
+    pinned: () => togglePinned(documentationId),
+    "pinned-dirty": () => togglePinned(documentationId),
+    "star-empty": () => toggleFavorite(documentationId),
+    "star-full": () => toggleFavorite(documentationId),
+    "eye-closed": () => toggleHide(documentationId),
+    eye: () => toggleHide(documentationId),
+  };
+
+  const action = actions[iconName];
+  if (action) {
+    action();
+  } else {
+    vscode.postMessage({ type: "wip" });
+  }
+};
+
+const openHomepage = (documentationId: string) => {
+  if (openDocumentations.includes(documentationId)) {
+    vscode.postMessage({
+      type: "focusDocumentation",
+      documentationId,
+    });
+  } else {
+    vscode.postMessage({
+      type: "openDocumentation",
+      documentationId,
+      homepage: true,
+    });
+    openDocumentations.push(documentationId);
+  }
+
+  currentDocumentation = documentationId;
+  updateBorder(
+    documentationId,
+    currentDocumentation,
+    openDocumentations,
+    pinnedDocumentations,
+    favoriteDocumentations
+  );
+};
+
+const togglePinned = (documentationId: string) => {
+  const isPinned = pinnedDocumentations.includes(documentationId);
+  const isHide = hideDocumentations.includes(documentationId);
+
+  if (isHide) {
+    toggleHide(documentationId);
+  }
+
+  pinnedDocumentations = isPinned
+    ? pinnedDocumentations.filter((id) => id !== documentationId)
+    : [...pinnedDocumentations, documentationId];
+
+  vscode.postMessage({ type: "togglePinned", documentationId });
+  updateDocumentation(documentationId, {
+    isPinned: !isPinned,
+    isHide: false,
+  });
+};
+
+const toggleFavorite = (documentationId: string) => {
+  const isFavorite = favoriteDocumentations.includes(documentationId);
+  const isHide = hideDocumentations.includes(documentationId);
+
+  if (isHide) {
+    toggleHide(documentationId);
+  }
+
+  favoriteDocumentations = isFavorite
+    ? favoriteDocumentations.filter((id) => id !== documentationId)
+    : [...favoriteDocumentations, documentationId];
+
+  vscode.postMessage({ type: "toggleFavorite", documentationId });
+  updateDocumentation(documentationId, {
+    isFavorite: !isFavorite,
+    isHide: false,
+  });
+};
+
+const toggleHide = (documentationId: string) => {
+  const isFavorite = favoriteDocumentations.includes(documentationId);
+  const isHide = hideDocumentations.includes(documentationId);
+
+  if (isFavorite) {
+    toggleFavorite(documentationId);
+  }
+
+  hideDocumentations = isHide
+    ? hideDocumentations.filter((id) => id !== documentationId)
+    : [...hideDocumentations, documentationId];
+
+  vscode.postMessage({ type: "toggleHide", documentationId });
+  updateDocumentation(documentationId, { isHide: !isHide, isFavorite: false });
+};
+
+const updateDocumentation = (
+  documentationId: string,
+  updates: Partial<IDocumentation>
+) => {
+  if (searchMode) {
+    const index = searchDocumentations.findIndex(
+      (doc) => doc.id === documentationId
+    );
+    if (index !== -1) {
+      searchDocumentations[index] = {
+        ...searchDocumentations[index],
+        ...updates,
+      };
+      searchDocumentations = sortDocumentations(
+        searchDocumentations,
+        pinnedDocumentations,
+        favoriteDocumentations,
+        hideDocumentations,
+        searchMode
+      );
+      loadDocumentations(documentations, searchDocumentations);
+      updateBorder(
+        documentationId,
+        currentDocumentation,
+        openDocumentations,
+        pinnedDocumentations,
+        favoriteDocumentations
+      );
+    }
+  } else {
+    const index = documentations.findIndex((doc) => doc.id === documentationId);
+    if (index !== -1) {
+      documentations[index] = { ...documentations[index], ...updates };
+      documentations = sortDocumentations(
+        documentations,
+        pinnedDocumentations,
+        favoriteDocumentations,
+        hideDocumentations,
+        searchMode
+      );
+      loadDocumentations(documentations, searchDocumentations);
+      updateBorder(
+        documentationId,
+        currentDocumentation,
+        openDocumentations,
+        pinnedDocumentations,
+        favoriteDocumentations
+      );
+    }
+  }
 };
 
 window.addEventListener("message", (event) => {
   const message = event.data;
 
   switch (message.type) {
-    case "setDocumentations":
-      const { documentations: newDocumentations } = message;
-      loadDocumentations(newDocumentations);
-      break;
+    case "reloadExtension":
+      document
+        .getElementById("documentation-container")
+        ?.style.setProperty("display", "none");
 
+      document
+        .getElementById("no-documentation-found")
+        ?.style.setProperty("display", "flex");
+      break;
+    case "setDocumentations":
+      const {
+        documentations: newDocumentations,
+        searchDocumentations: newSearchDocumentations,
+        openDocumentations: newOpenDocumentations,
+        currentDocumentation: newCurrentDocumentations,
+        searchMode: newSearchMode,
+        searchValue: newSearchValue,
+        reset,
+      } = message;
+      openDocumentations = newOpenDocumentations;
+      currentDocumentation = newCurrentDocumentations;
+      searchMode = newSearchMode;
+      searchValue = newSearchValue;
+      if (reset) {
+        pinnedDocumentations = [];
+        favoriteDocumentations = [];
+        hideDocumentations = [];
+      }
+      loadDocumentations(newDocumentations, newSearchDocumentations);
+      break;
     case "documentationFocused":
       currentDocumentation = message.documentationId;
       updateBorder(
         message.documentationId,
         currentDocumentation,
         openDocumentations,
-        favoriteDocumentations,
-        hideDocumentations
+        pinnedDocumentations,
+        favoriteDocumentations
       );
       break;
-
     case "documentationClosed":
       openDocumentations = openDocumentations.filter(
         (id) => id !== message.documentationId
       );
+
       if (openDocumentations.length === 0) {
         currentDocumentation = "";
       }
       removeBorder(message.documentationId, openDocumentations);
-      break;
-
-    default:
       break;
   }
 });

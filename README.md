@@ -12,6 +12,7 @@ The codeX extension allows the user to read dependency documentation in VSCode:
 - Display of dependency name, available documentation version and short description if available
 - Opening documentation in an editor side panel
 - Display of a markdown interpreter for documentation hosted on GitHub
+- Search a package documentation in the NPM registry
 
 Go to your activity bar to see all available websites. After installation, a new icon appears to access the extension!
 
