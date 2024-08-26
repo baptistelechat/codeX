@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { DocumentationViewProvider } from "./lib/utils/documentation/DocumentationViewProvider";
 import openFeedbackForms from "./lib/utils/openFeedbackForms";
+import { DocumentationViewProvider } from "./lib/utils/provider/DocumentationViewProvider";
 
 export const activate = (context: vscode.ExtensionContext) => {
   const documentationViewProvider = new DocumentationViewProvider(
@@ -17,13 +17,15 @@ export const activate = (context: vscode.ExtensionContext) => {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("codeX.reload", () => {
+      documentationViewProvider.reloadExtension();
       documentationViewProvider.getDocumentations();
+      // vscode.commands.executeCommand("workbench.action.reloadWindow");
     })
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("codeX.reset", () => {
-      documentationViewProvider.resetDocumentations();
+      documentationViewProvider.resetExtension();
     })
   );
 

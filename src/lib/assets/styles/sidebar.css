@@ -32,6 +32,42 @@
     transparent transparent;
 }
 
+.tooltip-pinned {
+  width: 100px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-pinned::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-pinned-dirty {
+  width: 120px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-pinned-dirty::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-home {
+  width: 120px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-home::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .tooltip-preview {
   width: 120px;
   border-radius: 5px;

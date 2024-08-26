@@ -122,8 +122,10 @@
     "undici-types": "^6.19.2"
   },
   "dependencies": {
+    "@types/jsdom": "^21.1.7",
     "@vscode/codicons": "^0.0.36",
     "cross-env": "^7.0.3",
+    "jsdom": "^24.1.0",
     "parse5": "^7.1.2",
     "undici": "^6.19.2"
   },

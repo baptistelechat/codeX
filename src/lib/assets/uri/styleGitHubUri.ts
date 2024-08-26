@@ -6,8 +6,7 @@ const styleGitHubUri = (webview: vscode.Webview, extensionUri: vscode.Uri) =>
       extensionUri,
       "src",
       "lib",
-      "components",
-      "Documentation",
+      "assets",
       "styles",
       "gitHub.css"
     )

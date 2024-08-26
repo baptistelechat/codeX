@@ -20,7 +20,9 @@ const getDocumentationViewContent = (
         <meta charset="UTF-8">
         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' ${
           webview.cspSource
-        }; font-src 'self' ${webview.cspSource}; script-src 'nonce-${nonce}';">
+        }; font-src 'self' ${
+    webview.cspSource
+  }; script-src 'nonce-${nonce}' https://unpkg.com; connect-src https://lottie.host;">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="${styleResetUri(webview, extensionUri)}" rel="stylesheet">
         <link href="${styleTailwindUri(
@@ -35,17 +37,28 @@ const getDocumentationViewContent = (
     webview,
     extensionUri
   )}">
-        </script>
+      </script>
+      <script nonce="${nonce}" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
+      <script nonce="${nonce}" type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/zoomies.js"></script>
       </head>
       <body>
-        <div id="no-documentation-found" class="flex flex-col gap-4 py-4">
-          <p>No documentation found. Try to reload the extension.</p>
-          <div id="reload" class="flex items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
-            <div class="codicon codicon-refresh" aria-label="refresh"></div>
-            <p class="text-slate-50">Reload</p>
+        <div id="no-documentation-found" class="flex flex-col gap-4 px-6 py-4">
+          <p>No documentation found or loading too long ? Try to reload the extension or window.</p>
+          <div class="flex w-full flex-col items-center justify-center gap-6">
+            <div id="reload" class="flex w-full items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400">
+              <div class="codicon codicon-refresh" aria-label="refresh"></div>
+              <p class="text-slate-50">Reload</p>
+            </div>
+            <l-zoomies
+              size="150"
+              stroke="4"
+              bg-opacity="0.1"
+              speed="1.4"
+              color="black" 
+            ></l-zoomies>
           </div>
         </div>
-        <div id="documentation-list" class="mt-2 space-y-2 max-w-full"></div>
+        <div id="documentation-container" class="flex overflow-hidden max-w-full"></div>
       </body>
       </html>`;
 };

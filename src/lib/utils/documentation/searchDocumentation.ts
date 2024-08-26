@@ -2,20 +2,20 @@ import { IDocumentation } from "../../interfaces/IDocumentation";
 import checkIframeSupport from "../checkIframeSupport";
 import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
-import getPackageInfo from "../getPackageInfo";
 import { DocumentationViewProvider } from "../provider/DocumentationViewProvider";
+import searchPackage from "../searchPackage";
 import formatUrl from "./formatUrl";
 
-const getAllDocumentations = async (
-  provider: DocumentationViewProvider,
-  dependencies: string[]
-) => {
-  const uniqueIds: string[] = [];
+const searchDocumentation = async (
+  provider: DocumentationViewProvider
+): Promise<IDocumentation[]> => {
+  try {
+    const packages = await searchPackage(provider._searchValue);
+    const uniqueIds: string[] = [];
 
-  const documentations = await Promise.all(
-    dependencies.map(async (dependency) => {
-      const info = await getPackageInfo(dependency);
-      if (info) {
+    const documentations = await Promise.all(
+      packages.map(async (pkg) => {
+        const info = pkg;
         if (info.name.startsWith("@types")) {
           return null;
         }
@@ -62,7 +62,7 @@ const getAllDocumentations = async (
 
         uniqueIds.push(id);
 
-        return {
+        const doc = {
           name: id.charAt(0).toUpperCase() + id.slice(1),
           id,
           version: info.version,
@@ -80,20 +80,24 @@ const getAllDocumentations = async (
           isFavorite: provider._favoriteDocumentations.includes(id),
           isHide: provider._hideDocumentations.includes(id),
         } as IDocumentation;
-      }
-      return null;
-    })
-  );
 
-  const validDocumentations = documentations
-    .filter((documentation) => documentation !== null)
-    .filter(
-      (documentation) =>
-        documentation?.homepage.url !== "" &&
-        documentation?.documentationPage.url !== ""
-    ) as IDocumentation[];
+        return doc;
+      })
+    );
 
-  return validDocumentations;
+    const validDocumentations = documentations
+      .filter((documentation) => documentation !== null)
+      .filter(
+        (documentation) =>
+          documentation?.homepage.url !== "" &&
+          documentation?.documentationPage.url !== ""
+      ) as IDocumentation[];
+
+    return validDocumentations;
+  } catch (error) {
+    console.error("Error getting documentations:", error);
+    return [];
+  }
 };
 
-export default getAllDocumentations;
+export default searchDocumentation;

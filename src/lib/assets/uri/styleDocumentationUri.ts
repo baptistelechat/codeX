@@ -9,8 +9,7 @@ const styleDocumentationUri = (
       extensionUri,
       "src",
       "lib",
-      "components",
-      "Documentation",
+      "assets",
       "styles",
       "documentation.css"
     )
