@@ -71,7 +71,7 @@ const loadDocumentations = (
     pinnedDocumentations,
     favoriteDocumentations,
     hideDocumentations,
-    searchMode
+    true
   );
 
   documentations = sortDocumentations(
@@ -79,7 +79,7 @@ const loadDocumentations = (
     pinnedDocumentations,
     favoriteDocumentations,
     hideDocumentations,
-    searchMode
+    false
   );
 
   const container = document.getElementById("documentation-container");
