@@ -7,6 +7,7 @@ const formatUrl = async (info: IPackageInformation) => {
     (info.repository && info.repository.url) ||
     (info.links && info.links.homepage) ||
     (info.links && info.links.repository) ||
+    (info.source && info.source.url) ||
     "";
 
   if (url.includes("radix-ui.com/primitives")) {

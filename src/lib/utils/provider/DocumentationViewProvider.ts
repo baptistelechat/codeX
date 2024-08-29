@@ -17,7 +17,8 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
   public _view?: vscode.WebviewView;
   public _panels: { [id: string]: vscode.WebviewPanel } = {};
-  public _packageJson: string[] = [];
+  public _registry: "npm" | "packagist" = "npm";
+  public _dependencies: string[] = [];
   public _documentations: IDocumentation[] = [];
   public _pinnedDocumentations: string[] = [];
   public _favoriteDocumentations: string[] = [];

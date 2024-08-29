@@ -14,7 +14,7 @@ const getAllDocumentations = async (
 
   const documentations = await Promise.all(
     dependencies.map(async (dependency) => {
-      const info = await getPackageInfo(dependency);
+      const info = await getPackageInfo(dependency, provider._registry);
       if (info) {
         if (info.name.startsWith("@types")) {
           return null;

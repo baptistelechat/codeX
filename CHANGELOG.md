@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-<!-- ## Unreleased -->
+## Unreleased
+
+### Added
+
+- Reading composer.json for projects written in PHP
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Fix reload command that not correctly refresh documentation list after installing or removing packages
+
+### Security
+
 
 ## [0.3.0] - 2024-08-27
 
