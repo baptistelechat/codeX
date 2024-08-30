@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { IDocumentation } from "../../interfaces/IDocumentation";
+import IDocumentation from "../../interfaces/IDocumentation";
 import getFallbackContent from "./content/getFallbackContent";
 import getGitHubContent from "./content/getGitHubContent";
 import getIframeContent from "./content/getIframeContent";

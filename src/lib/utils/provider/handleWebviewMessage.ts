@@ -31,15 +31,15 @@ export async function handleWebviewMessage(
       break;
 
     case "togglePinned":
-      provider.togglePinned(message.documentationId);
+      provider.togglePinned(message.dependency);
       break;
 
     case "toggleFavorite":
-      provider.toggleFavorite(message.documentationId);
+      provider.toggleFavorite(message.dependency);
       break;
 
     case "toggleHide":
-      provider.toggleHide(message.documentationId);
+      provider.toggleHide(message.dependency);
       break;
 
     case "openExternalUri":

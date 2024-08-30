@@ -1,12 +1,16 @@
+import IDependency from "../../../lib/interfaces/IDependency";
+
 const updateHover = (
   documentationId: string,
   openDocumentations: string[],
-  hideDocumentations: string[]
+  hideDocumentations: IDependency[]
 ) => {
   document.querySelectorAll(".item").forEach((item) => {
     const isHovered = item.id === documentationId;
     const isOpen = openDocumentations.includes(item.id);
-    const isHide = hideDocumentations.includes(item.id);
+    const isHide = hideDocumentations.some(
+      (dependency: IDependency) => dependency.id === item.id
+    );
 
     if (isHovered) {
       item.classList.add("brightness-100");

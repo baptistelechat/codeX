@@ -1,15 +1,21 @@
+import IDependency from "../../../../lib/interfaces/IDependency";
+
 const updateBorder = (
   documentationId: string,
   currentDocumentation: string,
   openDocumentations: string[],
-  pinnedDocumentations: string[],
-  favoriteDocumentations: string[]
+  pinnedDocumentations: IDependency[],
+  favoriteDocumentations: IDependency[]
 ) => {
   document.querySelectorAll(".item").forEach((item) => {
     const isCurrentDocumentation = currentDocumentation === item.id;
     const isOpen = openDocumentations.includes(item.id);
-    const isPinned = pinnedDocumentations.includes(item.id);
-    const isFavorite = favoriteDocumentations.includes(item.id);
+    const isPinned = pinnedDocumentations.some(
+      (dependency: IDependency) => dependency.id === item.id
+    );
+    const isFavorite = favoriteDocumentations.some(
+      (dependency: IDependency) => dependency.id === item.id
+    );
 
     // Reset classes
     item.classList.remove(

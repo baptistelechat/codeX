@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import getDocumentationViewContent from "../documentation/getDocumentationViewContent";
-import readDependencies from "../readDependencies";
 import { DocumentationViewProvider } from "./DocumentationViewProvider";
 import { handleWebviewMessage } from "./handleWebviewMessage";
 

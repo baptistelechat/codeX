@@ -1,25 +1,28 @@
+import IDependency from "../../interfaces/IDependency";
 import getDocumentationName from "../getDocumentationName";
 import { DocumentationViewProvider } from "../provider/DocumentationViewProvider";
 import { showInformationMessage } from "../showMessage";
 
 const toggleFavorite = (
   provider: DocumentationViewProvider,
-  documentationId: string
+  dependency: IDependency
 ) => {
-  const index = provider._favoriteDocumentations.indexOf(documentationId);
+  const index = provider._favoriteDocumentations.findIndex(
+    (documentation) => documentation.id === dependency.id
+  );
 
   if (index !== -1) {
     provider._favoriteDocumentations.splice(index, 1);
     showInformationMessage(
       `${getDocumentationName(
         provider,
-        documentationId
+        dependency.id
       )} removed from favorites.`
     );
   } else {
-    provider._favoriteDocumentations.push(documentationId);
+    provider._favoriteDocumentations.push(dependency);
     showInformationMessage(
-      `${getDocumentationName(provider, documentationId)} added to favorites.`
+      `${getDocumentationName(provider, dependency.id)} added to favorites.`
     );
   }
 

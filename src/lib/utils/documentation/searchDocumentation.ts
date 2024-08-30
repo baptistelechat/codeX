@@ -1,4 +1,5 @@
-import { IDocumentation } from "../../interfaces/IDocumentation";
+import IDependency from "../../interfaces/IDependency";
+import IDocumentation from "../../interfaces/IDocumentation";
 import checkIframeSupport from "../checkIframeSupport";
 import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
@@ -76,9 +77,16 @@ const searchDocumentation = async (
             canBeIframe: documentationPageCanBeIFrame,
           },
           icon: (await getFaviconUrl(documentationPageUrl)) ?? "",
-          isPinned: provider._pinnedDocumentations.includes(id),
-          isFavorite: provider._favoriteDocumentations.includes(id),
-          isHide: provider._hideDocumentations.includes(id),
+          isPinned: provider._pinnedDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          isFavorite: provider._favoriteDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          isHide: provider._hideDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          registry: "npm",
         } as IDocumentation;
 
         return doc;

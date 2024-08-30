@@ -1,4 +1,4 @@
-import { IDocumentation } from "../../../interfaces/IDocumentation";
+import IDocumentation from "../../../interfaces/IDocumentation";
 
 const getContentBody = (
   documentation: IDocumentation,

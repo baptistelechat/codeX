@@ -1,10 +1,11 @@
-import { IDocumentation } from "../../../lib/interfaces/IDocumentation";
+import IDependency from "../../../lib/interfaces/IDependency";
+import IDocumentation from "../../../lib/interfaces/IDocumentation";
 
 const sortDocumentations = (
   documentations: IDocumentation[] = [],
-  pinnedDocumentationIds: string[],
-  favoriteDocumentationIds: string[],
-  hideDocumentationIds: string[],
+  pinnedDocumentationIds: IDependency[],
+  favoriteDocumentationIds: IDependency[],
+  hideDocumentationIds: IDependency[],
   searchMode: boolean
 ): IDocumentation[] => {
   // console.log("searchMode:", searchMode);
@@ -15,9 +16,15 @@ const sortDocumentations = (
   const hideDocumentations: IDocumentation[] = [];
 
   documentations.forEach((documentation) => {
-    const isPinned = pinnedDocumentationIds.includes(documentation.id);
-    const isFavorite = favoriteDocumentationIds.includes(documentation.id);
-    const isHide = hideDocumentationIds.includes(documentation.id);
+    const isPinned = pinnedDocumentationIds.some(
+      (dependency: IDependency) => dependency.id === documentation.id
+    );
+    const isFavorite = favoriteDocumentationIds.some(
+      (dependency: IDependency) => dependency.id === documentation.id
+    );
+    const isHide = hideDocumentationIds.some(
+      (dependency: IDependency) => dependency.id === documentation.id
+    );
 
     if (isPinned) {
       pinnedDocumentations.push(documentation);
@@ -30,8 +37,8 @@ const sortDocumentations = (
     }
   });
 
-  const sortedPinnedDocumentations = [...pinnedDocumentations].sort(
-    (a, b) => (a && b ? a.id.localeCompare(b.id) : 0)
+  const sortedPinnedDocumentations = [...pinnedDocumentations].sort((a, b) =>
+    a && b ? a.id.localeCompare(b.id) : 0
   );
 
   const sortedFavoriteDocumentations = [...favoriteDocumentations].sort(
@@ -54,10 +61,10 @@ const sortDocumentations = (
       ...uncategorizedDocumentations,
       ...sortedHideDocumentations,
     ];
-    
+
     return sortedDocumentations;
   }
-  
+
   // console.log("default mode activated");
   const sortedDocumentations = [
     ...sortedPinnedDocumentations,

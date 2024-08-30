@@ -1,5 +1,5 @@
 import { DocumentationViewProvider } from "../provider/DocumentationViewProvider";
-import readDependencies from "../readDependencies";
+import readDependencies from "../readDependencies/readDependencies";
 import getAllDocumentations from "./getAllDocumentations";
 
 export async function getDocumentations(provider: DocumentationViewProvider) {
@@ -10,7 +10,10 @@ export async function getDocumentations(provider: DocumentationViewProvider) {
       ...provider._pinnedDocumentations,
       ...provider._searchDocumentations
         .filter((documentation) => documentation.isPinned)
-        .map((documentation) => documentation.id),
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
     ]);
 
     const documentations = await getAllDocumentations(

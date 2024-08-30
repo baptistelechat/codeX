@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import styleCodiconUri from "../../../assets/uri/styleCodiconUri";
 import styleDocumentationUri from "../../../assets/uri/styleDocumentationUri";
 import styleTailwindUri from "../../../assets/uri/styleTailwindUri";
-import { IDocumentation } from "../../../interfaces/IDocumentation";
+import IDocumentation from "../../../interfaces/IDocumentation";
 import getContentBody from "./getContentBody";
 
 const getIframeContent = (

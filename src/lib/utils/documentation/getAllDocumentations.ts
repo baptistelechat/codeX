@@ -1,4 +1,5 @@
-import { IDocumentation } from "../../interfaces/IDocumentation";
+import IDependency from "../../interfaces/IDependency";
+import IDocumentation from "../../interfaces/IDocumentation";
 import checkIframeSupport from "../checkIframeSupport";
 import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
@@ -8,14 +9,16 @@ import formatUrl from "./formatUrl";
 
 const getAllDocumentations = async (
   provider: DocumentationViewProvider,
-  dependencies: string[]
+  dependencies: IDependency[]
 ) => {
   const uniqueIds: string[] = [];
 
   const documentations = await Promise.all(
     dependencies.map(async (dependency) => {
-      const info = await getPackageInfo(dependency, provider._registry);
+      const info = await getPackageInfo(dependency);
       if (info) {
+        const registry = dependency.registry;
+
         if (info.name.startsWith("@types")) {
           return null;
         }
@@ -76,9 +79,16 @@ const getAllDocumentations = async (
             canBeIframe: documentationPageCanBeIFrame,
           },
           icon: (await getFaviconUrl(documentationPageUrl)) ?? "",
-          isPinned: provider._pinnedDocumentations.includes(id),
-          isFavorite: provider._favoriteDocumentations.includes(id),
-          isHide: provider._hideDocumentations.includes(id),
+          isPinned: provider._pinnedDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          isFavorite: provider._favoriteDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          isHide: provider._hideDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          registry,
         } as IDocumentation;
       }
       return null;

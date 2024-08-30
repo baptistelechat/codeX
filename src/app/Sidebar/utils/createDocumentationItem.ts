@@ -1,12 +1,13 @@
-import { IDocumentation } from "../../../lib/interfaces/IDocumentation";
+import IDependency from "../../../lib/interfaces/IDependency";
+import IDocumentation from "../../../lib/interfaces/IDocumentation";
 import createActionItems from "./createActionItems";
 import escapeHTML from "./escapeHTML";
 
 const createDocumentationItem = (
   documentation: IDocumentation,
-  pinnedDocumentations: string[],
-  favoriteDocumentations: string[],
-  hideDocumentations: string[]
+  pinnedDocumentations: IDependency[],
+  favoriteDocumentations: IDependency[],
+  hideDocumentations: IDependency[]
 ) => {
   const { id, icon, name, description, version, isHide } = documentation;
   const actionItems = createActionItems(

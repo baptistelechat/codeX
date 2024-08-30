@@ -1,31 +1,41 @@
+import IDependency from "../../../lib/interfaces/IDependency";
+
 const createActionItems = (
-  pinnedDocumentations: string[],
-  favoriteDocumentations: string[],
-  hideDocumentations: string[],
+  pinnedDocumentations: IDependency[],
+  favoriteDocumentations: IDependency[],
+  hideDocumentations: IDependency[],
   documentationId: string
 ) => {
-  const isSave = pinnedDocumentations.includes(documentationId);
+    const isPinned = pinnedDocumentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    );
+    const isFavorite = favoriteDocumentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    );
+    const isHide = hideDocumentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    );
 
   const actions = [
     { codicon: "home", description: "Open homepage" },
     { codicon: "preview", description: "Open in browser" },
     {
-      codicon: isSave ? "pinned-dirty" : "pinned",
-      description: isSave ? "Unpin for later" : "Pin for later",
+      codicon: isPinned ? "pinned-dirty" : "pinned",
+      description: isPinned ? "Unpin for later" : "Pin for later",
     },
     {
-      codicon: favoriteDocumentations.includes(documentationId)
+      codicon: isFavorite
         ? "star-full"
         : "star-empty",
-      description: favoriteDocumentations.includes(documentationId)
+      description: isFavorite
         ? "Remove favorite"
         : "Add to favorites",
     },
     {
-      codicon: hideDocumentations.includes(documentationId)
+      codicon:isHide
         ? "eye"
         : "eye-closed",
-      description: hideDocumentations.includes(documentationId)
+      description: isHide
         ? "Unhide"
         : "Hide",
     },

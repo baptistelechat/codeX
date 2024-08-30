@@ -1,4 +1,5 @@
-import { IDocumentation } from "../../lib/interfaces/IDocumentation";
+import IDependency from "../../lib/interfaces/IDependency";
+import IDocumentation from "../../lib/interfaces/IDocumentation";
 import loader from "./components/loader";
 import searchInput from "./components/searchInput";
 import removeBorder from "./utils/border/removeBorder";
@@ -16,9 +17,9 @@ let documentations: IDocumentation[] = [];
 let searchDocumentations: IDocumentation[] = [];
 let openDocumentations: string[] = [];
 let currentDocumentation: string = "";
-let pinnedDocumentations: string[] = [];
-let favoriteDocumentations: string[] = [];
-let hideDocumentations: string[] = [];
+let pinnedDocumentations: IDependency[] = [];
+let favoriteDocumentations: IDependency[] = [];
+let hideDocumentations: IDependency[] = [];
 let searchValue: string = "";
 let searchMode: boolean = false;
 
@@ -43,26 +44,50 @@ const loadDocumentations = (
 ) => {
   if (pinnedDocumentations.length === 0) {
     pinnedDocumentations = [
-      ...newDocumentations.filter((doc) => doc.isPinned).map((doc) => doc.id),
+      ...newDocumentations
+        .filter((documentation) => documentation.isPinned)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
       ...newSearchDocumentations
-        .filter((doc) => doc.isPinned)
-        .map((doc) => doc.id),
+        .filter((documentation) => documentation.isPinned)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
     ];
   }
   if (favoriteDocumentations.length === 0) {
     favoriteDocumentations = [
-      ...newDocumentations.filter((doc) => doc.isFavorite).map((doc) => doc.id),
+      ...newDocumentations
+        .filter((documentation) => documentation.isFavorite)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
       ...newSearchDocumentations
-        .filter((doc) => doc.isFavorite)
-        .map((doc) => doc.id),
+        .filter((documentation) => documentation.isFavorite)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
     ];
   }
   if (hideDocumentations.length === 0) {
     hideDocumentations = [
-      ...newDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
+      ...newDocumentations
+        .filter((documentation) => documentation.isHide)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
       ...newSearchDocumentations
-        .filter((doc) => doc.isHide)
-        .map((doc) => doc.id),
+        .filter((documentation) => documentation.isHide)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
     ];
   }
 
@@ -332,18 +357,37 @@ const openHomepage = (documentationId: string) => {
 };
 
 const togglePinned = (documentationId: string) => {
-  const isPinned = pinnedDocumentations.includes(documentationId);
-  const isHide = hideDocumentations.includes(documentationId);
+  const isPinned = pinnedDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
+  const isHide = hideDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
 
   if (isHide) {
     toggleHide(documentationId);
   }
 
-  pinnedDocumentations = isPinned
-    ? pinnedDocumentations.filter((id) => id !== documentationId)
-    : [...pinnedDocumentations, documentationId];
+  const dependency = {
+    id: documentationId,
+    registry: documentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    )
+      ? documentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry
+      : searchDocumentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry,
+  };
 
-  vscode.postMessage({ type: "togglePinned", documentationId });
+  pinnedDocumentations = isPinned
+    ? pinnedDocumentations.filter(
+        (dependency: IDependency) => dependency.id !== documentationId
+      )
+    : [...pinnedDocumentations, dependency];
+
+  vscode.postMessage({ type: "togglePinned", dependency });
   updateDocumentation(documentationId, {
     isPinned: !isPinned,
     isHide: false,
@@ -351,18 +395,37 @@ const togglePinned = (documentationId: string) => {
 };
 
 const toggleFavorite = (documentationId: string) => {
-  const isFavorite = favoriteDocumentations.includes(documentationId);
-  const isHide = hideDocumentations.includes(documentationId);
+  const isFavorite = favoriteDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
+  const isHide = hideDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
 
   if (isHide) {
     toggleHide(documentationId);
   }
 
-  favoriteDocumentations = isFavorite
-    ? favoriteDocumentations.filter((id) => id !== documentationId)
-    : [...favoriteDocumentations, documentationId];
+  const dependency = {
+    id: documentationId,
+    registry: documentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    )
+      ? documentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry
+      : searchDocumentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry,
+  };
 
-  vscode.postMessage({ type: "toggleFavorite", documentationId });
+  favoriteDocumentations = isFavorite
+    ? favoriteDocumentations.filter(
+        (dependency: IDependency) => dependency.id !== documentationId
+      )
+    : [...favoriteDocumentations, dependency];
+
+  vscode.postMessage({ type: "toggleFavorite", dependency });
   updateDocumentation(documentationId, {
     isFavorite: !isFavorite,
     isHide: false,
@@ -370,18 +433,37 @@ const toggleFavorite = (documentationId: string) => {
 };
 
 const toggleHide = (documentationId: string) => {
-  const isFavorite = favoriteDocumentations.includes(documentationId);
-  const isHide = hideDocumentations.includes(documentationId);
+  const isFavorite = favoriteDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
+  const isHide = hideDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
 
   if (isFavorite) {
     toggleFavorite(documentationId);
   }
 
-  hideDocumentations = isHide
-    ? hideDocumentations.filter((id) => id !== documentationId)
-    : [...hideDocumentations, documentationId];
+  const dependency = {
+    id: documentationId,
+    registry: documentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    )
+      ? documentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry
+      : searchDocumentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry,
+  };
 
-  vscode.postMessage({ type: "toggleHide", documentationId });
+  hideDocumentations = isHide
+    ? hideDocumentations.filter(
+        (dependency: IDependency) => dependency.id !== documentationId
+      )
+    : [...hideDocumentations, dependency];
+
+  vscode.postMessage({ type: "toggleHide", dependency });
   updateDocumentation(documentationId, { isHide: !isHide, isFavorite: false });
 };
 

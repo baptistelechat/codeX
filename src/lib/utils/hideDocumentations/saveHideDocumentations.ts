@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
+import IDependency from "../../interfaces/IDependency";
 
 const saveHideDocumentations = async (
   context: vscode.ExtensionContext,
-  hidden: string[]
+  hidden: IDependency[]
 ) => {
   await context.globalState.update("hideDocumentations", hidden);
 };
