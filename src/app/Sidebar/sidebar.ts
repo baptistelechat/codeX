@@ -321,6 +321,7 @@ const handleActionItemClick = (
     "star-full": () => toggleFavorite(documentationId),
     "eye-closed": () => toggleHide(documentationId),
     eye: () => toggleHide(documentationId),
+    registry: () => "",
   };
 
   const action = actions[iconName];

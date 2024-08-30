@@ -32,6 +32,32 @@
     transparent transparent;
 }
 
+/* Registry */
+.tooltip-registry-npm {
+  width: 40px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-22%);
+}
+
+.tooltip-registry-npm::after {
+  left: 15%;
+  transform: translateX(0%);
+}
+
+.tooltip-registry-packagist {
+  width: 75px;
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-8%);
+}
+
+.tooltip-registry-packagist::after {
+  left: 5%;
+  transform: translateX(0%);
+}
+
+/* Action items */
 .tooltip-pinned {
   width: 100px;
   border-radius: 5px;
