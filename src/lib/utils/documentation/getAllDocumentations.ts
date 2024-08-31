@@ -24,6 +24,10 @@ const getAllDocumentations = async (
         }
 
         const id = info.name.replaceAll("@", "");
+        
+        const version = info.version.startsWith("v")
+          ? info.version.slice(1)
+          : info.version;
 
         const homepageUrl = await formatUrl(info);
 
@@ -68,7 +72,7 @@ const getAllDocumentations = async (
         return {
           name: id.charAt(0).toUpperCase() + id.slice(1),
           id,
-          version: info.version,
+          version,
           description: description(),
           homepage: {
             url: homepageUrl,

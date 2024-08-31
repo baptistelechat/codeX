@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Reading composer.json for projects written in PHP
+- Display the registry where documentation is located with a colored circle (red = npm / yellow = packagist)
+- Add the ability to search documentation in the packagist's registry
 
 ### Changed
 

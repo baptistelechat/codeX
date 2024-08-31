@@ -89,6 +89,7 @@ interface IPackageInformation {
   _hasShrinkwrap: boolean;
   peerDependenciesMeta?: PackagePeerDependenciesMeta;
   _npmOperationalInternal?: NpmOperationalInternal;
+  registry: "npm" | "packagist";
   [key: string]: any; // For custom properties that are not standard
 }
 

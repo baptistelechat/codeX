@@ -19,6 +19,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public _view?: vscode.WebviewView;
   public _panels: { [id: string]: vscode.WebviewPanel } = {};
   public _dependencies: IDependency[] = [];
+  public _registries: ("npm" | "packagist")[] = [];
   public _documentations: IDocumentation[] = [];
   public _pinnedDocumentations: IDependency[] = [];
   public _favoriteDocumentations: IDependency[] = [];

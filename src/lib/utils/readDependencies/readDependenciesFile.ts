@@ -31,6 +31,10 @@ const readDependenciesFile = (
         ...Object.keys(fileContentParse["require-dev"] || {}),
       ];
 
+      if (!provider._registries.includes(registry)) {
+        provider._registries.push(registry);
+      }
+
       provider._dependencies.push(
         ...dependencies.map(
           (dependency) =>
