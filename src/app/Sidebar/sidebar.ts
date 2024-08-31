@@ -125,12 +125,12 @@ const loadDocumentations = (
       ${searchInput(
         searchValue,
         searchMode,
-        documentations.length,
-        searchDocumentations.length
+        documentations,
+        searchDocumentations
       )}
     </div>
     ${loader()}  
-    <div id="documentation-list" class="space-y-2 flex-1 mt-28 overflow-y-auto p-4 pt-0">
+    <div id="documentation-list" class="space-y-2 flex-1 overflow-y-auto p-4 pt-0" style="margin-top:7.5rem">
       ${
         searchMode
           ? searchDocumentations
@@ -202,9 +202,7 @@ const setupEventListeners = () => {
     "navigation-button"
   ) as HTMLButtonElement;
 
-  const documentationFoundLength = document.getElementById(
-    "documentation-found-length"
-  ) as HTMLInputElement;
+  const subtitle = document.getElementById("subtitle") as HTMLInputElement;
 
   const loader = document.getElementById("loader");
   const lottieAnimations = document.querySelectorAll(".lottieAnimation");
@@ -215,7 +213,7 @@ const setupEventListeners = () => {
     searchPackageInput &&
     searchPackageButton &&
     navigationButton &&
-    documentationFoundLength &&
+    subtitle &&
     loader &&
     documentationList &&
     lottieAnimations
@@ -224,7 +222,7 @@ const setupEventListeners = () => {
       if (event.key === "Enter") {
         const searchValue = searchPackageInput.value;
 
-        documentationFoundLength.style.setProperty("display", "none");
+        subtitle.style.setProperty("display", "none");
         documentationList.style.setProperty("display", "none");
         loader.style.setProperty("display", "flex");
 
@@ -248,7 +246,7 @@ const setupEventListeners = () => {
     searchPackageButton.addEventListener("click", () => {
       const searchValue = searchPackageInput.value;
 
-      documentationFoundLength.style.setProperty("display", "none");
+      subtitle.style.setProperty("display", "none");
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
 
@@ -389,10 +387,13 @@ const togglePinned = (documentationId: string) => {
     : [...pinnedDocumentations, dependency];
 
   vscode.postMessage({ type: "togglePinned", dependency });
+
   updateDocumentation(documentationId, {
     isPinned: !isPinned,
     isHide: false,
   });
+
+  // updateRegistriesLength(searchMode, documentations, searchDocumentations);
 };
 
 const toggleFavorite = (documentationId: string) => {
@@ -427,6 +428,7 @@ const toggleFavorite = (documentationId: string) => {
     : [...favoriteDocumentations, dependency];
 
   vscode.postMessage({ type: "toggleFavorite", dependency });
+
   updateDocumentation(documentationId, {
     isFavorite: !isFavorite,
     isHide: false,
@@ -465,6 +467,7 @@ const toggleHide = (documentationId: string) => {
     : [...hideDocumentations, dependency];
 
   vscode.postMessage({ type: "toggleHide", dependency });
+
   updateDocumentation(documentationId, { isHide: !isHide, isFavorite: false });
 };
 

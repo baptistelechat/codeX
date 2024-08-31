@@ -52,9 +52,30 @@
   transform: translateX(-8%);
 }
 
+/* Registry subtitle */
 .tooltip-registry-packagist::after {
   left: 5%;
   transform: translateX(0%);
+}
+
+.tooltip-registry-subtitle {
+  border-radius: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-registry-npm-subtitle {
+  width: 40px;
+}
+
+.tooltip-registry-packagist-subtitle {
+  width: 75px;
+}
+
+.tooltip-registry-npm-subtitle::after,
+.tooltip-registry-packagist-subtitle::after {
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Action items */
