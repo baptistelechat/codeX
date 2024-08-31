@@ -7,7 +7,8 @@ const createDocumentationItem = (
   documentation: IDocumentation,
   pinnedDocumentations: IDependency[],
   favoriteDocumentations: IDependency[],
-  hideDocumentations: IDependency[]
+  hideDocumentations: IDependency[],
+  hideRegistries: ("npm" | "packagist")[]
 ) => {
   const { id, icon, name, description, version, isHide, registry } =
     documentation;
@@ -38,7 +39,7 @@ const createDocumentationItem = (
   };
 
   return `
-    <div id="${escapeHTML(id)}" class="${
+    <div id="${escapeHTML(id)}" class="${hideRegistries.includes(registry) ? "hidden" : "flex"} ${
     isHide ? "blur-sm grayscale" : ""
   } item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200 ease-in-out" data-url="${
     documentation.documentationPage.url

@@ -22,6 +22,7 @@ let favoriteDocumentations: IDependency[] = [];
 let hideDocumentations: IDependency[] = [];
 let searchValue: string = "";
 let searchMode: boolean = false;
+let hideRegistries: ("npm" | "packagist")[] = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.documentElement;
@@ -139,7 +140,8 @@ const loadDocumentations = (
                   documentation,
                   pinnedDocumentations,
                   favoriteDocumentations,
-                  hideDocumentations
+                  hideDocumentations,
+                  hideRegistries
                 )
               )
               .join("")
@@ -149,7 +151,8 @@ const loadDocumentations = (
                   documentation,
                   pinnedDocumentations,
                   favoriteDocumentations,
-                  hideDocumentations
+                  hideDocumentations,
+                  hideRegistries
                 )
               )
               .join("")
@@ -186,6 +189,38 @@ const setupEventListeners = () => {
     if (documentationId) {
       item.addEventListener("click", (event) =>
         handleActionItemClick(event, iconName, documentationId)
+      );
+    }
+  });
+
+  document.querySelectorAll(".registry-action-item").forEach((actionItem) => {
+    const registry = actionItem.id.split("-")[1] as "npm" | "packagist";
+    const dependencyCount = Number(
+      document.getElementById(
+        `${registry === "npm" ? "packagist" : "npm"}-dependencies`
+      )?.innerHTML
+    );
+
+    if (dependencyCount > 0) {
+      actionItem.addEventListener("click", () => {
+        const content = actionItem.querySelector(".registry-data");
+        if (content) {
+          content.classList.toggle("brightness-50");
+          actionItem.classList.toggle("hover:brightness-90");
+
+          if (hideRegistries.includes(registry)) {
+            hideRegistries = hideRegistries.filter((r) => r !== registry);
+          } else {
+            hideRegistries.push(registry);
+          }
+
+          loadDocumentations(documentations, searchDocumentations);
+        }
+      });
+    } else {
+      actionItem.classList.remove(
+        "hover:cursor-pointer",
+        "hover:brightness-90"
       );
     }
   });
@@ -266,14 +301,16 @@ const setupEventListeners = () => {
       });
     });
 
-    navigationButton.addEventListener("click", () => {
-      searchMode = !searchMode;
-      loadDocumentations(documentations, searchDocumentations);
+    if (searchMode || searchDocumentations.length > 0) {
+      navigationButton.addEventListener("click", () => {
+        searchMode = !searchMode;
+        loadDocumentations(documentations, searchDocumentations);
 
-      vscode.postMessage({
-        type: "toggleSearchMode",
+        vscode.postMessage({
+          type: "toggleSearchMode",
+        });
       });
-    });
+    }
   }
 };
 

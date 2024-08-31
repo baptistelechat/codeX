@@ -1,6 +1,6 @@
 .action-item {
   position: relative;
-  display: inline-block;
+  /* display: inline-block; */
 }
 
 .action-item:hover .tooltip {

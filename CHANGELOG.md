@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning].
 ### Fixed
 
 - Fix reload command that not correctly refresh documentation list after installing or removing packages
+- User can click on the navigation button in the search bar and switch to the search documentation list even if the button is disabled
 
 ### Security
 

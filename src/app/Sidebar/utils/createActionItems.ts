@@ -58,7 +58,7 @@ const createActionItems = (
       (action) => `
     <div id="${
       action.codicon
-    }" class="action-item flex items-center justify-center rounded p-1 pb-0 hover:bg-[--vscode-toolbar-hoverBackground]">
+    }" class="action-item flex items-center justify-center rounded p-1 hover:bg-[--vscode-toolbar-hoverBackground]">
       <div class="codicon codicon-${action.codicon} ${actionIconColor(
         action.codicon
       )}" aria-label="${action.codicon}"></div>
