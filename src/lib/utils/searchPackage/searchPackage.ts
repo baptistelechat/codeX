@@ -1,10 +1,9 @@
 import { fetch } from "undici";
-import registryKeywords from "../../constants/registryKeywords";
 import IPackageInformation from "../../interfaces/IPackageInformation";
 import IPackageSearchResponse from "../../interfaces/IPackageSearch";
 import getPackageInfo from "../getPackageInfo";
-import replaceKeywordsInQuery from "./replaceKeywordsInQuery";
 import getRegistriesFromQuery from "./getRegistriesFromQuery";
+import replaceKeywordsInQuery from "./replaceKeywordsInQuery";
 
 const searchPackage = async (
   query: string,
@@ -17,7 +16,7 @@ const searchPackage = async (
 
   for (const registry of usedRegistries) {
     try {
-      const cleanQuery = replaceKeywordsInQuery(query, registry);
+      const cleanQuery = replaceKeywordsInQuery(query, usedRegistries);
       let url: string;
 
       if (registry === "npm") {
