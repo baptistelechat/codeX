@@ -68,6 +68,12 @@
         "category": "CodeX",
         "title": "Feedback",
         "icon": "$(comment)"
+      },
+      {
+        "command": "codeX.getHelp",
+        "category": "CodeX",
+        "title": "Get Help",
+        "icon": "$(question)"
       }
     ],
     "menus": {
@@ -78,13 +84,18 @@
           "when": "view == codeX.documentations"
         },
         {
-          "command": "codeX.feedback",
+          "command": "codeX.getHelp",
           "group": "navigation@2",
+            "when": "view == codeX.documentations"
+        },
+        {
+          "command": "codeX.feedback",
+          "group": "navigation@3",
           "when": "view == codeX.documentations"
         },
         {
           "command": "codeX.reset",
-          "group": "navigation@3",
+          "group": "navigation@4",
           "when": "view == codeX.documentations"
         }
       ]

@@ -14,7 +14,11 @@ and this project adheres to [Semantic Versioning].
 - Reading composer.json for projects written in PHP
 - Display the registry where documentation is located with a colored circle (red = npm / yellow = packagist)
 - Add the ability to search documentation in the packagist's registry
-- Possibility of filtering the list of documentation by register
+- Adding a list of keywords that filter the search results with a specific registry
+- Filter the list of documentation by registry at the click of a button below the search bar
+
+### Changed
+- Keep only one lottie animation for the loader
 
 ### Fixed
 

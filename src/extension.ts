@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import openFeedbackForms from "./lib/utils/openFeedbackForms";
+import openGetHelp from "./lib/utils/openGetHelp";
 import { DocumentationViewProvider } from "./lib/utils/provider/DocumentationViewProvider";
 
 export const activate = (context: vscode.ExtensionContext) => {
@@ -20,6 +21,12 @@ export const activate = (context: vscode.ExtensionContext) => {
       documentationViewProvider.reloadExtension();
       documentationViewProvider.getDocumentations();
       // vscode.commands.executeCommand("workbench.action.reloadWindow");
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("codeX.getHelp", () => {
+      openGetHelp(context);
     })
   );
 

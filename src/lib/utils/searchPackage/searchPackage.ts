@@ -1,22 +1,28 @@
 import { fetch } from "undici";
-import IPackageInformation from "../interfaces/IPackageInformation";
-import IPackageSearchResponse from "../interfaces/IPackageSearch";
-import getPackageInfo from "./getPackageInfo";
+import IPackageInformation from "../../interfaces/IPackageInformation";
+import IPackageSearchResponse from "../../interfaces/IPackageSearch";
+import getPackageInfo from "../getPackageInfo";
+import getRegistriesFromQuery from "./getRegistriesFromQuery";
+import replaceKeywordsInQuery from "./replaceKeywordsInQuery";
 
 const searchPackage = async (
   query: string,
   registries: ("npm" | "packagist")[]
 ): Promise<IPackageInformation[]> => {
   const searchedDependencies = [] as IPackageInformation[];
+  const requestedRegistries = getRegistriesFromQuery(query);
+  const usedRegistries =
+    requestedRegistries.length > 0 ? requestedRegistries : registries;
 
-  for (const registry of registries) {
+  for (const registry of usedRegistries) {
     try {
+      const cleanQuery = replaceKeywordsInQuery(query, usedRegistries);
       let url: string;
 
       if (registry === "npm") {
-        url = `https://registry.npmjs.org/-/v1/search?text=${query}&popularity=1.0`;
+        url = `https://registry.npmjs.org/-/v1/search?text=${cleanQuery}&popularity=1.0`;
       } else if (registry === "packagist") {
-        url = `https://packagist.org/search.json?q=${query}`;
+        url = `https://packagist.org/search.json?q=${cleanQuery}`;
       } else {
         throw new Error(`Unknown registry: ${registry}`);
       }
