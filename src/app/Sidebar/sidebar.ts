@@ -6,7 +6,6 @@ import removeBorder from "./utils/border/removeBorder";
 import resetHover from "./utils/border/resetHover";
 import updateBorder from "./utils/border/updateBorder";
 import createDocumentationItem from "./utils/createDocumentationItem";
-import getRandomLottieFile from "./utils/getRandomLottieFile";
 import sortDocumentations from "./utils/sortDocumentations";
 import updateHover from "./utils/updateHover";
 
@@ -262,16 +261,6 @@ const setupEventListeners = () => {
         documentationList.style.setProperty("display", "none");
         loader.style.setProperty("display", "flex");
 
-        const activeLottieFileId =
-          "lottie-animation-" + getRandomLottieFile().id.toString();
-        lottieAnimations.forEach((lottieAnimation) => {
-          if (lottieAnimation.id === activeLottieFileId) {
-            lottieAnimation.classList.remove("hidden");
-          } else {
-            lottieAnimation.classList.add("hidden");
-          }
-        });
-
         vscode.postMessage({
           type: "searchDocumentation",
           searchValue,
@@ -285,16 +274,6 @@ const setupEventListeners = () => {
       subtitle.style.setProperty("display", "none");
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
-
-      const activeLottieFileId =
-        "lottie-animation-" + getRandomLottieFile().id.toString();
-      lottieAnimations.forEach((lottieAnimation) => {
-        if (lottieAnimation.id === activeLottieFileId) {
-          lottieAnimation.classList.remove("hidden");
-        } else {
-          lottieAnimation.classList.add("hidden");
-        }
-      });
 
       vscode.postMessage({
         type: "searchDocumentation",

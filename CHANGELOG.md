@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning].
 - Adding a list of keywords that filter the search results with a specific registry
 - Filter the list of documentation by registry at the click of a button below the search bar
 
+### Changed
+- Keep only one lottie animation for the loader
+
 ### Fixed
 
 - Fix reload command that not correctly refresh documentation list after installing or removing packages
