@@ -220,7 +220,8 @@ const setupEventListeners = () => {
     } else {
       actionItem.classList.remove(
         "hover:cursor-pointer",
-        "hover:brightness-90"
+        "hover:brightness-90",
+        "brightness-50"
       );
     }
   });
@@ -261,6 +262,8 @@ const setupEventListeners = () => {
         documentationList.style.setProperty("display", "none");
         loader.style.setProperty("display", "flex");
 
+        hideRegistries = [];
+
         vscode.postMessage({
           type: "searchDocumentation",
           searchValue,
@@ -274,6 +277,8 @@ const setupEventListeners = () => {
       subtitle.style.setProperty("display", "none");
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
+
+      hideRegistries = [];
 
       vscode.postMessage({
         type: "searchDocumentation",

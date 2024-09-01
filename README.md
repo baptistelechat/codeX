@@ -29,6 +29,8 @@ CodeX intelligently detects the registry based on your query and directs you to 
 <u>Use keywords :</u>
 You can filter results according to specific registries (npm or packagist for the moment).
 
+![Sidebar](https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/images/captures/searchbar.png)
+
 ### 🧙‍♂️ Keywords
 
 You can add keywords to your search if you want to search in a particular registry :
