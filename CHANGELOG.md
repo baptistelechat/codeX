@@ -5,27 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## Unreleased
+<!-- ## Unreleased -->
+
+## [0.4.0] - 2024-09-02
 
 ### Added
 
 - Reading composer.json for projects written in PHP
 - Display the registry where documentation is located with a colored circle (red = npm / yellow = packagist)
 - Add the ability to search documentation in the packagist's registry
-
-### Changed
-
-### Deprecated
-
-### Removed
+- Possibility of filtering the list of documentation by register
 
 ### Fixed
 
 - Fix reload command that not correctly refresh documentation list after installing or removing packages
 - User can click on the navigation button in the search bar and switch to the search documentation list even if the button is disabled
-
-### Security
-
 
 ## [0.3.0] - 2024-08-27
 
@@ -98,3 +92,4 @@ and this project adheres to [Semantic Versioning].
 [0.2.0]: https://github.com/baptistelechat/codeX/releases/tag/v0.2.0
 [0.2.1]: https://github.com/baptistelechat/codeX/releases/tag/v0.2.1
 [0.3.0]: https://github.com/baptistelechat/codeX/releases/tag/v0.3.0
+[0.4.0]: https://github.com/baptistelechat/codeX/releases/tag/v0.4.0
