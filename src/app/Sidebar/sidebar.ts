@@ -127,7 +127,8 @@ const loadDocumentations = (
         searchValue,
         searchMode,
         documentations,
-        searchDocumentations
+        searchDocumentations,
+        hideRegistries
       )}
     </div>
     ${loader()}  
@@ -195,19 +196,19 @@ const setupEventListeners = () => {
 
   document.querySelectorAll(".registry-action-item").forEach((actionItem) => {
     const registry = actionItem.id.split("-")[1] as "npm" | "packagist";
-    const dependencyCount = Number(
-      document.getElementById(
-        `${registry === "npm" ? "packagist" : "npm"}-dependencies`
-      )?.innerHTML
+    const oppositeRegistryButton = document.getElementById(
+      `${registry === "npm" ? "packagist" : "npm"}-dependencies`
     );
+    const oppositeDependencyCount = Number(oppositeRegistryButton?.innerHTML);
+    const oppositeRegistryIsDisable =
+      oppositeRegistryButton?.parentElement?.classList.contains(
+        "brightness-50"
+      );
 
-    if (dependencyCount > 0) {
+    if (oppositeDependencyCount > 0 && !oppositeRegistryIsDisable) {
       actionItem.addEventListener("click", () => {
         const content = actionItem.querySelector(".registry-data");
         if (content) {
-          content.classList.toggle("brightness-50");
-          actionItem.classList.toggle("hover:brightness-90");
-
           if (hideRegistries.includes(registry)) {
             hideRegistries = hideRegistries.filter((r) => r !== registry);
           } else {
