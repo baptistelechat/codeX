@@ -1,8 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
 import * as vscode from "vscode";
 import getDocumentationViewContent from "../documentation/getDocumentationViewContent";
-import { showErrorMessage } from "../showMessage";
 import { DocumentationViewProvider } from "./DocumentationViewProvider";
 import { handleWebviewMessage } from "./handleWebviewMessage";
 
@@ -11,35 +8,6 @@ export async function resolveWebviewView(
   webviewView: vscode.WebviewView
 ) {
   provider._view = webviewView;
-
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (!workspaceFolders) {
-    showErrorMessage("No workspace folder is open.");
-    return;
-  }
-
-  const packageJsonPath = path.join(
-    workspaceFolders[0].uri.fsPath,
-    "package.json"
-  );
-  if (fs.existsSync(packageJsonPath)) {
-    try {
-      const packageJsonContent = fs.readFileSync(packageJsonPath, "utf8");
-      const packageJSONContentParse = JSON.parse(packageJsonContent);
-      const dependencies = [
-        ...Object.keys(packageJSONContentParse.dependencies || {}),
-        ...Object.keys(packageJSONContentParse.devDependencies || {}),
-      ];
-
-      provider._packageJson = dependencies;
-    } catch (error) {
-      showErrorMessage("Failed to read package.json.");
-      return;
-    }
-  } else {
-    showErrorMessage("No package.json found in the workspace.");
-    return;
-  }
 
   provider.getDocumentations();
 

@@ -1,26 +1,38 @@
-import { IDocumentation } from "../../interfaces/IDocumentation";
+import IDependency from "../../interfaces/IDependency";
+import IDocumentation from "../../interfaces/IDocumentation";
+import IPackageInformation from "../../interfaces/IPackageInformation";
 import checkIframeSupport from "../checkIframeSupport";
 import findUrlDocumentation from "../findUrlDocumentation";
 import getFaviconUrl from "../getFaviconUrl";
 import { DocumentationViewProvider } from "../provider/DocumentationViewProvider";
-import searchPackage from "../searchPackage";
+import searchPackage from "../searchPackage/searchPackage";
 import formatUrl from "./formatUrl";
 
 const searchDocumentation = async (
   provider: DocumentationViewProvider
 ): Promise<IDocumentation[]> => {
   try {
-    const packages = await searchPackage(provider._searchValue);
+    const packages = await searchPackage(
+      provider._searchValue,
+      provider._registries
+    );
     const uniqueIds: string[] = [];
 
     const documentations = await Promise.all(
-      packages.map(async (pkg) => {
+      packages.map(async (pkg: IPackageInformation) => {
         const info = pkg;
+
+        const registry = info.registry;
+
         if (info.name.startsWith("@types")) {
           return null;
         }
 
         const id = info.name.replaceAll("@", "");
+
+        const version = info.version.startsWith("v")
+          ? info.version.slice(1)
+          : info.version;
 
         const homepageUrl = await formatUrl(info);
 
@@ -65,7 +77,7 @@ const searchDocumentation = async (
         const doc = {
           name: id.charAt(0).toUpperCase() + id.slice(1),
           id,
-          version: info.version,
+          version,
           description: description(),
           homepage: {
             url: homepageUrl,
@@ -76,9 +88,16 @@ const searchDocumentation = async (
             canBeIframe: documentationPageCanBeIFrame,
           },
           icon: (await getFaviconUrl(documentationPageUrl)) ?? "",
-          isPinned: provider._pinnedDocumentations.includes(id),
-          isFavorite: provider._favoriteDocumentations.includes(id),
-          isHide: provider._hideDocumentations.includes(id),
+          isPinned: provider._pinnedDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          isFavorite: provider._favoriteDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          isHide: provider._hideDocumentations.some(
+            (dependency: IDependency) => dependency.id === id
+          ),
+          registry,
         } as IDocumentation;
 
         return doc;

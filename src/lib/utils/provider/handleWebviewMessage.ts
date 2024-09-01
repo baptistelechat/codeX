@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import focusDocumentation from "../documentation/action/focusDocumentation";
 import openDocumentation from "../documentation/action/openDocumentation";
-import { getDocumentations } from "../documentation/getDocumentations";
 import searchDocumentation from "../documentation/searchDocumentation";
 import { showInformationMessage } from "../showMessage";
 import { DocumentationViewProvider } from "./DocumentationViewProvider";
@@ -32,15 +31,15 @@ export async function handleWebviewMessage(
       break;
 
     case "togglePinned":
-      provider.togglePinned(message.documentationId);
+      provider.togglePinned(message.dependency);
       break;
 
     case "toggleFavorite":
-      provider.toggleFavorite(message.documentationId);
+      provider.toggleFavorite(message.dependency);
       break;
 
     case "toggleHide":
-      provider.toggleHide(message.documentationId);
+      provider.toggleHide(message.dependency);
       break;
 
     case "openExternalUri":
@@ -53,23 +52,13 @@ export async function handleWebviewMessage(
       break;
 
     case "reload":
-      if (provider._documentations.length === 0) {
-        getDocumentations(provider);
-      } else {
-        const searchMode = provider._searchDocumentations
-          .map((documentation) => documentation.id)
-          .includes(provider._currentDocumentations);
+      const searchMode = provider._searchDocumentations
+        .map((documentation) => documentation.id)
+        .includes(provider._currentDocumentations);
 
-        provider._view?.webview.postMessage({
-          type: "setDocumentations",
-          documentations: provider._documentations,
-          searchDocumentations: provider._searchDocumentations,
-          openDocumentations: provider._openDocumentations,
-          currentDocumentation: provider._currentDocumentations,
-          searchMode,
-          searchValue: provider._searchValue,
-        });
-      }
+      provider._searchMode = searchMode;
+
+      provider.getDocumentations();
       break;
 
     case "searchDocumentation":

@@ -3,7 +3,7 @@ interface Url {
   canBeIframe: boolean;
 }
 
-export interface IDocumentation {
+interface IDocumentation {
   name: string;
   id: string;
   version: string;
@@ -14,4 +14,7 @@ export interface IDocumentation {
   isPinned: boolean;
   isFavorite: boolean;
   isHide: boolean;
+  registry: "npm" | "packagist";
 }
+
+export default IDocumentation;

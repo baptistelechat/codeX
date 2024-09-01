@@ -1,10 +1,11 @@
 import * as vscode from "vscode";
-import { IDocumentation } from "../../interfaces/IDocumentation";
+import IDependency from "../../interfaces/IDependency";
+import IDocumentation from "../../interfaces/IDocumentation";
 import { getDocumentations } from "../documentation/getDocumentations";
 import loadFavoriteDocumentations from "../favoriteDocumentations/loadFavoriteDocumentations";
 import saveFavoriteDocumentations from "../favoriteDocumentations/saveFavoriteDocumentations";
 import toggleFavorite from "../favoriteDocumentations/toggleFavorite";
-import { loadHideDocumentations } from "../hideDocumentations/loadHideDocumentations";
+import loadHideDocumentations from "../hideDocumentations/loadHideDocumentations";
 import saveHideDocumentations from "../hideDocumentations/saveHideDocumentations";
 import toggleHide from "../hideDocumentations/toggleHide";
 import loadPinnedDocumentations from "../pinnedDocumentations/loadPinnedDocumentations";
@@ -17,11 +18,12 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "codeX.documentations";
   public _view?: vscode.WebviewView;
   public _panels: { [id: string]: vscode.WebviewPanel } = {};
-  public _packageJson: string[] = [];
+  public _dependencies: IDependency[] = [];
+  public _registries: ("npm" | "packagist")[] = [];
   public _documentations: IDocumentation[] = [];
-  public _pinnedDocumentations: string[] = [];
-  public _favoriteDocumentations: string[] = [];
-  public _hideDocumentations: string[] = [];
+  public _pinnedDocumentations: IDependency[] = [];
+  public _favoriteDocumentations: IDependency[] = [];
+  public _hideDocumentations: IDependency[] = [];
   public _searchValue: string = "";
   public _searchMode: boolean = false;
   public _searchDocumentations: IDocumentation[] = [];
@@ -70,8 +72,8 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     await savePinnedDocumentations(this.context, this._pinnedDocumentations);
   }
 
-  public async togglePinned(documentationId: string) {
-    togglePinned(this, documentationId);
+  public async togglePinned(dependency: IDependency) {
+    togglePinned(this, dependency);
   }
 
   // Favorite documentations
@@ -89,8 +91,8 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     );
   }
 
-  public toggleFavorite(documentationId: string) {
-    toggleFavorite(this, documentationId);
+  public toggleFavorite(dependency: IDependency) {
+    toggleFavorite(this, dependency);
   }
 
   // Hide documentations
@@ -103,7 +105,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
     await saveHideDocumentations(this.context, this._hideDocumentations);
   }
 
-  public toggleHide(documentationId: string) {
-    toggleHide(this, documentationId);
+  public toggleHide(dependency: IDependency) {
+    toggleHide(this, dependency);
   }
 }

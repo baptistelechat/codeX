@@ -1,14 +1,17 @@
-import { IDocumentation } from "../../../lib/interfaces/IDocumentation";
+import IDependency from "../../../lib/interfaces/IDependency";
+import IDocumentation from "../../../lib/interfaces/IDocumentation";
 import createActionItems from "./createActionItems";
 import escapeHTML from "./escapeHTML";
 
 const createDocumentationItem = (
   documentation: IDocumentation,
-  pinnedDocumentations: string[],
-  favoriteDocumentations: string[],
-  hideDocumentations: string[]
+  pinnedDocumentations: IDependency[],
+  favoriteDocumentations: IDependency[],
+  hideDocumentations: IDependency[],
+  hideRegistries: ("npm" | "packagist")[]
 ) => {
-  const { id, icon, name, description, version, isHide } = documentation;
+  const { id, icon, name, description, version, isHide, registry } =
+    documentation;
   const actionItems = createActionItems(
     pinnedDocumentations,
     favoriteDocumentations,
@@ -36,7 +39,7 @@ const createDocumentationItem = (
   };
 
   return `
-    <div id="${escapeHTML(id)}" class="${
+    <div id="${escapeHTML(id)}" class="${hideRegistries.includes(registry) ? "hidden" : "flex"} ${
     isHide ? "blur-sm grayscale" : ""
   } item cursor-pointer flex-col rounded py-2 pl-4 transition-all duration-200 ease-in-out" data-url="${
     documentation.documentationPage.url
@@ -47,7 +50,17 @@ const createDocumentationItem = (
           <h2 class="text-xl font-semibold">${escapeHTML(name)}</h2>
           <p class="truncate">${formatDescription(description)}</p>
           <div class="flex justify-between">
-            <p class="font-semibold italic">v${escapeHTML(version)}</p>
+            <div class="flex items-center gap-1">
+              <div id="registry" class="action-item flex items-center justify-center rounded p-1.5 hover:bg-[--vscode-toolbar-hoverBackground]">
+                <div class="size-2.5 rounded-full ${
+                  registry === "npm" ? "bg-red-400" : "bg-yellow-400"
+                }"></div>
+                <div class="tooltip tooltip-registry-${registry}">${
+    registry[0].toUpperCase() + registry.slice(1)
+  }</div>
+              </div>
+              <p class="font-semibold italic">v${escapeHTML(version)}</p>
+            </div>
             <div class="mr-2 flex gap-1.5">${actionItems}</div>
           </div>
         </div>

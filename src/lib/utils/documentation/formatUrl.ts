@@ -2,11 +2,12 @@ import { fetch } from "undici";
 import IPackageInformation from "../../interfaces/IPackageInformation";
 
 const formatUrl = async (info: IPackageInformation) => {
-  const url =
+  const url: string =
     info.homepage ||
     (info.repository && info.repository.url) ||
     (info.links && info.links.homepage) ||
     (info.links && info.links.repository) ||
+    (info.source && info.source.url) ||
     "";
 
   if (url.includes("radix-ui.com/primitives")) {
@@ -26,7 +27,7 @@ const formatUrl = async (info: IPackageInformation) => {
     return componentUrl;
   }
 
-  return url;
+  return url.endsWith(".git") ? url.replace(".git", "") : url;
 };
 
 export default formatUrl;

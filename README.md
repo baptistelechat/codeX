@@ -12,11 +12,42 @@ The codeX extension allows the user to read dependency documentation in VSCode:
 - Display of dependency name, available documentation version and short description if available
 - Opening documentation in an editor side panel
 - Display of a markdown interpreter for documentation hosted on GitHub
-- Search a package documentation in the NPM registry
+- Search a package documentation
 
 Go to your activity bar to see all available websites. After installation, a new icon appears to access the extension!
 
 ![Sidebar](https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/images/captures/sidebar.png)
+
+## 🔎 Search a package
+
+With codeX, you can effortlessly search for documentation for any package directly from Visual Studio Code. Simply use the search bar provided by the extension to find the relevant documentation for your dependencies. Whether you're working with npm or packagist **(other popular package managers will be available soon).**
+
+<u>Quick access :</u>
+Open documentation in a side panel or directly in your default web browser with a single click.
+<u>Automatic registry detection :</u>
+CodeX intelligently detects the registry based on your query and directs you to the correct documentation source.
+<u>Use keywords :</u>
+You can filter results according to specific registries (npm or packagist for the moment).
+
+![Sidebar](https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/images/captures/searchbar.png)
+
+### 🧙‍♂️ Keywords
+
+You can add keywords to your search if you want to search in a particular registry :
+
+- NPM :
+  - #npm
+  - #js
+  - #node
+  - #nodejs
+  - #javascript
+- Packagist :
+  - #packagist
+  - #pkg
+  - #php
+  - #composer
+
+Examples : "#npm React" or "React #node" or "#php React" or "#javascript #php React" or "#js #php React"
 
 ## 🐛 Error
 
@@ -31,7 +62,6 @@ We appreciate your feedback and suggestions for improving this project. If you h
 ![Feedback](https://raw.githubusercontent.com/baptistelechat/codeX/main/src/lib/assets/images/captures/feedback.png)
 
 Your feedback is important to us, and will help us make this project even better. Thank you for your participation! 🙏
-
 
 ## 🔄 Translation
 

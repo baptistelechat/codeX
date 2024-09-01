@@ -1,11 +1,11 @@
-import { IDocumentation } from "../../lib/interfaces/IDocumentation";
+import IDependency from "../../lib/interfaces/IDependency";
+import IDocumentation from "../../lib/interfaces/IDocumentation";
 import loader from "./components/loader";
 import searchInput from "./components/searchInput";
 import removeBorder from "./utils/border/removeBorder";
 import resetHover from "./utils/border/resetHover";
 import updateBorder from "./utils/border/updateBorder";
 import createDocumentationItem from "./utils/createDocumentationItem";
-import getRandomLottieFile from "./utils/getRandomLottieFile";
 import sortDocumentations from "./utils/sortDocumentations";
 import updateHover from "./utils/updateHover";
 
@@ -16,11 +16,12 @@ let documentations: IDocumentation[] = [];
 let searchDocumentations: IDocumentation[] = [];
 let openDocumentations: string[] = [];
 let currentDocumentation: string = "";
-let pinnedDocumentations: string[] = [];
-let favoriteDocumentations: string[] = [];
-let hideDocumentations: string[] = [];
+let pinnedDocumentations: IDependency[] = [];
+let favoriteDocumentations: IDependency[] = [];
+let hideDocumentations: IDependency[] = [];
 let searchValue: string = "";
 let searchMode: boolean = false;
+let hideRegistries: ("npm" | "packagist")[] = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.documentElement;
@@ -43,26 +44,50 @@ const loadDocumentations = (
 ) => {
   if (pinnedDocumentations.length === 0) {
     pinnedDocumentations = [
-      ...newDocumentations.filter((doc) => doc.isPinned).map((doc) => doc.id),
+      ...newDocumentations
+        .filter((documentation) => documentation.isPinned)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
       ...newSearchDocumentations
-        .filter((doc) => doc.isPinned)
-        .map((doc) => doc.id),
+        .filter((documentation) => documentation.isPinned)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
     ];
   }
   if (favoriteDocumentations.length === 0) {
     favoriteDocumentations = [
-      ...newDocumentations.filter((doc) => doc.isFavorite).map((doc) => doc.id),
+      ...newDocumentations
+        .filter((documentation) => documentation.isFavorite)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
       ...newSearchDocumentations
-        .filter((doc) => doc.isFavorite)
-        .map((doc) => doc.id),
+        .filter((documentation) => documentation.isFavorite)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
     ];
   }
   if (hideDocumentations.length === 0) {
     hideDocumentations = [
-      ...newDocumentations.filter((doc) => doc.isHide).map((doc) => doc.id),
+      ...newDocumentations
+        .filter((documentation) => documentation.isHide)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
       ...newSearchDocumentations
-        .filter((doc) => doc.isHide)
-        .map((doc) => doc.id),
+        .filter((documentation) => documentation.isHide)
+        .map((documentation) => ({
+          id: documentation.id,
+          registry: documentation.registry,
+        })),
     ];
   }
 
@@ -100,12 +125,13 @@ const loadDocumentations = (
       ${searchInput(
         searchValue,
         searchMode,
-        documentations.length,
-        searchDocumentations.length
+        documentations,
+        searchDocumentations,
+        hideRegistries
       )}
     </div>
     ${loader()}  
-    <div id="documentation-list" class="space-y-2 flex-1 mt-28 overflow-y-auto p-4 pt-0">
+    <div id="documentation-list" class="space-y-2 flex-1 overflow-y-auto p-4 pt-0" style="margin-top:7.5rem">
       ${
         searchMode
           ? searchDocumentations
@@ -114,7 +140,8 @@ const loadDocumentations = (
                   documentation,
                   pinnedDocumentations,
                   favoriteDocumentations,
-                  hideDocumentations
+                  hideDocumentations,
+                  hideRegistries
                 )
               )
               .join("")
@@ -124,7 +151,8 @@ const loadDocumentations = (
                   documentation,
                   pinnedDocumentations,
                   favoriteDocumentations,
-                  hideDocumentations
+                  hideDocumentations,
+                  hideRegistries
                 )
               )
               .join("")
@@ -165,6 +193,39 @@ const setupEventListeners = () => {
     }
   });
 
+  document.querySelectorAll(".registry-action-item").forEach((actionItem) => {
+    const registry = actionItem.id.split("-")[1] as "npm" | "packagist";
+    const oppositeRegistryButton = document.getElementById(
+      `${registry === "npm" ? "packagist" : "npm"}-dependencies`
+    );
+    const oppositeDependencyCount = Number(oppositeRegistryButton?.innerHTML);
+    const oppositeRegistryIsDisable =
+      oppositeRegistryButton?.parentElement?.classList.contains(
+        "brightness-50"
+      );
+
+    if (oppositeDependencyCount > 0 && !oppositeRegistryIsDisable) {
+      actionItem.addEventListener("click", () => {
+        const content = actionItem.querySelector(".registry-data");
+        if (content) {
+          if (hideRegistries.includes(registry)) {
+            hideRegistries = hideRegistries.filter((r) => r !== registry);
+          } else {
+            hideRegistries.push(registry);
+          }
+
+          loadDocumentations(documentations, searchDocumentations);
+        }
+      });
+    } else {
+      actionItem.classList.remove(
+        "hover:cursor-pointer",
+        "hover:brightness-90",
+        "brightness-50"
+      );
+    }
+  });
+
   const searchPackageInput = document.getElementById(
     "search-package-input"
   ) as HTMLInputElement;
@@ -177,9 +238,7 @@ const setupEventListeners = () => {
     "navigation-button"
   ) as HTMLButtonElement;
 
-  const documentationFoundLength = document.getElementById(
-    "documentation-found-length"
-  ) as HTMLInputElement;
+  const subtitle = document.getElementById("subtitle") as HTMLInputElement;
 
   const loader = document.getElementById("loader");
   const lottieAnimations = document.querySelectorAll(".lottieAnimation");
@@ -190,7 +249,7 @@ const setupEventListeners = () => {
     searchPackageInput &&
     searchPackageButton &&
     navigationButton &&
-    documentationFoundLength &&
+    subtitle &&
     loader &&
     documentationList &&
     lottieAnimations
@@ -199,19 +258,11 @@ const setupEventListeners = () => {
       if (event.key === "Enter") {
         const searchValue = searchPackageInput.value;
 
-        documentationFoundLength.style.setProperty("display", "none");
+        subtitle.style.setProperty("display", "none");
         documentationList.style.setProperty("display", "none");
         loader.style.setProperty("display", "flex");
 
-        const activeLottieFileId =
-          "lottie-animation-" + getRandomLottieFile().id.toString();
-        lottieAnimations.forEach((lottieAnimation) => {
-          if (lottieAnimation.id === activeLottieFileId) {
-            lottieAnimation.classList.remove("hidden");
-          } else {
-            lottieAnimation.classList.add("hidden");
-          }
-        });
+        hideRegistries = [];
 
         vscode.postMessage({
           type: "searchDocumentation",
@@ -223,19 +274,11 @@ const setupEventListeners = () => {
     searchPackageButton.addEventListener("click", () => {
       const searchValue = searchPackageInput.value;
 
-      documentationFoundLength.style.setProperty("display", "none");
+      subtitle.style.setProperty("display", "none");
       documentationList.style.setProperty("display", "none");
       loader.style.setProperty("display", "flex");
 
-      const activeLottieFileId =
-        "lottie-animation-" + getRandomLottieFile().id.toString();
-      lottieAnimations.forEach((lottieAnimation) => {
-        if (lottieAnimation.id === activeLottieFileId) {
-          lottieAnimation.classList.remove("hidden");
-        } else {
-          lottieAnimation.classList.add("hidden");
-        }
-      });
+      hideRegistries = [];
 
       vscode.postMessage({
         type: "searchDocumentation",
@@ -243,14 +286,16 @@ const setupEventListeners = () => {
       });
     });
 
-    navigationButton.addEventListener("click", () => {
-      searchMode = !searchMode;
-      loadDocumentations(documentations, searchDocumentations);
+    if (searchMode || searchDocumentations.length > 0) {
+      navigationButton.addEventListener("click", () => {
+        searchMode = !searchMode;
+        loadDocumentations(documentations, searchDocumentations);
 
-      vscode.postMessage({
-        type: "toggleSearchMode",
+        vscode.postMessage({
+          type: "toggleSearchMode",
+        });
       });
-    });
+    }
   }
 };
 
@@ -296,6 +341,7 @@ const handleActionItemClick = (
     "star-full": () => toggleFavorite(documentationId),
     "eye-closed": () => toggleHide(documentationId),
     eye: () => toggleHide(documentationId),
+    registry: () => "",
   };
 
   const action = actions[iconName];
@@ -332,37 +378,79 @@ const openHomepage = (documentationId: string) => {
 };
 
 const togglePinned = (documentationId: string) => {
-  const isPinned = pinnedDocumentations.includes(documentationId);
-  const isHide = hideDocumentations.includes(documentationId);
+  const isPinned = pinnedDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
+  const isHide = hideDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
 
   if (isHide) {
     toggleHide(documentationId);
   }
 
-  pinnedDocumentations = isPinned
-    ? pinnedDocumentations.filter((id) => id !== documentationId)
-    : [...pinnedDocumentations, documentationId];
+  const dependency = {
+    id: documentationId,
+    registry: documentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    )
+      ? documentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry
+      : searchDocumentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry,
+  };
 
-  vscode.postMessage({ type: "togglePinned", documentationId });
+  pinnedDocumentations = isPinned
+    ? pinnedDocumentations.filter(
+        (dependency: IDependency) => dependency.id !== documentationId
+      )
+    : [...pinnedDocumentations, dependency];
+
+  vscode.postMessage({ type: "togglePinned", dependency });
+
   updateDocumentation(documentationId, {
     isPinned: !isPinned,
     isHide: false,
   });
+
+  // updateRegistriesLength(searchMode, documentations, searchDocumentations);
 };
 
 const toggleFavorite = (documentationId: string) => {
-  const isFavorite = favoriteDocumentations.includes(documentationId);
-  const isHide = hideDocumentations.includes(documentationId);
+  const isFavorite = favoriteDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
+  const isHide = hideDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
 
   if (isHide) {
     toggleHide(documentationId);
   }
 
-  favoriteDocumentations = isFavorite
-    ? favoriteDocumentations.filter((id) => id !== documentationId)
-    : [...favoriteDocumentations, documentationId];
+  const dependency = {
+    id: documentationId,
+    registry: documentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    )
+      ? documentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry
+      : searchDocumentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry,
+  };
 
-  vscode.postMessage({ type: "toggleFavorite", documentationId });
+  favoriteDocumentations = isFavorite
+    ? favoriteDocumentations.filter(
+        (dependency: IDependency) => dependency.id !== documentationId
+      )
+    : [...favoriteDocumentations, dependency];
+
+  vscode.postMessage({ type: "toggleFavorite", dependency });
+
   updateDocumentation(documentationId, {
     isFavorite: !isFavorite,
     isHide: false,
@@ -370,18 +458,38 @@ const toggleFavorite = (documentationId: string) => {
 };
 
 const toggleHide = (documentationId: string) => {
-  const isFavorite = favoriteDocumentations.includes(documentationId);
-  const isHide = hideDocumentations.includes(documentationId);
+  const isFavorite = favoriteDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
+  const isHide = hideDocumentations.some(
+    (dependency: IDependency) => dependency.id === documentationId
+  );
 
   if (isFavorite) {
     toggleFavorite(documentationId);
   }
 
-  hideDocumentations = isHide
-    ? hideDocumentations.filter((id) => id !== documentationId)
-    : [...hideDocumentations, documentationId];
+  const dependency = {
+    id: documentationId,
+    registry: documentations.some(
+      (dependency: IDependency) => dependency.id === documentationId
+    )
+      ? documentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry
+      : searchDocumentations.filter(
+          (documentation) => documentation.id === documentationId
+        )[0].registry,
+  };
 
-  vscode.postMessage({ type: "toggleHide", documentationId });
+  hideDocumentations = isHide
+    ? hideDocumentations.filter(
+        (dependency: IDependency) => dependency.id !== documentationId
+      )
+    : [...hideDocumentations, dependency];
+
+  vscode.postMessage({ type: "toggleHide", dependency });
+
   updateDocumentation(documentationId, { isHide: !isHide, isFavorite: false });
 };
 

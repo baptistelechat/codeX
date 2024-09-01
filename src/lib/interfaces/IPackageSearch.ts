@@ -1,6 +1,6 @@
 import IPackageInformation from "./IPackageInformation";
 
-export interface IPackageSearchObject {
+interface IPackageSearchObject {
   package: IPackageInformation;
   flags: {
     insecure: number;
@@ -17,8 +17,10 @@ export interface IPackageSearchObject {
   searchScore: number;
 }
 
-export interface IPackageSearchResponse {
+interface IPackageSearchResponse {
   objects: IPackageSearchObject[];
   total: number;
   time: Date;
 }
+
+export default IPackageSearchResponse;
