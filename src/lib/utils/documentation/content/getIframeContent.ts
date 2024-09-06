@@ -3,18 +3,21 @@ import styleCodiconUri from "../../../assets/uri/styleCodiconUri";
 import styleDocumentationUri from "../../../assets/uri/styleDocumentationUri";
 import styleTailwindUri from "../../../assets/uri/styleTailwindUri";
 import IDocumentation from "../../../interfaces/IDocumentation";
+import Language from "../../../types/Language";
 import getContentBody from "./getContentBody";
+import l10nUri from "../../../assets/uri/l10n/l10nUri";
 
 const getIframeContent = (
   documentation: IDocumentation,
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
   url: string,
-  homepage: boolean
+  homepage: boolean,
+  language: Language
 ) => {
   return `
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="${language}">
       <head>
         <link rel="icon" href="${documentation.icon}" type="image/png">
         <link href="${styleTailwindUri(
@@ -29,7 +32,13 @@ const getIframeContent = (
         <title>${documentation.name}</title>
       </head>
       <body>
-        ${getContentBody(documentation, url, "iframe", homepage)}
+        ${getContentBody(
+          documentation,
+          url,
+          "iframe",
+          homepage,
+          language,
+        )}
       </body>
     </html>`;
 };

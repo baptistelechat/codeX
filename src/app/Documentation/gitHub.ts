@@ -1,3 +1,10 @@
+import L10n from "../l10n/l10n";
+
+const html = document.documentElement;
+const lang = html.lang;
+// @ts-ignore
+const l10n = new L10n(lang, l10nPath);
+
 const checkIframeSupport = async (url: string) => {
   try {
     const response = await fetch(url, {
@@ -39,8 +46,9 @@ window.replaceBodyContent = async (href: string) => {
         console.error("Error fetching README:", error);
         const readmeContentDiv = document.getElementById("readme-content");
         if (readmeContentDiv) {
-          readmeContentDiv.innerHTML =
-            "Error fetching README. Please check the console for details.";
+          readmeContentDiv.innerHTML = l10n.translate(
+            "Error fetching README. Please check the console for details."
+          );
         }
       });
   } else {
@@ -56,30 +64,37 @@ window.replaceBodyContent = async (href: string) => {
         <div class="flex flex-col h-screen">
           <div class="flex-1 overflow-auto">
             <iframe width="100%" height="100%" src="${href}" frameborder="0" class="bg-white">
-              <p>Can't load ${href}</p>
+              <p>${l10n.translate("Can't load")} ${href}</p>
             </iframe>
           </div>
           <div class="flex items-center justify-center gap-4 border-t border-t-sky-200 p-2">
-            <p class="m-0">Failed to load ? Try opening this page in a browser.</p>
+            <p class="m-0">${l10n.translate(
+              "Failed to load ? Try opening this page in a browser."
+            )}</p>
             <a
               id="openBrowser"
               class="flex w-fit items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400 hover:text-slate-50  hover:no-underline"
               href="${href}"
               target="_blank"
             >
-              <div class="codicon codicon-browser" aria-label="browser"></div>
-              Open in Browser</a
+              <div class="codicon codicon-browser" aria-label="browser"></div>${l10n.translate(
+                "Open in Browser"
+              )}</a
             >
           </div>
         </div>`;
     } else {
       document.body.innerHTML = `
         <div class="flex h-screen w-screen flex-col items-center justify-center gap-4">
-          <p class="m-0">Failed to load page due to the website's security policy.</p>
-          <p>You can open it in a browser instead.</p>
+          <p class="m-0 text-center">${l10n.translate(
+            "Failed to load page due to the website's security policy."
+          )}</p>
+          <p class="m-0 text-center">${l10n.translate(
+            "You can open it in a browser instead."
+          )}</p>
           <a id="openBrowser" class="flex w-fit items-center justify-center gap-2 rounded bg-sky-500 p-2 text-slate-50 hover:cursor-pointer hover:bg-sky-400 hover:text-slate-50 hover:no-underline" href="${href}" target="_blank">
             <div class="codicon codicon-browser" aria-label="browser"></div>
-            Open in Browser
+            ${l10n.translate("Open in Browser")}
           </a>
         </div>`;
     }
@@ -134,8 +149,9 @@ window.onload = () => {
       console.error("Error fetching README:", error);
       const readmeContentDiv = document.getElementById("readme-content");
       if (readmeContentDiv) {
-        readmeContentDiv.innerHTML =
-          "Error fetching README. Please check the console for details.";
+        readmeContentDiv.innerHTML = l10n.translate(
+          "Error fetching README. Please check the console for details."
+        );
       }
     });
 };

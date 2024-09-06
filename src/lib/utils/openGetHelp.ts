@@ -39,7 +39,8 @@ const openGetHelp = (context: vscode.ExtensionContext) => {
     documentation,
     panel.webview,
     context.extensionUri,
-    true
+    true,
+    "en"
   );
 
   panel.webview.html = content;

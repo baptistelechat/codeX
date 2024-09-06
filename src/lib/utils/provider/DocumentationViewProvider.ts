@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import IDependency from "../../interfaces/IDependency";
 import IDocumentation from "../../interfaces/IDocumentation";
+import Language from "../../types/Language";
 import { getDocumentations } from "../documentation/getDocumentations";
 import loadFavoriteDocumentations from "../favoriteDocumentations/loadFavoriteDocumentations";
 import saveFavoriteDocumentations from "../favoriteDocumentations/saveFavoriteDocumentations";
@@ -29,6 +30,7 @@ export class DocumentationViewProvider implements vscode.WebviewViewProvider {
   public _searchDocumentations: IDocumentation[] = [];
   public _currentDocumentations: string = "";
   public _openDocumentations: string[] = [];
+  public _language: Language = vscode.env.language as Language;
 
   constructor(
     public readonly _extensionUri: vscode.Uri,

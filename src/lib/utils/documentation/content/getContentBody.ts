@@ -1,10 +1,12 @@
 import IDocumentation from "../../../interfaces/IDocumentation";
+import Language from "../../../types/Language";
 
 const getContentBody = (
   documentation: IDocumentation,
   url: string,
   type: "github" | "iframe" | "fallback",
-  homepage: boolean
+  homepage: boolean,
+  language: Language
 ) => {
   const mainContent =
     type === "github"
@@ -12,7 +14,7 @@ const getContentBody = (
       : type === "iframe"
       ? `<iframe width="100%" height="100%" src="${url}" frameborder="0" class="bg-white">
         <p>Can't load ${documentation.name}</p>
-       </iframe>`
+          </iframe>`
       : `<div class="flex h-screen w-screen flex-col items-center justify-center gap-4">
         <p class="m-0">Failed to load ${
           documentation.name

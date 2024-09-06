@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import IDocumentation from "../../interfaces/IDocumentation";
+import Language from "../../types/Language";
 import getFallbackContent from "./content/getFallbackContent";
 import getGitHubContent from "./content/getGitHubContent";
 import getIframeContent from "./content/getIframeContent";
@@ -8,7 +9,8 @@ const getDocumentationContent = (
   documentation: IDocumentation,
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
-  homepage: boolean
+  homepage: boolean,
+  language: Language
 ) => {
   const url = homepage
     ? documentation.homepage.url
@@ -23,7 +25,8 @@ const getDocumentationContent = (
       webview,
       extensionUri,
       url,
-      homepage
+      homepage,
+      language
     );
   } else if (canBeIframe) {
     return getIframeContent(
@@ -31,7 +34,8 @@ const getDocumentationContent = (
       webview,
       extensionUri,
       url,
-      homepage
+      homepage,
+      language
     );
   } else {
     return getFallbackContent(
@@ -39,7 +43,8 @@ const getDocumentationContent = (
       webview,
       extensionUri,
       url,
-      homepage
+      homepage,
+      language
     );
   }
 };

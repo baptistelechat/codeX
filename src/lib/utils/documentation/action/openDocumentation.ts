@@ -42,7 +42,8 @@ const openDocumentation = ({
       documentation,
       panel.webview,
       provider._extensionUri,
-      homepage
+      homepage,
+      provider._language
     );
 
     panel.webview.html = content;
